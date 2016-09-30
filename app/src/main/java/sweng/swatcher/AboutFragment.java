@@ -1,12 +1,15 @@
 package sweng.swatcher;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
 /**
@@ -28,6 +31,10 @@ public class AboutFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+
+    private Button settings;
+    private Button streaming;
 
     public AboutFragment() {
         // Required empty public constructor
@@ -64,7 +71,9 @@ public class AboutFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_about, container, false);
+        View view = inflater.inflate(R.layout.fragment_about, container, false);
+        handleAbout(view);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -105,4 +114,11 @@ public class AboutFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private void handleAbout(View view){
+
+    }
+
+
+
 }

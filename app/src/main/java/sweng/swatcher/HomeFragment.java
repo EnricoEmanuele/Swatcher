@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -128,10 +129,16 @@ public class HomeFragment extends Fragment {
     private void handleHome(View view){
         class Streaming extends WebViewClient {
             @Override
+            public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
+                handler.proceed("user", "password");
+            }
+
+            @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
             }
+
         }
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         url = settings.getString(Constants.PREFS_KEY_URL, null);
