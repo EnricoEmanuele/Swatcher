@@ -1,0 +1,45 @@
+
+******************* File Description *********************************
+Questo file contiene regole, convenzioni, definizioni e abbreviazioni 
+utilizzate sia nella scrittura che nell'esecuzione dei casi di test.
+**********************************************************************
+*****
+*****
+******************* TEST CASE VALIDATION *****************************
+Ad ogni Step di un Test Case può essere associato uno dei 3 stati:
+P (Passed)
+F (Failed)
+E (to be EValuated)
+
+a seconda che la validazione di quest'ultimo sia Passata, Fallita 
+o è ancora in attesa di validazione.
+**********************************************************************
+*****
+*****
+******************* Input on Android APP *****************************
+N.I. (No Input)
+Nessun input viene somministrato all'app android: non viene effettuata 
+nessuna selezione o digitazione.
+**********************************************************************
+*****
+*****
+******************* Video on Android APP *****************************
+V.S.S. (Videata in Stato Stabile)
+La videata in assenza di ulteriori input o selezioni resta stabilmente 
+nello stesso stato in cui è apparsa.
+**********************************************************************
+*****
+***** 
+******************* Other Special Notations **************************
+Il trattino "-" nelle caselle relative a "Actual Result" e "Notes"
+indica una situazione "empty" in cui il relativo step del Test Case 
+deve essere ancora validato oppure non ci sono note allegate.
+**********************************************************************
+*****
+*****
+
+
+
+
+
+
