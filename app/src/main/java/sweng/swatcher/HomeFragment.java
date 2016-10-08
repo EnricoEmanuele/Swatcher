@@ -8,12 +8,34 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.HttpAuthHandler;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+
+import sweng.swatcher.model.Authorization;
+import sweng.swatcher.model.SnapshotRequest;
+import sweng.swatcher.model.StreamRequest;
 
 
 /**
@@ -42,6 +64,13 @@ public class HomeFragment extends Fragment {
     private FloatingActionButton stop_button;
     private FloatingActionButton snapshot_button;
     private FloatingActionButton record_button;
+
+    private StreamRequest streaming;
+    private SnapshotRequest snapshot;
+
+
+
+    String res;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -127,24 +156,15 @@ public class HomeFragment extends Fragment {
 
     //Funzione di gestione della home
     private void handleHome(View view){
-        class Streaming extends WebViewClient {
-            @Override
-            public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
-                handler.proceed("user", "password");
-            }
 
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
-
-        }
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         url = settings.getString(Constants.PREFS_KEY_URL, null);
 
         webview_streaming = (WebView)view.findViewById(R.id.webview_streaming);
-        webview_streaming.setWebViewClient(new Streaming());
+       // webview_streaming.setWebViewClient(new Streaming());
+        streaming = new StreamRequest("87.17.157.85","5432",new Authorization("user","password","Basic"),webview_streaming);
+        snapshot = new SnapshotRequest("87.17.157.85","4321",new Authorization("user","password","Basic"),0,getContext(),view);
+
         play_button = (FloatingActionButton) view.findViewById(R.id.play);
         stop_button = (FloatingActionButton) view.findViewById(R.id.stop);
         snapshot_button = (FloatingActionButton) view.findViewById(R.id.snapshot);
@@ -160,10 +180,8 @@ public class HomeFragment extends Fragment {
     private View.OnClickListener playListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            webview_streaming.getSettings().setLoadsImagesAutomatically(true);
-            webview_streaming.getSettings().setJavaScriptEnabled(true);
-            webview_streaming.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-            webview_streaming.loadUrl(url);
+
+            streaming.sendRequest();
             Snackbar.make(view, "Successful Connected", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             displayMediaButton();
         }
@@ -180,7 +198,9 @@ public class HomeFragment extends Fragment {
     private View.OnClickListener snapshotListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Snackbar.make(view, "Snapshot taken", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+             int res = snapshot.sendRequest();
+            //String res = testRequest();
+           // Snackbar.make(view, "Snapshot taken "+res, Snackbar.LENGTH_LONG).setAction("Action", null).show();
         }
     };
 
@@ -204,4 +224,47 @@ public class HomeFragment extends Fragment {
         snapshot_button.setVisibility(View.GONE);
         record_button.setVisibility(View.GONE);
     }
+
+
+    /*
+    public String testRequest() {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        // Request a string response from the provided URL.
+        //StringRequest stringRequest = new StringRequest(Request.Method.GET, getURL(), new Response.Listener<String>()
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://87.17.157.85:4321/0/action/snapshot", new Response.Listener<String>()
+        {
+
+            @Override
+            public void onResponse(String response)
+            {
+                // Display the first 500 characters of the response string.
+                res = response.toString();
+                Log.i("LOOOOOOG ",res);
+
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                res = "That didn't work!";
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                // add headers <key,value>
+                String credentials = "user:password";
+                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+
+        return res;
+    }
+    */
 }
