@@ -1,6 +1,7 @@
 package sweng.swatcher.model;
 
-import org.apache.commons.codec.binary.Base64;
+
+import android.util.Base64;
 
 /**
  * Created by ee on 07/10/16.
@@ -44,7 +45,8 @@ public class Authorization {
 
     public String encodeAuthorization(){
         String auth = username + ":" + password;
-        return Base64.encodeBase64String(auth.getBytes());
+        return Base64.encodeToString(auth.getBytes(),Base64.NO_WRAP);
+
 
     }
 }

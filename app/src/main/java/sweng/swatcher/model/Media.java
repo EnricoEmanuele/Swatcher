@@ -4,18 +4,24 @@ package sweng.swatcher.model;
  * Created by ee on 07/10/16.
  */
 
-public class Image {
+public class Media {
 
     private String name;
     private String extension;
     private String size;
     private String date;
+    private String path;
 
-    public Image(String name, String extension, String size, String date) {
-        this.name = name;
-        this.extension = extension;
-        this.size = size;
-        this.date = date;
+    public Media() {
+
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getDate() {

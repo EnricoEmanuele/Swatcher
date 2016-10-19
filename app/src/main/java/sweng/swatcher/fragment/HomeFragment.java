@@ -1,41 +1,26 @@
-package sweng.swatcher;
+package sweng.swatcher.fragment;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-
+import sweng.swatcher.R;
+import sweng.swatcher.util.SettingManager;
+import sweng.swatcher.command.StreamCommand;
 import sweng.swatcher.model.Authorization;
-import sweng.swatcher.model.SnapshotRequest;
-import sweng.swatcher.model.StreamRequest;
+import sweng.swatcher.command.MediaCommand;
+import sweng.swatcher.model.Setting;
+import sweng.swatcher.request.MovieRequest;
+import sweng.swatcher.request.SnapshotRequest;
+import sweng.swatcher.request.StreamRequest;
+import sweng.swatcher.util.MediaButtonSet;
 
 
 /**
@@ -59,7 +44,7 @@ public class HomeFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private WebView webview_streaming;
-    private String url;
+    private String ip, port;
     private FloatingActionButton play_button;
     private FloatingActionButton stop_button;
     private FloatingActionButton snapshot_button;
@@ -67,6 +52,13 @@ public class HomeFragment extends Fragment {
 
     private StreamRequest streaming;
     private SnapshotRequest snapshot;
+    private MovieRequest movie;
+    private MediaButtonSet mediaButtonSet;
+
+    private StreamCommand streamCommand;
+
+
+
 
 
 
@@ -157,13 +149,14 @@ public class HomeFragment extends Fragment {
     //Funzione di gestione della home
     private void handleHome(View view){
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-        url = settings.getString(Constants.PREFS_KEY_URL, null);
+        SettingManager sm = new SettingManager(getContext());
+        Setting setting = sm.getSetting();
 
         webview_streaming = (WebView)view.findViewById(R.id.webview_streaming);
        // webview_streaming.setWebViewClient(new Streaming());
-        streaming = new StreamRequest("87.17.157.85","5432",new Authorization("user","password","Basic"),webview_streaming);
-        snapshot = new SnapshotRequest("87.17.157.85","4321",new Authorization("user","password","Basic"),0,getContext(),view);
+        streaming = new StreamRequest(setting.getIpAddress(),setting.getStreamingPort(),new Authorization(setting.getUsername(),setting.getPassword(),"Basic"));
+        snapshot = new SnapshotRequest(setting.getIpAddress(),"4321",new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,view);
+        movie = new MovieRequest(setting.getIpAddress(),"4321",new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,view);
 
         play_button = (FloatingActionButton) view.findViewById(R.id.play);
         stop_button = (FloatingActionButton) view.findViewById(R.id.stop);
@@ -175,39 +168,55 @@ public class HomeFragment extends Fragment {
         snapshot_button.setOnClickListener(snapshotListner);
         record_button.setOnClickListener(recordListner);
 
+        mediaButtonSet = new MediaButtonSet(view);
+
+        mediaButtonSet.addToStopList(play_button);
+        mediaButtonSet.addToPlayList(stop_button);
+        mediaButtonSet.addToPlayList(snapshot_button);
+        mediaButtonSet.addToPlayList(record_button);
+
+
     }
 
     private View.OnClickListener playListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            streamCommand = new StreamCommand(webview_streaming, view, streaming, mediaButtonSet);
+            streamCommand.execute();
 
-            streaming.sendRequest();
-            Snackbar.make(view, "Successful Connected", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            displayMediaButton();
         }
     };
 
     private View.OnClickListener stopListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            hideMediaButton();
-            Snackbar.make(view, "Stop streaming video", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            streamCommand.hideMediaButton();
+
         }
     };
 
     private View.OnClickListener snapshotListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-             int res = snapshot.sendRequest();
-            //String res = testRequest();
-           // Snackbar.make(view, "Snapshot taken "+res, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            snapshot.setResponse(null);
+            MediaCommand cmd = new MediaCommand(getContext(),snapshot,view);
+            cmd.execute();
+            /*
+            ResponseControl control = new ResponseControl(snapshot,getView());
+            control.checkResponse();
+            */
         }
     };
 
     private View.OnClickListener recordListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Snackbar.make(view, "Start record video", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            MediaCommand cmd = new MediaCommand(getContext(),movie, view);
+            cmd.execute();
+            /*
+            ResponseControl control = new ResponseControl(movie, getView());
+            control.checkResponse();
+            */
         }
     };
 
@@ -226,45 +235,6 @@ public class HomeFragment extends Fragment {
     }
 
 
-    /*
-    public String testRequest() {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-        // Request a string response from the provided URL.
-        //StringRequest stringRequest = new StringRequest(Request.Method.GET, getURL(), new Response.Listener<String>()
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://87.17.157.85:4321/0/action/snapshot", new Response.Listener<String>()
-        {
-
-            @Override
-            public void onResponse(String response)
-            {
-                // Display the first 500 characters of the response string.
-                res = response.toString();
-                Log.i("LOOOOOOG ",res);
-
-            }
-        }, new Response.ErrorListener()
-        {
-            @Override
-            public void onErrorResponse(VolleyError error)
-            {
-                res = "That didn't work!";
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                // add headers <key,value>
-                String credentials = "user:password";
-                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-
-        return res;
-    }
-    */
 }
+
+

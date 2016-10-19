@@ -1,4 +1,6 @@
-package sweng.swatcher.model;
+package sweng.swatcher.request;
+
+import sweng.swatcher.model.Authorization;
 
 /**
  * Created by ee on 07/10/16.
@@ -9,6 +11,7 @@ public abstract class HttpRequest {
     private String ipAddress;
     private String port;
     private Authorization authorization;
+    private String response = null;
 
     public HttpRequest(String ipAddress, String port, Authorization authorization) {
         this.ipAddress = ipAddress;
@@ -40,7 +43,14 @@ public abstract class HttpRequest {
         this.authorization = authorization;
     }
 
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
+    }
+
     public abstract String getURL();
 
-    public abstract int sendRequest();
 }

@@ -1,29 +1,25 @@
-package sweng.swatcher;
+package sweng.swatcher.fragment;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import sweng.swatcher.R;
+import sweng.swatcher.util.SettingManager;
+import sweng.swatcher.command.GalleryCommand;
+import sweng.swatcher.model.Authorization;
+import sweng.swatcher.model.Media;
+import sweng.swatcher.model.Setting;
+import sweng.swatcher.request.GalleryRequest;
+
+import static java.lang.Thread.sleep;
 
 
 /**
@@ -46,9 +42,9 @@ public class GalleryFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private static final String IMAGES_URL = "http://ip.jsontest.com";
-    TextView json_text;
-
+    private ArrayAdapter<Media> mediaAdapter;
+    private ListView listview;
+    private FloatingActionButton gallery_button;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -86,7 +82,11 @@ public class GalleryFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
-        handleGallery(view);
+
+        listview = (ListView) view.findViewById(R.id.gallery_listview);
+        gallery_button = (FloatingActionButton)view.findViewById(R.id.gallery_button);
+        gallery_button.setOnClickListener(galleryListner);
+
         return view;
     }
 
@@ -129,65 +129,20 @@ public class GalleryFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void handleGallery(View view){
 
-        Button button_download = (Button)view.findViewById(R.id.button_download);
-        button_download.setOnClickListener(downloadListner);
 
-        json_text = (TextView)view.findViewById(R.id.json_text);
 
-    }
-
-    private View.OnClickListener downloadListner = new View.OnClickListener() {
+    private View.OnClickListener galleryListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            getAllImages(view);
+            SettingManager sm = new SettingManager(getContext());
+            Setting setting = sm.getSetting();
+            GalleryRequest gallery = new GalleryRequest(setting.getIpAddress(),setting.getWebServerPort(),new Authorization(setting.getUsername(),setting.getPassword(),"Basic"));
+            GalleryCommand gc = new GalleryCommand(gallery, getContext(),listview);
+            gc.execute();
+
         }
     };
 
-    private void getAllImages(final View view) {
-        class GetAllImages extends AsyncTask<String,Void,String> {
-            ProgressDialog loading;
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                loading = ProgressDialog.show(getContext(), "Fetching Data","Please Wait...",true,true);
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                loading.dismiss();
-                json_text.setText(s);
-                // Toast.makeText(getContext(),s,Toast.LENGTH_LONG).show();
-                // Snackbar.make(getContext(), "Snapshot taken", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-                String uri = params[0];
-                BufferedReader bufferedReader = null;
-                try {
-                    URL url = new URL(uri);
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    StringBuilder sb = new StringBuilder();
-
-                    bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-                    String json;
-                    while((json = bufferedReader.readLine())!= null){
-                        sb.append(json+"\n");
-                    }
-
-                    return sb.toString().trim();
-
-                }catch(Exception e){
-                    return null;
-                }
-            }
-        }
-        GetAllImages gai = new GetAllImages();
-        gai.execute(IMAGES_URL);
-    }
 }

@@ -1,10 +1,8 @@
-package sweng.swatcher;
+package sweng.swatcher.fragment;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,7 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.NumberPicker;
+
+import sweng.swatcher.R;
+import sweng.swatcher.util.SettingManager;
+import sweng.swatcher.model.Setting;
 
 
 /**
@@ -36,13 +38,17 @@ public class ConnectionSettingsFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     /*************************************/
-    SharedPreferences  settings;
-    SharedPreferences.Editor editor;
-    EditText url;
-    EditText username;
-    EditText password;
-    Button delete;
+    NumberPicker ip1;
+    NumberPicker ip2;
+    NumberPicker ip3;
+    NumberPicker ip4;
+    NumberPicker stream_port;
+    EditText username, new_username;
+    EditText password, new_password;
+    Button change;
     Button save;
+    String ipAddress;
+
 
     public ConnectionSettingsFragment() {
         // Required empty public constructor
@@ -129,28 +135,73 @@ public class ConnectionSettingsFragment extends Fragment {
     //Funzione di gestione della pagina Connection Settings
     private void handleConnectionSettings(View view){
 
-        //Initialize shared preferences
-        settings = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-        editor = settings.edit();
-
         //Initialize page element
-        url = (EditText) view.findViewById(R.id.url);
+        ip1 = (NumberPicker) view.findViewById(R.id.IP1);
+        ip2 = (NumberPicker) view.findViewById(R.id.IP2);
+        ip3 = (NumberPicker) view.findViewById(R.id.IP3);
+        ip4 = (NumberPicker) view.findViewById(R.id.IP4);
+
+        ip1.setMinValue(0);
+        ip1.setMaxValue(255);
+
+        ip2.setMinValue(0);
+        ip2.setMaxValue(255);
+
+        ip3.setMinValue(0);
+        ip3.setMaxValue(255);
+
+        ip4.setMinValue(0);
+        ip4.setMaxValue(255);
+
+
+        stream_port = (NumberPicker) view.findViewById(R.id.streamingPort);
+        stream_port.setMinValue(0);
+        stream_port.setMaxValue(99999);
+
+
         username = (EditText) view.findViewById(R.id.username);
         password = (EditText) view.findViewById(R.id.password);
-        delete = (Button) view.findViewById(R.id.button_delete);
-        save = (Button) view.findViewById(R.id.button_save);
+
+        new_username = (EditText) view.findViewById(R.id.new_username);
+        new_password = (EditText) view.findViewById(R.id.new_password);
+
+        change = (Button) view.findViewById(R.id.change);
+        save = (Button) view.findViewById(R.id.save);
+
 
         save.setOnClickListener(
                 new View.OnClickListener()
                 {
                     public void onClick(View view)
                     {
+                        ipAddress = Integer.toString(ip1.getValue())+"."+Integer.toString(ip2.getValue())+"."+Integer.toString(ip3.getValue())+"."+Integer.toString(ip4.getValue());
                         //Set shared preferences
-                        editor.putString(Constants.PREFS_KEY_URL, url.getText().toString());
-                        editor.putString(Constants.PREFS_KEY_USR, username.getText().toString());
-                        editor.putString(Constants.PREFS_KEY_PSW, password.getText().toString());
-                        editor.commit();
+                        Setting stg = new Setting();
+                        stg.setIpAddress(ipAddress);
+                        stg.setStreamingPort(Integer.toString(stream_port.getValue()));
+                        stg.setUsername(username.getText().toString());
+                        stg.setPassword(password.getText().toString());
+
+                        //CAMBIARE
+                        stg.setCommandPort("4321");
+                        stg.setWebServerPort("80");
+
+                        stg.setNewPassword("");
+                        stg.setNewUsername("");
+
+                        SettingManager stgMng = new SettingManager(getContext());
+                        stgMng.setSetting(stg);
                         Snackbar.make(view, "Settings Saved", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
+                    }
+                });
+
+        change.setOnClickListener(
+                new View.OnClickListener()
+                {
+                    public void onClick(View view)
+                    {
+                        //Set shared preferences
                     }
                 });
 
