@@ -3,12 +3,18 @@ package sweng.swatcher.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import sweng.swatcher.R;
+import sweng.swatcher.command.MediaSettingReadCommand;
+import sweng.swatcher.model.Authorization;
+import sweng.swatcher.model.Setting;
+import sweng.swatcher.request.HttpRequest;
+import sweng.swatcher.request.ReadMediaSettingRequest;
+import sweng.swatcher.util.SettingManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +35,24 @@ public class MediaSettingFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private View view;
+    private FloatingActionButton updateButton;
+    private FloatingActionButton saveButton;
+
+    private MediaSettingReadCommand mediaSettingReadCommand;
+
+    private SettingManager sm;
+    private Setting setting;
+
+    private static final String QUALITY_PARAMETER = "quality";
+    private static final String PICTURE_TYPE = "picture_type";
+    private static final String MAX_MOVIE_TIME = "max_movie_time";
+    private static final String OUTPUT_PICTURES = "output_pictures";
+    private static final String THRESHOLD = "threshold";
+    private static final String SNAPSHOT_INTERVAL = "snapshot_interval";
+
+
 
     public MediaSettingFragment() {
         // Required empty public constructor
@@ -59,13 +83,24 @@ public class MediaSettingFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_media_setting, container, false);
+
+        //Settings
+        sm = new SettingManager(getContext());
+        setting = sm.getSetting();
+
+        //View informations
+        view = inflater.inflate(R.layout.fragment_media_setting, container, false);
+        updateButton = (FloatingActionButton) view.findViewById(R.id.update_ms_button);
+        saveButton = (FloatingActionButton) view.findViewById(R.id.save_ms_button);
+        updateButton.setOnClickListener(updateListener);
+        saveButton.setOnClickListener(saveListener);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -106,4 +141,68 @@ public class MediaSettingFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    /*
+     * Read media parameters from Server
+     */
+    private View.OnClickListener updateListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            //read image quality parameter
+            HttpRequest qualityImage = new ReadMediaSettingRequest(setting.getIpAddress(),
+                    setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, QUALITY_PARAMETER);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), qualityImage, view);
+            mediaSettingReadCommand.execute();
+
+            //read picture type parameter
+            HttpRequest pictureType = new ReadMediaSettingRequest(setting.getIpAddress(),
+                    setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, PICTURE_TYPE);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), pictureType, view);
+            mediaSettingReadCommand.execute();
+
+            //read max movie time
+            HttpRequest maxMovieTime = new ReadMediaSettingRequest(setting.getIpAddress(),
+                    setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, MAX_MOVIE_TIME);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), maxMovieTime, view);
+            mediaSettingReadCommand.execute();
+
+            //read snapshot on detection parameter
+            HttpRequest snapshotOnDetection = new ReadMediaSettingRequest(setting.getIpAddress(),
+                    setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, OUTPUT_PICTURES);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotOnDetection, view);
+            mediaSettingReadCommand.execute();
+
+            //read threshold parameter
+            HttpRequest threshold = new ReadMediaSettingRequest(setting.getIpAddress(),
+                    setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, THRESHOLD);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), threshold, view);
+            mediaSettingReadCommand.execute();
+
+            //read continuous snapshot interval parameter
+            HttpRequest snapshotInterval = new ReadMediaSettingRequest(setting.getIpAddress(),
+                    setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, SNAPSHOT_INTERVAL);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotInterval, view);
+            mediaSettingReadCommand.execute();
+
+        }
+    };
+
+    /*
+     * Update media parameters on Server
+     */
+    private View.OnClickListener saveListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+        }
+    };
+
+
 }
