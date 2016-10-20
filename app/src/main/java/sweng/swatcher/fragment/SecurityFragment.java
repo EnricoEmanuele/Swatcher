@@ -3,12 +3,22 @@ package sweng.swatcher.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import sweng.swatcher.R;
+import sweng.swatcher.command.GalleryCommand;
+import sweng.swatcher.command.SecurityCommand;
+import sweng.swatcher.model.Authorization;
+import sweng.swatcher.model.Setting;
+import sweng.swatcher.request.GalleryRequest;
+import sweng.swatcher.request.SecurityRequest;
+import sweng.swatcher.util.SettingManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +39,13 @@ public class SecurityFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private FloatingActionButton changeButton;
+    private EditText new_username_text;
+    private EditText new_password_text;
+
+    private ProgressBar spinner;
+
 
     public SecurityFragment() {
         // Required empty public constructor
@@ -65,7 +82,17 @@ public class SecurityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_security, container, false);
+        View view = inflater.inflate(R.layout.fragment_security, container, false);
+
+        changeButton = (FloatingActionButton) view.findViewById(R.id.change_button);
+        new_username_text = (EditText) view.findViewById(R.id.new_username);
+        new_password_text = (EditText) view.findViewById(R.id.new_password);
+        spinner = (ProgressBar)view.findViewById(R.id.progressBar);
+        spinner.setVisibility(View.GONE);
+
+        changeButton.setOnClickListener(changeListner);
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -106,4 +133,20 @@ public class SecurityFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private View.OnClickListener changeListner = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            spinner.setVisibility(View.VISIBLE);
+            String new_username = new_username_text.getText().toString();
+            String new_password = new_password_text.getText().toString();
+
+            SettingManager sm = new SettingManager(getContext());
+            Setting setting = sm.getSetting();
+            SecurityRequest security = new SecurityRequest(setting.getIpAddress(),setting.getWebServerPort(),new Authorization(setting.getUsername(),setting.getPassword(),"Basic"));
+            SecurityCommand sc = new SecurityCommand(security, getContext(), view, new_username, new_password);
+            sc.execute();
+
+        }
+    };
 }
