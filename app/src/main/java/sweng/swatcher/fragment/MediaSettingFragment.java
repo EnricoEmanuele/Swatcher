@@ -8,6 +8,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
 import sweng.swatcher.R;
 import sweng.swatcher.command.MediaSettingReadCommand;
 import sweng.swatcher.model.Authorization;
@@ -15,6 +18,14 @@ import sweng.swatcher.model.Setting;
 import sweng.swatcher.request.HttpRequest;
 import sweng.swatcher.request.ReadMediaSettingRequest;
 import sweng.swatcher.util.SettingManager;
+
+import static sweng.swatcher.util.ParametersKeys.MAX_MOVIE_TIME;
+import static sweng.swatcher.util.ParametersKeys.OUTPUT_PICTURES;
+import static sweng.swatcher.util.ParametersKeys.PICTURE_TYPE;
+import static sweng.swatcher.util.ParametersKeys.QUALITY_PARAMETER;
+import static sweng.swatcher.util.ParametersKeys.THRESHOLD;
+import static sweng.swatcher.util.ParametersKeys.SNAPSHOT_INTERVAL;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,12 +56,6 @@ public class MediaSettingFragment extends Fragment {
     private SettingManager sm;
     private Setting setting;
 
-    private static final String QUALITY_PARAMETER = "quality";
-    private static final String PICTURE_TYPE = "picture_type";
-    private static final String MAX_MOVIE_TIME = "max_movie_time";
-    private static final String OUTPUT_PICTURES = "output_pictures";
-    private static final String THRESHOLD = "threshold";
-    private static final String SNAPSHOT_INTERVAL = "snapshot_interval";
 
 
 
@@ -100,7 +105,19 @@ public class MediaSettingFragment extends Fragment {
         saveButton = (FloatingActionButton) view.findViewById(R.id.save_ms_button);
         updateButton.setOnClickListener(updateListener);
         saveButton.setOnClickListener(saveListener);
+
+        //Set spinner entries
+        Spinner spinner = (Spinner) view.findViewById(R.id.picture_type);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.picture_types, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+
         return view;
+
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
