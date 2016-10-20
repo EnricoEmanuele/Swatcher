@@ -144,7 +144,7 @@ public class SecurityFragment extends Fragment {
             SettingManager sm = new SettingManager(getContext());
             Setting setting = sm.getSetting();
             SecurityRequest security = new SecurityRequest(setting.getIpAddress(),setting.getWebServerPort(),new Authorization(setting.getUsername(),setting.getPassword(),"Basic"));
-            SecurityCommand sc = new SecurityCommand(security, getContext(), view, new_username, new_password);
+            SecurityCommand sc = new SecurityCommand(security, getContext(), view, spinner, new_username, new_password);
             sc.execute();
 
         }
