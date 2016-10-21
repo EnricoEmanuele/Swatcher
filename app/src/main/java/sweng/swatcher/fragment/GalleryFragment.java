@@ -1,8 +1,10 @@
 package sweng.swatcher.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import sweng.swatcher.R;
+import sweng.swatcher.util.PreferecesKeys;
 import sweng.swatcher.util.SettingManager;
 import sweng.swatcher.command.GalleryCommand;
 import sweng.swatcher.model.Authorization;
@@ -135,11 +138,12 @@ public class GalleryFragment extends Fragment {
     private View.OnClickListener galleryListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            SettingManager sm = new SettingManager(getContext());
-            Setting setting = sm.getSetting();
-            Authorization auth = new Authorization(setting.getUsername(),setting.getPassword(),"Basic");
-            GalleryRequest gallery = new GalleryRequest(setting.getIpAddress(),setting.getWebServerPort(),auth);
-            GalleryCommand gc = new GalleryCommand(gallery, getContext(),listview);
+
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+            Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
+            GalleryRequest gallery = new GalleryRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.WEB_PORT,""),auth);
+            GalleryCommand gc = new GalleryCommand(gallery, getContext(), listview);
             gc.execute();
 
         }

@@ -1,6 +1,7 @@
 package sweng.swatcher.fragment;
 
 import java.io.IOException;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.util.List;
 
@@ -67,8 +68,18 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         holder.name.setText(media.getName());
         holder.size.setText(media.getSize());
         //Picasso.with(ctx).load("http://i.imgur.com/DvpvklR.png").into(holder.image);
-        Picasso customPicasso = new Picasso.Builder(ctx).downloader(new CustomPicassoLoader(ctx)).build();
+        Picasso.Builder builder = new Picasso.Builder(ctx);
+        builder.listener(new Picasso.Listener()
+        {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
+            {
+                exception.printStackTrace();
+            }
+        });
+        Picasso customPicasso = builder.downloader(new CustomPicassoLoader(ctx)).build();
         customPicasso.load(getImageUrl(media)).into(holder.image);
+      //  customPicasso.load("http://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/sign-check-icon.png").into(holder.image);
         return convertView;
     }
 
@@ -86,8 +97,8 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
     public String getImageUrl(Media media){
         String path = media.getPath();
-        Log.i("Path", "http://"+setting.getIp1()+":"+setting.getWebServerPort()+"/"+path);
-        return "http://"+setting.getIp1()+":"+setting.getWebServerPort()+"/"+path;
+        //Log.i("Path", "http://"+setting.getIpAddress()+":"+setting.getWebServerPort()+"/"+path);
+        return "http://"+setting.getIpAddress()+":"+setting.getWebServerPort()+"/"+path;
 
     }
 
@@ -98,11 +109,12 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
         @Override
         protected HttpURLConnection openConnection(Uri path) throws IOException {
-            HttpURLConnection c = super.openConnection(path);
-            c.setRequestProperty("Authorization", auth.getAuthType() +
-                    Base64.encodeToString((auth.getUsername()+":"+auth.getPassword()).getBytes(), Base64.NO_WRAP));
 
-            Log.i("Credentials", auth.getUsername()+":"+auth.getPassword());
+            HttpURLConnection c = super.openConnection(path);
+            c.setRequestProperty("Authorization", auth.getAuthType()+ " "
+                    + Base64.encodeToString((auth.getUsername()+":"+auth.getPassword()).getBytes(), Base64.NO_WRAP));
+
+           // Log.i("Credentials", auth.getAuthType() +" "+ auth.getUsername()+":"+auth.getPassword());
 
             return c;
         }
