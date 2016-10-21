@@ -1,4 +1,5 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,204 +9,196 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:text="IP ADDRESS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView3" />
 
             <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="211dp">
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/IP1"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/IP2"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/IP3"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/IP4"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
 
                     <TextView
+                        android:text="STREAM PORT"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName"
-                        android:text="Ip Address"
-                        android:ems="10"
-                        android:id="@+id/editText"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignRight="@+id/IP4"
-                        android:layout_alignEnd="@+id/IP4"
+                        android:id="@+id/textView7"
                         android:gravity="center_vertical|center_horizontal" />
 
-                    <LinearLayout
-                        android:orientation="horizontal"
+                    <EditText
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <NumberPicker
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/editText"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:id="@+id/IP1"
-                            android:layout_weight="1" />
-
-                        <NumberPicker
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/IP2"
-                            android:layout_alignBaseline="@+id/IP1"
-                            android:layout_alignBottom="@+id/IP1"
-                            android:layout_toRightOf="@+id/IP1"
-                            android:layout_toEndOf="@+id/IP1"
-                            android:layout_weight="1" />
-
-                        <NumberPicker
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/IP3"
-                            android:layout_alignBaseline="@+id/IP2"
-                            android:layout_alignBottom="@+id/IP2"
-                            android:layout_toRightOf="@+id/IP2"
-                            android:layout_toEndOf="@+id/IP2"
-                            android:layout_weight="1" />
-
-                        <NumberPicker
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/IP4"
-                            android:layout_alignBaseline="@+id/IP3"
-                            android:layout_alignBottom="@+id/IP3"
-                            android:layout_toRightOf="@+id/IP3"
-                            android:layout_toEndOf="@+id/IP3"
-                            android:layout_weight="1" />
-                    </LinearLayout>
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:ems="10"
+                        android:id="@+id/streaming_port"
+                        android:gravity="center_vertical|center_horizontal" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
 
                     <TextView
+                        android:text="COMMAND PORT"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName"
-                        android:text="Port"
-                        android:ems="10"
-                        android:id="@+id/editText2"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_toRightOf="@+id/editText"
-                        android:layout_toEndOf="@+id/editText"
+                        android:id="@+id/textView14"
                         android:gravity="center_vertical|center_horizontal" />
 
-                    <NumberPicker
+                    <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/streamingPort"
-                        android:layout_alignBaseline="@+id/IP4"
-                        android:layout_alignBottom="@+id/IP4"
-                        android:layout_toRightOf="@+id/IP4"
-                        android:layout_toEndOf="@+id/IP4"
-                        android:layout_marginLeft="31dp"
-                        android:layout_marginStart="31dp" />
+                        android:inputType="number"
+                        android:ems="10"
+                        android:id="@+id/command_port"
+                        android:gravity="center_vertical|center_horizontal" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:text="WEB PORT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView16"
+                        android:gravity="center_vertical|center_horizontal" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:ems="10"
+                        android:id="@+id/web_port"
+                        android:gravity="center_vertical|center_horizontal" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+                android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="Username"
+                    android:text="USERNAME"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/IP2"
-                    android:layout_toStartOf="@+id/IP2"
-                    android:id="@+id/textView3"
-                    android:layout_weight="1" />
+                    android:id="@+id/textView17" />
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
                     android:ems="10"
                     android:id="@+id/username"
-                    android:layout_weight="4" />
+                    android:inputType="text" />
 
                 <TextView
+                    android:text="PASSWORD"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textView7"
-                    android:text="Password"
-                    android:layout_weight="1" />
+                    android:id="@+id/textView18" />
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
                     android:ems="10"
                     android:id="@+id/password"
-                    android:layout_weight="1" />
+                    android:inputType="text" />
 
-                <Button
-                    android:text="SAVE"
-                    android:layout_width="match_parent"
-                    android:layout_height="36dp"
-                    android:id="@+id/save" />
             </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_height="117dp"
-            android:layout_below="@+id/IP1"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
             android:layout_width="match_parent"
-            android:padding="5dp">
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_weight="2"
+            android:weightSum="1">
 
-            <EditText
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text="new username"
-                android:ems="10"
-                android:id="@+id/new_username"
-                android:layout_weight="1" />
+                android:layout_height="match_parent">
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text="new password"
-                android:ems="10"
-                android:id="@+id/new_password"
-                android:layout_weight="1" />
-
-            <Button
-                android:text="CHANGE CREDENTIALS"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/change"
-                android:layout_weight="1" />
+                <android.support.design.widget.FloatingActionButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    app:fabSize="mini"
+                    app:srcCompat="@android:drawable/ic_menu_save"
+                    android:id="@+id/save_button"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true" />
+            </RelativeLayout>
 
         </LinearLayout>
-
     </LinearLayout>
 
 </FrameLayout>

@@ -7,6 +7,10 @@ package sweng.swatcher.model;
 public class Setting {
 
     private String ipAddress;
+    private String ip1;
+    private String ip2;
+    private String ip3;
+    private String ip4;
     private String streamingPort;
     private String commandPort;
     private String webServerPort;
@@ -16,6 +20,14 @@ public class Setting {
     private String newPassword;
 
     public Setting() {
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
     public String getCommandPort() {
@@ -50,12 +62,36 @@ public class Setting {
         this.newPassword = newPassword;
     }
 
-    public String getIpAddress() {
-        return ipAddress;
+    public String getIp1() {
+        return ip1;
     }
 
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setIp1(String ip1) {
+        this.ip1 = ip1;
+    }
+
+    public String getIp2() {
+        return ip2;
+    }
+
+    public void setIp2(String ip2) {
+        this.ip2 = ip2;
+    }
+
+    public String getIp3() {
+        return ip3;
+    }
+
+    public void setIp3(String ip3) {
+        this.ip3 = ip3;
+    }
+
+    public String getIp4() {
+        return ip4;
+    }
+
+    public void setIp4(String ip4) {
+        this.ip4 = ip4;
     }
 
     public String getStreamingPort() {

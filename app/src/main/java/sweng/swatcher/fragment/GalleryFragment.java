@@ -137,7 +137,8 @@ public class GalleryFragment extends Fragment {
         public void onClick(View view) {
             SettingManager sm = new SettingManager(getContext());
             Setting setting = sm.getSetting();
-            GalleryRequest gallery = new GalleryRequest(setting.getIpAddress(),setting.getWebServerPort(),new Authorization(setting.getUsername(),setting.getPassword(),"Basic"));
+            Authorization auth = new Authorization(setting.getUsername(),setting.getPassword(),"Basic");
+            GalleryRequest gallery = new GalleryRequest(setting.getIpAddress(),setting.getWebServerPort(),auth);
             GalleryCommand gc = new GalleryCommand(gallery, getContext(),listview);
             gc.execute();
 

@@ -1,8 +1,10 @@
 package sweng.swatcher.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,12 +14,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import sweng.swatcher.R;
-import sweng.swatcher.command.GalleryCommand;
 import sweng.swatcher.command.SecurityCommand;
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.model.Setting;
-import sweng.swatcher.request.GalleryRequest;
 import sweng.swatcher.request.SecurityRequest;
+import sweng.swatcher.util.PreferecesKeys;
 import sweng.swatcher.util.SettingManager;
 
 /**
@@ -141,12 +142,12 @@ public class SecurityFragment extends Fragment {
             String new_username = new_username_text.getText().toString();
             String new_password = new_password_text.getText().toString();
 
-            SettingManager sm = new SettingManager(getContext());
-            Setting setting = sm.getSetting();
-            SecurityRequest security = new SecurityRequest(setting.getIpAddress(),setting.getWebServerPort(),new Authorization(setting.getUsername(),setting.getPassword(),"Basic"));
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+            Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
+            SecurityRequest security = new SecurityRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.WEB_PORT,""),auth);
             SecurityCommand sc = new SecurityCommand(security, getContext(), view, spinner, new_username, new_password);
             sc.execute();
-
         }
     };
 }

@@ -7,7 +7,15 @@ public class PreferecesKeys {
 
     //Thi is The PreferecesKeys Class
 
-    public static final String IP = "IP";
+    public static final String IP_ADDR = "IP_ADDR";
+
+    public static final String IP1 = "IP1";
+
+    public static final String IP2 = "IP2";
+
+    public static final String IP3 = "IP3";
+
+    public static final String IP4 = "IP4";
 
     public static final String STREAM_PORT = "STREAM_PORT";
 

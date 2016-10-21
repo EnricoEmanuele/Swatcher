@@ -1,18 +1,22 @@
 package sweng.swatcher.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.SharedPreferencesCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 
 import sweng.swatcher.R;
+import sweng.swatcher.util.PreferecesKeys;
 import sweng.swatcher.util.SettingManager;
 import sweng.swatcher.model.Setting;
 
@@ -38,16 +42,22 @@ public class ConnectionSettingsFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     /*************************************/
-    NumberPicker ip1;
-    NumberPicker ip2;
-    NumberPicker ip3;
-    NumberPicker ip4;
-    NumberPicker stream_port;
-    EditText username, new_username;
-    EditText password, new_password;
-    Button change;
-    Button save;
-    String ipAddress;
+    Setting stg;
+    EditText ip1;
+    EditText ip2;
+    EditText ip3;
+    EditText ip4;
+    EditText streaming_port;
+    EditText command_port;
+    EditText web_port;
+    EditText username;
+    EditText password;
+    FloatingActionButton save_button;
+
+
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
+
 
 
     public ConnectionSettingsFragment() {
@@ -87,8 +97,11 @@ public class ConnectionSettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_connection_settings, container, false);
         //Handle page
-        handleConnectionSettings(view);
+        sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+        editor = sp.edit();
 
+        handleConnectionSettings(view);
+        setPreviousValue();
         return view;
     }
 
@@ -136,79 +149,74 @@ public class ConnectionSettingsFragment extends Fragment {
     private void handleConnectionSettings(View view){
 
         //Initialize page element
-        ip1 = (NumberPicker) view.findViewById(R.id.IP1);
-        ip2 = (NumberPicker) view.findViewById(R.id.IP2);
-        ip3 = (NumberPicker) view.findViewById(R.id.IP3);
-        ip4 = (NumberPicker) view.findViewById(R.id.IP4);
+        ip1 = (EditText) view.findViewById(R.id.IP1);
+        ip2 = (EditText) view.findViewById(R.id.IP2);
+        ip3 = (EditText) view.findViewById(R.id.IP3);
+        ip4 = (EditText) view.findViewById(R.id.IP4);
 
-        ip1.setMinValue(0);
-        ip1.setMaxValue(255);
-
-        ip2.setMinValue(0);
-        ip2.setMaxValue(255);
-
-        ip3.setMinValue(0);
-        ip3.setMaxValue(255);
-
-        ip4.setMinValue(0);
-        ip4.setMaxValue(255);
-
-
-        stream_port = (NumberPicker) view.findViewById(R.id.streamingPort);
-        stream_port.setMinValue(0);
-        stream_port.setMaxValue(99999);
-
+        streaming_port = (EditText) view.findViewById(R.id.streaming_port);
+        command_port = (EditText) view.findViewById(R.id.command_port);
+        web_port = (EditText) view.findViewById(R.id.web_port);
 
         username = (EditText) view.findViewById(R.id.username);
         password = (EditText) view.findViewById(R.id.password);
 
-        new_username = (EditText) view.findViewById(R.id.new_username);
-        new_password = (EditText) view.findViewById(R.id.new_password);
+        save_button = (FloatingActionButton) view.findViewById(R.id.save_button);
 
-        change = (Button) view.findViewById(R.id.change);
-        save = (Button) view.findViewById(R.id.save);
+        save_button.setOnClickListener(saveListner);
+    }
 
+    private View.OnClickListener saveListner = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+/*
 
-        save.setOnClickListener(
-                new View.OnClickListener()
-                {
-                    public void onClick(View view)
-                    {
-                        ipAddress = Integer.toString(ip1.getValue())+"."+Integer.toString(ip2.getValue())+"."+Integer.toString(ip3.getValue())+"."+Integer.toString(ip4.getValue());
-                        //Set shared preferences
-                        Setting stg = new Setting();
-                        stg.setIpAddress(ipAddress);
-                        stg.setStreamingPort(Integer.toString(stream_port.getValue()));
-                        stg.setUsername(username.getText().toString());
-                        stg.setPassword(password.getText().toString());
+            //Set shared preferences
+            stg.setIp1(ip1.getText().toString());
+            stg.setIp2(ip2.getText().toString());
+            stg.setIp3(ip3.getText().toString());
+            stg.setIp4(ip4.getText().toString());
+            stg.setIpAddress(stg.getIp1() + "." + stg.getIp2() + "." + stg.getIp3() + "." + stg.getIp4());
+            stg.setStreamingPort(streaming_port.getText().toString());
+            stg.setCommandPort(command_port.getText().toString());
+            stg.setWebServerPort(web_port.getText().toString());
+            stg.setUsername(username.getText().toString());
+            stg.setPassword(password.getText().toString());
 
-                        //CAMBIARE
-                        stg.setCommandPort("4321");
-                        stg.setWebServerPort("80");
+            SettingManager stgMng = new SettingManager(getContext());
+            stgMng.setConnectionSetting(stg);
+*/
+            editor.putString(PreferecesKeys.IP1, ip1.getText().toString());
+            editor.putString(PreferecesKeys.IP2, ip2.getText().toString());
+            editor.putString(PreferecesKeys.IP3, ip3.getText().toString());
+            editor.putString(PreferecesKeys.IP4, ip4.getText().toString());
+            editor.putString(PreferecesKeys.IP_ADDR, ip1.getText().toString()+"."+
+                                                     ip2.getText().toString()+"."+
+                                                     ip3.getText().toString()+"."+
+                                                     ip4.getText().toString());
+            editor.putString(PreferecesKeys.STREAM_PORT, streaming_port.getText().toString());
+            editor.putString(PreferecesKeys.CMD_PORT, command_port.getText().toString());
+            editor.putString(PreferecesKeys.WEB_PORT, web_port.getText().toString());
+            editor.putString(PreferecesKeys.USR, username.getText().toString());
+            editor.putString(PreferecesKeys.PSW, password.getText().toString());
+//        editor.putString(PreferecesKeys.NEW_USR, stg.getNewUsername().toString());
+            //       editor.putString(PreferecesKeys.NEW_PSW, stg.getNewPassword().toString());
+            editor.commit();
+           // spinner.setVisibility(View.GONE);
+            Snackbar.make(view, "Settings Saved", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
-                        stg.setNewPassword("");
-                        stg.setNewUsername("");
+        }
+    };
 
-                        SettingManager stgMng = new SettingManager(getContext());
-                        stgMng.setSetting(stg);
-                        Snackbar.make(view, "Settings Saved", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-
-                    }
-                });
-
-        change.setOnClickListener(
-                new View.OnClickListener()
-                {
-                    public void onClick(View view)
-                    {
-                        //Set shared preferences
-                    }
-                });
-
-
-
-
-
-
+    private void setPreviousValue(){
+        ip1.setText(sp.getString(PreferecesKeys.IP1,""));
+        ip2.setText(sp.getString(PreferecesKeys.IP2,""));
+        ip3.setText(sp.getString(PreferecesKeys.IP3,""));
+        ip4.setText(sp.getString(PreferecesKeys.IP4,""));
+        streaming_port.setText(sp.getString(PreferecesKeys.STREAM_PORT,""));
+        command_port.setText(sp.getString(PreferecesKeys.CMD_PORT,""));
+        web_port.setText(sp.getString(PreferecesKeys.WEB_PORT,""));
+        username.setText(sp.getString(PreferecesKeys.USR,""));
+        password.setText(sp.getString(PreferecesKeys.PSW,""));
     }
 }
