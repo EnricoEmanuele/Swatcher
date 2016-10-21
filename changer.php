@@ -63,7 +63,7 @@ file_put_contents( $filename , implode( "\n", $lines ) );
 
 //Restart motion service
 exec("sudo service motion restart", $output);
-//echo($output[0]);
+echo($output[0]);
 
 
 ?>
