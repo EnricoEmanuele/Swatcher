@@ -86,8 +86,8 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
     public String getImageUrl(Media media){
         String path = media.getPath();
-        Log.i("Path", "http://"+setting.getIpAddress()+":"+setting.getWebServerPort()+"/"+path);
-        return "http://"+setting.getIpAddress()+":"+setting.getWebServerPort()+"/"+path;
+        Log.i("Path", "http://"+setting.getIp1()+":"+setting.getWebServerPort()+"/"+path);
+        return "http://"+setting.getIp1()+":"+setting.getWebServerPort()+"/"+path;
 
     }
 

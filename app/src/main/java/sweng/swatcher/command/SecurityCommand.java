@@ -14,11 +14,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,26 +45,27 @@ public class SecurityCommand implements CommandInterface {
     private String new_psw;
 
 
-    public SecurityCommand(HttpRequest request, Context ctx, View view, String new_usr, String new_psw) {
+    public SecurityCommand(HttpRequest request, Context ctx, View view, ProgressBar spinner, String new_usr, String new_psw) {
         this.request = request;
         this.ctx = ctx;
         this.view = view;
         this.new_usr = new_usr;
         this.new_psw = new_psw;
-        spinner = (ProgressBar)view.findViewById(R.id.progressBar);
+        //spinner = (ProgressBar)view.findViewById(R.id.progressBar);
+        this.spinner = spinner;
     }
 
     public void execute(){
         RequestQueue queue = Volley.newRequestQueue(ctx);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, request.getURL(), new Response.Listener<String>()
+        JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, request.getURL(), null, new Response.Listener<JSONObject>()
         {
             @Override
-            public void onResponse(String response)
+            public void onResponse(JSONObject response)
             {
-                Log.i("Volley Res:", String.valueOf(response));
-                request.setResponse(response);
-                spinner.setVisibility(view.GONE);
-                Snackbar.make(view, "Successfully credentials change", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Log.i("Volley Res:", response.toString());
+                request.setResponse(response.toString());
+                spinner.setVisibility(View.GONE);
+                Snackbar.make(view, response.toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
             }
 
@@ -73,7 +76,7 @@ public class SecurityCommand implements CommandInterface {
             {
                 Log.i("Volley Res:", error.getMessage());
                 request.setResponse(error.getMessage());
-                spinner.setVisibility(view.GONE);
+                spinner.setVisibility(View.GONE);
                 Snackbar.make(view, "Error", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
             }
@@ -86,14 +89,14 @@ public class SecurityCommand implements CommandInterface {
                 String auth = request.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
                 headers.put("Authorization", auth);
 
-              //  headers.put("new_username", new_usr);
-              //  headers.put("new_password", new_psw);
+                headers.put("new_username", new_usr);
+                headers.put("new_password", new_psw);
 
                 return headers;
             }
         };
         // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        queue.add(jsonObjRequest);
     }
 
 

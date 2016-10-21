@@ -17,6 +17,6 @@ public class SecurityRequest extends HttpRequest {
     }
 
     public String getURL(){
-        return "http://"+super.getIpAddress()+":"+super.getPort()+"/changer.php";
+        return "http://"+super.getIpAddress()+":"+super.getPort()+"/newCredentials.php";
     }
 }
