@@ -31,5 +31,4 @@ public class WriteMediaSettingRequest extends HttpRequest {
                 "/"+threadNumber+
                 "/config/write";
     }
-
 }
