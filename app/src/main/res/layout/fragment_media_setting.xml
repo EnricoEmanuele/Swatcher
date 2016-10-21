@@ -78,7 +78,6 @@
             android:id="@+id/textView14" />
 
         <Switch
-            android:text="enabled"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/snapshot_switch" />

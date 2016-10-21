@@ -47,7 +47,8 @@ public class MediaSettingFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private View view;
+    private View msView;
+
     private FloatingActionButton updateButton;
     private FloatingActionButton saveButton;
 
@@ -100,22 +101,20 @@ public class MediaSettingFragment extends Fragment {
         setting = sm.getSetting();
 
         //View informations
-        view = inflater.inflate(R.layout.fragment_media_setting, container, false);
-        updateButton = (FloatingActionButton) view.findViewById(R.id.update_ms_button);
-        saveButton = (FloatingActionButton) view.findViewById(R.id.save_ms_button);
+        msView = inflater.inflate(R.layout.fragment_media_setting, container, false);
+        updateButton = (FloatingActionButton) msView.findViewById(R.id.update_ms_button);
+        saveButton = (FloatingActionButton) msView.findViewById(R.id.save_ms_button);
         updateButton.setOnClickListener(updateListener);
         saveButton.setOnClickListener(saveListener);
 
         //Set spinner entries
-        Spinner spinner = (Spinner) view.findViewById(R.id.picture_type);
+        Spinner spinner = (Spinner) msView.findViewById(R.id.picture_type);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.picture_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-
-        return view;
-
+        return msView;
 
 
     }
@@ -170,42 +169,42 @@ public class MediaSettingFragment extends Fragment {
             HttpRequest qualityImage = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, QUALITY_PARAMETER);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), qualityImage, view);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), qualityImage, msView);
             mediaSettingReadCommand.execute();
 
             //read picture type parameter
             HttpRequest pictureType = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, PICTURE_TYPE);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), pictureType, view);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), pictureType, msView);
             mediaSettingReadCommand.execute();
 
             //read max movie time
             HttpRequest maxMovieTime = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, MAX_MOVIE_TIME);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), maxMovieTime, view);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), maxMovieTime, msView);
             mediaSettingReadCommand.execute();
 
             //read snapshot on detection parameter
             HttpRequest snapshotOnDetection = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, OUTPUT_PICTURES);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotOnDetection, view);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotOnDetection, msView);
             mediaSettingReadCommand.execute();
 
             //read threshold parameter
             HttpRequest threshold = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, THRESHOLD);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), threshold, view);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), threshold, msView);
             mediaSettingReadCommand.execute();
 
             //read continuous snapshot interval parameter
             HttpRequest snapshotInterval = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, SNAPSHOT_INTERVAL);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotInterval, view);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotInterval, msView);
             mediaSettingReadCommand.execute();
 
         }
