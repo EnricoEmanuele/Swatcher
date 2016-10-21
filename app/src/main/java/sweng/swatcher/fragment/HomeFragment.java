@@ -1,10 +1,11 @@
 package sweng.swatcher.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 import sweng.swatcher.R;
+import sweng.swatcher.util.PreferecesKeys;
 import sweng.swatcher.util.SettingManager;
 import sweng.swatcher.command.StreamCommand;
 import sweng.swatcher.model.Authorization;
@@ -149,14 +151,16 @@ public class HomeFragment extends Fragment {
     //Funzione di gestione della home
     private void handleHome(View view){
 
-        SettingManager sm = new SettingManager(getContext());
-        Setting setting = sm.getSetting();
+       // SettingManager sm = new SettingManager(getContext());
+       // Setting setting = sm.getSetting();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
 
         webview_streaming = (WebView)view.findViewById(R.id.webview_streaming);
-       // webview_streaming.setWebViewClient(new Streaming());
-        streaming = new StreamRequest(setting.getIpAddress(),setting.getStreamingPort(),new Authorization(setting.getUsername(),setting.getPassword(),"Basic"));
-        snapshot = new SnapshotRequest(setting.getIpAddress(),"4321",new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,view);
-        movie = new MovieRequest(setting.getIpAddress(),"4321",new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,view);
+        streaming = new StreamRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.STREAM_PORT,""),auth);
+        snapshot = new SnapshotRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.CMD_PORT,""),auth,0,view);
+        movie = new MovieRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.CMD_PORT,""),auth,0,view);
 
         play_button = (FloatingActionButton) view.findViewById(R.id.play);
         stop_button = (FloatingActionButton) view.findViewById(R.id.stop);
@@ -183,7 +187,6 @@ public class HomeFragment extends Fragment {
         public void onClick(View view) {
             streamCommand = new StreamCommand(webview_streaming, view, streaming, mediaButtonSet);
             streamCommand.execute();
-
         }
     };
 
@@ -191,7 +194,6 @@ public class HomeFragment extends Fragment {
         @Override
         public void onClick(View view) {
             streamCommand.hideMediaButton();
-
         }
     };
 
@@ -201,10 +203,6 @@ public class HomeFragment extends Fragment {
             snapshot.setResponse(null);
             MediaCommand cmd = new MediaCommand(getContext(),snapshot,view);
             cmd.execute();
-            /*
-            ResponseControl control = new ResponseControl(snapshot,getView());
-            control.checkResponse();
-            */
         }
     };
 
@@ -213,26 +211,10 @@ public class HomeFragment extends Fragment {
         public void onClick(View view) {
             MediaCommand cmd = new MediaCommand(getContext(),movie, view);
             cmd.execute();
-            /*
-            ResponseControl control = new ResponseControl(movie, getView());
-            control.checkResponse();
-            */
         }
     };
 
-    private void displayMediaButton(){
-        play_button.setVisibility(View.GONE);
-        stop_button.setVisibility(View.VISIBLE);
-        snapshot_button.setVisibility(View.VISIBLE);
-        record_button.setVisibility(View.VISIBLE);
-    }
 
-    private void hideMediaButton(){
-        play_button.setVisibility(View.VISIBLE);
-        stop_button.setVisibility(View.GONE);
-        snapshot_button.setVisibility(View.GONE);
-        record_button.setVisibility(View.GONE);
-    }
 
 
 }
