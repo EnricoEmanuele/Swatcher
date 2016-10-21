@@ -4,18 +4,25 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import sweng.swatcher.R;
 import sweng.swatcher.command.MediaSettingReadCommand;
+import sweng.swatcher.command.MediaSettingWriteCommand;
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.model.Setting;
 import sweng.swatcher.request.HttpRequest;
 import sweng.swatcher.request.ReadMediaSettingRequest;
+import sweng.swatcher.request.SetMediaSettingRequest;
 import sweng.swatcher.util.SettingManager;
 import static sweng.swatcher.util.ParametersKeys.MAX_MOVIE_TIME;
 import static sweng.swatcher.util.ParametersKeys.OUTPUT_PICTURES;
@@ -44,7 +51,9 @@ public class MediaSettingFragment extends Fragment {
     private View msView;
     private FloatingActionButton updateButton;
     private FloatingActionButton saveButton;
+    private Switch mediaSwitch;
     private MediaSettingReadCommand mediaSettingReadCommand;
+    private MediaSettingWriteCommand mediaSettingWriteCommand;
     private SettingManager sm;
     private Setting setting;
 
@@ -90,8 +99,18 @@ public class MediaSettingFragment extends Fragment {
         msView = inflater.inflate(R.layout.fragment_media_setting, container, false);
         updateButton = (FloatingActionButton) msView.findViewById(R.id.update_ms_button);
         saveButton = (FloatingActionButton) msView.findViewById(R.id.save_ms_button);
+        mediaSwitch = (Switch) msView.findViewById(R.id.snapshot_switch);
         updateButton.setOnClickListener(updateListener);
         saveButton.setOnClickListener(saveListener);
+        mediaSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if(checked)
+                    mediaSwitch.setText("Enabled");
+                else
+                    mediaSwitch.setText("Disabled");
+            }
+        });
 
         //Disable save button. First read settings from Server
         saveButton.setEnabled(false);
@@ -204,6 +223,85 @@ public class MediaSettingFragment extends Fragment {
     private View.OnClickListener saveListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
+            boolean settingError = false;
+
+            //View resources
+            EditText qualityImageEditText = (EditText) msView.findViewById(R.id.quality_image);
+            Spinner pictureTypeSpinenr = (Spinner) msView.findViewById(R.id.picture_type);
+            EditText maxMovieTimeEditText = (EditText) msView.findViewById(R.id.max_movie_time);
+            Switch snapshotSwitch = (Switch) msView.findViewById(R.id.snapshot_switch);
+            EditText thresholdEditText = (EditText) msView.findViewById(R.id.threshold);
+            EditText snapshotIntervalEditText = (EditText) msView.findViewById(R.id.snapshot_interval);
+
+            //set image quality parameter
+            HttpRequest quality;
+            String qualityValue = qualityImageEditText.getText().toString();
+            if(qualityValue!=null){
+                quality = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                        new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,QUALITY_PARAMETER,qualityValue);
+                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),quality,msView);
+                mediaSettingWriteCommand.execute();
+            }
+            else {settingError = true;}
+
+            //set picture type parameter
+            String picTypeValue = pictureTypeSpinenr.getSelectedItem().toString();
+            HttpRequest pictureType;
+            if(picTypeValue!=null){
+                pictureType = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                        new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,PICTURE_TYPE,picTypeValue);
+                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),pictureType,msView);
+                mediaSettingWriteCommand.execute();
+            }
+            else {settingError = true;}
+
+            //set max movie time parameter
+            String maxMovieTimeValue = maxMovieTimeEditText.getText().toString();
+            HttpRequest maxMovieTime;
+            if(maxMovieTimeValue!=null){
+                maxMovieTime = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                        new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,MAX_MOVIE_TIME,maxMovieTimeValue);
+                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),maxMovieTime,msView);
+                mediaSettingWriteCommand.execute();
+            }
+            else {settingError = true;}
+
+            //set output picture parameter
+            boolean outputPicEnabled = snapshotSwitch.isChecked();
+            String outPicValue;
+            if(outputPicEnabled) {outPicValue = "on";}
+            else {outPicValue = "off";}
+            HttpRequest snapshotOnDetection = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,OUTPUT_PICTURES,outPicValue);
+            mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),snapshotOnDetection,msView);
+            mediaSettingWriteCommand.execute();
+
+            //set threshold parameter
+            String thresholdValue = thresholdEditText.getText().toString();
+            HttpRequest threshold;
+            if(thresholdValue!=null){
+                threshold = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                        new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,THRESHOLD,thresholdValue);
+                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),threshold,msView);
+                mediaSettingWriteCommand.execute();
+            }
+            else{settingError = true;}
+
+            //set snapshot interval
+            String snapIntervalValue = snapshotIntervalEditText.getText().toString();
+            HttpRequest snapshotInterval;
+            if(snapIntervalValue!=null){
+                snapshotInterval = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                        new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,SNAPSHOT_INTERVAL,snapIntervalValue);
+                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),snapshotInterval,msView);
+                mediaSettingWriteCommand.execute();
+            }
+            else{settingError = true;}
+
+            if(settingError){
+                Snackbar.make(view, "Error writing setting on Server: ", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
 
         }
     };
