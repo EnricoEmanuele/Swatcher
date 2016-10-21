@@ -116,7 +116,6 @@ public class MediaSettingReadCommand implements CommandInterface {
                         break;
                     }
                 }
-
                 //Enable saveButton
                 FloatingActionButton saveButton = (FloatingActionButton) view.findViewById(R.id.save_ms_button);
                 saveButton.setEnabled(true);
