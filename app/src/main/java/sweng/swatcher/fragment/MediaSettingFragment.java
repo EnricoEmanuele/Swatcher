@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
 import sweng.swatcher.R;
 import sweng.swatcher.command.MediaSettingReadCommand;
 import sweng.swatcher.model.Authorization;
@@ -18,14 +17,12 @@ import sweng.swatcher.model.Setting;
 import sweng.swatcher.request.HttpRequest;
 import sweng.swatcher.request.ReadMediaSettingRequest;
 import sweng.swatcher.util.SettingManager;
-
 import static sweng.swatcher.util.ParametersKeys.MAX_MOVIE_TIME;
 import static sweng.swatcher.util.ParametersKeys.OUTPUT_PICTURES;
 import static sweng.swatcher.util.ParametersKeys.PICTURE_TYPE;
 import static sweng.swatcher.util.ParametersKeys.QUALITY_PARAMETER;
 import static sweng.swatcher.util.ParametersKeys.THRESHOLD;
 import static sweng.swatcher.util.ParametersKeys.SNAPSHOT_INTERVAL;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,25 +37,16 @@ public class MediaSettingFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
-
     private View msView;
-
     private FloatingActionButton updateButton;
     private FloatingActionButton saveButton;
-
     private MediaSettingReadCommand mediaSettingReadCommand;
-
     private SettingManager sm;
     private Setting setting;
-
-
-
 
     public MediaSettingFragment() {
         // Required empty public constructor
@@ -93,9 +81,7 @@ public class MediaSettingFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Settings
         sm = new SettingManager(getContext());
         setting = sm.getSetting();
@@ -107,6 +93,10 @@ public class MediaSettingFragment extends Fragment {
         updateButton.setOnClickListener(updateListener);
         saveButton.setOnClickListener(saveListener);
 
+        //Disable save button. First read settings from Server
+        saveButton.setEnabled(false);
+        saveButton.setClickable(false);
+
         //Set spinner entries
         Spinner spinner = (Spinner) msView.findViewById(R.id.picture_type);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
@@ -115,8 +105,6 @@ public class MediaSettingFragment extends Fragment {
         spinner.setAdapter(adapter);
 
         return msView;
-
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -219,6 +207,4 @@ public class MediaSettingFragment extends Fragment {
 
         }
     };
-
-
 }

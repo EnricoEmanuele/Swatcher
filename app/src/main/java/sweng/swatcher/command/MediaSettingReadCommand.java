@@ -1,15 +1,14 @@
 package sweng.swatcher.command;
 
 import android.content.Context;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -117,6 +116,12 @@ public class MediaSettingReadCommand implements CommandInterface {
                         break;
                     }
                 }
+
+                //Enable saveButton
+                FloatingActionButton saveButton = (FloatingActionButton) view.findViewById(R.id.save_ms_button);
+                saveButton.setEnabled(true);
+                saveButton.setClickable(true);
+
             }
 
         }, new Response.ErrorListener()
@@ -125,7 +130,7 @@ public class MediaSettingReadCommand implements CommandInterface {
             public void onErrorResponse(VolleyError error)
             {
                 Log.i("Volley Res:", error.getMessage());
-                //Snackbar.make(view, "Snapshot not taken: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(view, "Error reading current setting on Server: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 request.setResponse(error.getMessage());
 
             }
@@ -143,8 +148,5 @@ public class MediaSettingReadCommand implements CommandInterface {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-
     }
-
-
 }
