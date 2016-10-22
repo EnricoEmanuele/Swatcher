@@ -12,28 +12,42 @@ import sweng.swatcher.model.Setting;
 
 public class SettingManager {
 
-    SharedPreferences sp;
-    Context ctx;
-    SharedPreferences.Editor editor;
+    private Context context;
+    private SharedPreferences sharedPreferences;
 
     public SettingManager(Context ctx) {
-        this.ctx = ctx;
-        this.sp = PreferenceManager.getDefaultSharedPreferences(ctx);
+        this.context = ctx;
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public SharedPreferences getSharedPreferences() {
+        return this.sharedPreferences;
+    }
+
+    public SharedPreferences.Editor getEditor(){
+        return this.sharedPreferences.edit();
     }
 
     public Setting getSetting(){
+
         Setting settings = new Setting();
-        String ip1 = sp.getString(PreferecesKeys.IP1,"");
-        String ip2 = sp.getString(PreferecesKeys.IP2,"");
-        String ip3 = sp.getString(PreferecesKeys.IP3,"");
-        String ip4 = sp.getString(PreferecesKeys.IP4,"");
-        String stream_port = sp.getString(PreferecesKeys.STREAM_PORT,"");
-        String cmd_port = sp.getString(PreferecesKeys.CMD_PORT,"");
-        String web_port = sp.getString(PreferecesKeys.WEB_PORT,"");
-        String usr = sp.getString(PreferecesKeys.USR,"");
-        String psw = sp.getString(PreferecesKeys.PSW,"");
-        String new_usr = sp.getString(PreferecesKeys.NEW_USR,"");
-        String new_psw = sp.getString(PreferecesKeys.NEW_PSW,"");
+
+        String ip1 = this.sharedPreferences.getString(PreferecesKeys.IP1,"");
+        String ip2 = this.sharedPreferences.getString(PreferecesKeys.IP2,"");
+        String ip3 = this.sharedPreferences.getString(PreferecesKeys.IP3,"");
+        String ip4 = this.sharedPreferences.getString(PreferecesKeys.IP4,"");
+        String stream_port = this.sharedPreferences.getString(PreferecesKeys.STREAM_PORT,"");
+        String cmd_port = this.sharedPreferences.getString(PreferecesKeys.CMD_PORT,"");
+        String web_port = this.sharedPreferences.getString(PreferecesKeys.WEB_PORT,"");
+        String usr = this.sharedPreferences.getString(PreferecesKeys.USR,"");
+        String psw = this.sharedPreferences.getString(PreferecesKeys.PSW,"");
+        String new_usr = this.sharedPreferences.getString(PreferecesKeys.NEW_USR,"");
+        String new_psw = this.sharedPreferences.getString(PreferecesKeys.NEW_PSW,"");
+
         settings.setIp1(ip1);
         settings.setIp2(ip2);
         settings.setIp3(ip3);
@@ -51,7 +65,9 @@ public class SettingManager {
     }
 
     public void setConnectionSetting(Setting stg){
-        editor = sp.edit();
+
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+
         editor.putString(PreferecesKeys.IP1, stg.getIp1().toString());
         editor.putString(PreferecesKeys.IP2, stg.getIp2().toString());
         editor.putString(PreferecesKeys.IP3, stg.getIp3().toString());
@@ -62,14 +78,19 @@ public class SettingManager {
         editor.putString(PreferecesKeys.WEB_PORT, stg.getWebServerPort().toString());
         editor.putString(PreferecesKeys.USR, stg.getUsername().toString());
         editor.putString(PreferecesKeys.PSW, stg.getPassword().toString());
-//        editor.putString(PreferecesKeys.NEW_USR, stg.getNewUsername().toString());
- //       editor.putString(PreferecesKeys.NEW_PSW, stg.getNewPassword().toString());
+        // editor.putString(PreferecesKeys.NEW_USR, stg.getNewUsername().toString());
+        // editor.putString(PreferecesKeys.NEW_PSW, stg.getNewPassword().toString());
         editor.commit();
     }
 
     public void setSecuritySetting(Setting stg){
+
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+
         editor.putString(PreferecesKeys.NEW_USR, stg.getNewUsername().toString());
         editor.putString(PreferecesKeys.NEW_PSW, stg.getNewPassword().toString());
+
         editor.commit();
+
     }
 }
