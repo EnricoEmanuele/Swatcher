@@ -45,11 +45,23 @@
             android:id="@+id/picture_type" />
 
         <TextView
-            android:text="Movie Settings"
+            android:text="Detection Settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textView9"
             android:gravity="center_vertical|center_horizontal" />
+
+        <TextView
+            android:text="Record movie on detection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView11" />
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/movie_switch"
+            android:text=" " />
 
         <TextView
             android:text="Max Movie Time in seconds"
@@ -63,13 +75,6 @@
             android:inputType="number"
             android:ems="10"
             android:id="@+id/max_movie_time" />
-
-        <TextView
-            android:text="Detection Settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView11"
-            android:gravity="center_vertical|center_horizontal" />
 
         <TextView
             android:text="Snapshot on detection"
