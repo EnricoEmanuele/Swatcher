@@ -40,7 +40,7 @@ public class RestartCommand implements CommandInterface {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, request.getURL(), new Response.Listener<String>()  {
             @Override
             public void onResponse(String response) {
-                Log.i("MEDIA_SETTING_WRITE", response);
+                Log.i("RESTART SERVER", response);
                 Snackbar.make(view, "Server Restarted: "+response, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 request.setResponse(response);
             }
@@ -48,8 +48,8 @@ public class RestartCommand implements CommandInterface {
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error){
-                Log.i("MEDIA_SETTING_WRITE", error.getMessage());
-                Snackbar.make(view, "Error writing setting on Server: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Log.i("RESTART SERVER", error.getMessage());
+                Snackbar.make(view, "Error Restarting Server: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 request.setResponse(error.getMessage());
             }
         }) {
