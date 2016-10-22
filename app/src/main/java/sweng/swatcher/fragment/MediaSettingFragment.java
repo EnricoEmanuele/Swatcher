@@ -22,6 +22,7 @@ import sweng.swatcher.model.Setting;
 import sweng.swatcher.request.HttpRequest;
 import sweng.swatcher.request.ReadMediaSettingRequest;
 import sweng.swatcher.request.SetMediaSettingRequest;
+import sweng.swatcher.request.WriteMediaSettingRequest;
 import sweng.swatcher.util.SettingManager;
 import static sweng.swatcher.util.ParametersKeys.MAX_MOVIE_TIME;
 import static sweng.swatcher.util.ParametersKeys.OUTPUT_MOVIES;
@@ -247,6 +248,7 @@ public class MediaSettingFragment extends Fragment {
             //View resources
             EditText qualityImageEditText = (EditText) msView.findViewById(R.id.quality_image);
             Spinner pictureTypeSpinenr = (Spinner) msView.findViewById(R.id.picture_type);
+            Switch movieSwitch = (Switch) msView.findViewById(R.id.movie_switch);
             EditText maxMovieTimeEditText = (EditText) msView.findViewById(R.id.max_movie_time);
             Switch snapshotSwitch = (Switch) msView.findViewById(R.id.snapshot_switch);
             EditText thresholdEditText = (EditText) msView.findViewById(R.id.threshold);
@@ -273,6 +275,16 @@ public class MediaSettingFragment extends Fragment {
                 mediaSettingWriteCommand.execute();
             }
             else {settingError = true;}
+
+            //set record movie on detection
+            boolean recordMovieEnabled = movieSwitch.isChecked();
+            String recMovieValue;
+            if(recordMovieEnabled){recMovieValue = "on";}
+            else {recMovieValue = "off";}
+            HttpRequest outputMovie = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,OUTPUT_MOVIES,recMovieValue);
+            mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),outputMovie,msView);
+            mediaSettingWriteCommand.execute();
 
             //set max movie time parameter
             String maxMovieTimeValue = maxMovieTimeEditText.getText().toString();
@@ -316,6 +328,14 @@ public class MediaSettingFragment extends Fragment {
                 mediaSettingWriteCommand.execute();
             }
             else{settingError = true;}
+
+            //write new config on Server
+            HttpRequest writeRequest = new WriteMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0);
+            mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),writeRequest,msView);
+            mediaSettingWriteCommand.execute();
+
+            //restart server here....
 
             if(settingError){
                 Snackbar.make(view, "Error writing setting on Server: ", Snackbar.LENGTH_LONG).setAction("Action", null).show();

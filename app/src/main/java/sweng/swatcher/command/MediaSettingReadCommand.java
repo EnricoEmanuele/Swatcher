@@ -132,17 +132,14 @@ public class MediaSettingReadCommand implements CommandInterface {
                 FloatingActionButton saveButton = (FloatingActionButton) view.findViewById(R.id.save_ms_button);
                 saveButton.setEnabled(true);
                 saveButton.setClickable(true);
-
             }
 
         }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error)
-            {
+            public void onErrorResponse(VolleyError error) {
                 Log.i("Volley Res:", error.getMessage());
                 Snackbar.make(view, "Error reading current setting on Server: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 request.setResponse(error.getMessage());
-
             }
         }) {
             @Override
@@ -157,6 +154,5 @@ public class MediaSettingReadCommand implements CommandInterface {
         };
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
-
     }
 }
