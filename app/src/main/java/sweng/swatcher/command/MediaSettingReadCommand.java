@@ -79,6 +79,19 @@ public class MediaSettingReadCommand implements CommandInterface {
                         }
                         break;
                     }
+                    case ParametersKeys.OUTPUT_MOVIES: {
+                        //Set movie enabled parameter
+                        Switch movieSwitch = (Switch) view.findViewById(R.id.movie_switch);
+                        if (parameterValue.equalsIgnoreCase("on")) {
+                            movieSwitch.setChecked(true);
+                            movieSwitch.setText("Enabled");
+                        } else {
+                            movieSwitch.setChecked(false);
+                            movieSwitch.setText("Disabled");
+                        }
+                        Log.i("MEDIA_SETTING_READER", ParametersKeys.OUTPUT_MOVIES + " read " + parameterValue);
+                        break;
+                    }
                     case ParametersKeys.MAX_MOVIE_TIME: {
                         //Set max movie time parameter
                         EditText maxMovietime = (EditText) view.findViewById(R.id.max_movie_time);
@@ -99,7 +112,6 @@ public class MediaSettingReadCommand implements CommandInterface {
                         }
                         Log.i("MEDIA_SETTING_READER",ParametersKeys.OUTPUT_PICTURES+" read "+parameterValue);
                         break;
-
                     }
                     case ParametersKeys.THRESHOLD: {
                         //Set threshold parameter

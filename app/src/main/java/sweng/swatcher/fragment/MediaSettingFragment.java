@@ -197,6 +197,13 @@ public class MediaSettingFragment extends Fragment {
             mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), pictureType, msView);
             mediaSettingReadCommand.execute();
 
+            //read movie on detection parameter
+            HttpRequest movieOnDetection = new ReadMediaSettingRequest(setting.getIpAddress(),
+                    setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, OUTPUT_MOVIES);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), movieOnDetection, msView);
+            mediaSettingReadCommand.execute();
+
             //read max movie time
             HttpRequest maxMovieTime = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
@@ -209,13 +216,6 @@ public class MediaSettingFragment extends Fragment {
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, OUTPUT_PICTURES);
             mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotOnDetection, msView);
-            mediaSettingReadCommand.execute();
-
-            //read movie on detection parameter
-            HttpRequest movieOnDetection = new ReadMediaSettingRequest(setting.getIpAddress(),
-                    setting.getCommandPort(),
-                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, OUTPUT_MOVIES);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), movieOnDetection, msView);
             mediaSettingReadCommand.execute();
 
             //read threshold parameter
