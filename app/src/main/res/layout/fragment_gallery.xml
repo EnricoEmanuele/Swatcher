@@ -14,7 +14,7 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/gallery_listview"
+            android:id="@+id/galleryListView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 

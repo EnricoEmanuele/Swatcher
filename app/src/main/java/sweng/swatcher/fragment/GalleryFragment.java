@@ -86,7 +86,7 @@ public class GalleryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
-        listview = (ListView) view.findViewById(R.id.gallery_listview);
+        listview = (ListView) view.findViewById(R.id.galleryListView);
         gallery_button = (FloatingActionButton)view.findViewById(R.id.gallery_button);
         gallery_button.setOnClickListener(galleryListner);
 

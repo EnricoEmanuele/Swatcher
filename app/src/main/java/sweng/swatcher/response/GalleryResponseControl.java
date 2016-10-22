@@ -19,14 +19,14 @@ public class GalleryResponseControl {
 
     private HttpRequest request;
     private List<Media> mediaList;
-    private ListView gallery_listview;
+    private ListView galleryListView;
     private ArrayAdapter<Media> mediaAdapter;
     private Activity activity;
 
-    public GalleryResponseControl(HttpRequest request, List<Media> mediaList, ListView gallery_listview, Activity activity) {
+    public GalleryResponseControl(HttpRequest request, List<Media> mediaList, ListView galleryListView, Activity activity) {
         this.request = request;
         this.mediaList = mediaList;
-        this.gallery_listview = gallery_listview;
+        this.galleryListView = galleryListView;
         this.activity = activity;
     }
 
@@ -36,18 +36,35 @@ public class GalleryResponseControl {
             @Override
             public void run() {
 
-                try {
-                    while (request.getResponse() == null) {
-                        sleep(0);
-                    }
-                  //  mediaAdapter = new CustomListViewAdapter(activity, R.layout.item_gallery, mediaList);
-                   // gallery_listview.setAdapter(mediaAdapter);
+                while (request.getResponse() == null) {}
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                //  mediaAdapter = new CustomListViewAdapter(activity, R.layout.item_gallery, mediaList);
+                // galleryListView.setAdapter(mediaAdapter);
+
             }
         };
         thread.start();
     }
+
+    // Only Get Method are available
+    public HttpRequest getRequest() {
+        return request;
+    }
+
+    public List<Media> getMediaList() {
+        return mediaList;
+    }
+
+    public ListView getGalleryListView() {
+        return galleryListView;
+    }
+
+    public ArrayAdapter<Media> getMediaAdapter() {
+        return mediaAdapter;
+    }
+
+    public Activity getActivity() {
+        return activity;
+    }
+
 }
