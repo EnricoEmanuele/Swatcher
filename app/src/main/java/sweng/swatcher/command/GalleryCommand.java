@@ -60,6 +60,9 @@ public class GalleryCommand implements CommandInterface {
                     ////////////////////////////////
                     mediaAdapter = new CustomListViewAdapter(ctx, R.layout.item_gallery, mediaCollection,request.getAuthorization());
                     gallery_listview.setAdapter(mediaAdapter);
+
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
