@@ -24,6 +24,7 @@ import sweng.swatcher.request.ReadMediaSettingRequest;
 import sweng.swatcher.request.SetMediaSettingRequest;
 import sweng.swatcher.util.SettingManager;
 import static sweng.swatcher.util.ParametersKeys.MAX_MOVIE_TIME;
+import static sweng.swatcher.util.ParametersKeys.OUTPUT_MOVIES;
 import static sweng.swatcher.util.ParametersKeys.OUTPUT_PICTURES;
 import static sweng.swatcher.util.ParametersKeys.PICTURE_TYPE;
 import static sweng.swatcher.util.ParametersKeys.QUALITY_PARAMETER;
@@ -208,6 +209,13 @@ public class MediaSettingFragment extends Fragment {
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, OUTPUT_PICTURES);
             mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotOnDetection, msView);
+            mediaSettingReadCommand.execute();
+
+            //read movie on detection parameter
+            HttpRequest movieOnDetection = new ReadMediaSettingRequest(setting.getIpAddress(),
+                    setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, OUTPUT_MOVIES);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), movieOnDetection, msView);
             mediaSettingReadCommand.execute();
 
             //read threshold parameter
