@@ -23,19 +23,23 @@ public class ResponseControl {
         Thread thread = new Thread() {
             @Override
             public void run() {
-                try {
-                    while(request.getResponse() == null) {
-                        sleep(0);
-                    }
-                    Snackbar.make(view, request.getResponse(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+                while(request.getResponse() == null) {}
+
+                // when outside of the loop
+                Snackbar.make(view, request.getResponse(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
             }
         };
         thread.start();
     }
 
+    public HttpRequest getRequest() {
+        return request;
+    }
 
+    public View getView() {
+        return view;
+    }
 
 }
