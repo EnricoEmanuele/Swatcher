@@ -1,11 +1,11 @@
 package sweng.swatcher.fragment;
 
 import java.io.IOException;
-import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Base64;
@@ -14,7 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -34,6 +36,9 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
     private Setting setting;
     private Authorization auth;
 
+    Media media;
+    Picasso customPicasso;
+
     public CustomListViewAdapter(Context ctx, int resource, List<Media> mediaList, Authorization auth) {
         super(ctx, resource, mediaList);
         this.ctx = ctx;
@@ -44,12 +49,12 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         ViewHolder holder = null;
-        LayoutInflater inflater = (LayoutInflater) ctx
-                .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         // If holder not exist then locate all view from UI file.
         if (convertView == null) {
             // inflate UI from XML file
@@ -63,41 +68,82 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Media media = getItem(position);
+        media = getItem(position);
 
         holder.name.setText(media.getName());
         holder.size.setText(media.getSize());
-        //Picasso.with(ctx).load("http://i.imgur.com/DvpvklR.png").into(holder.image);
+        
         Picasso.Builder builder = new Picasso.Builder(ctx);
-        builder.listener(new Picasso.Listener()
-        {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        });
-        Picasso customPicasso = builder.downloader(new CustomPicassoLoader(ctx)).build();
+        builder.listener(new CustomPicassoListner());
+        customPicasso = builder.downloader(new CustomPicassoLoader(ctx)).build();
         customPicasso.load(getImageUrl(media)).into(holder.image);
-      //  customPicasso.load("http://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/sign-check-icon.png").into(holder.image);
+
+        DialogListner dialogListner = new DialogListner(media);
+
+        holder.singleItem.setOnClickListener(dialogListner);
+
         return convertView;
+    }
+
+
+    private class CustomPicassoListner implements Picasso.Listener{
+        @Override
+        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    private class DialogListner implements View.OnClickListener
+    {
+        Media dialog_media;
+
+        public DialogListner(Media dialog_media) {
+            this.dialog_media = dialog_media;
+        }
+
+        @Override
+        public void onClick(View v)
+        {
+           // Log.i("Immagine cliccata: ",getImageUrl(dialog_media));
+
+            final Dialog dialog = new Dialog(ctx);
+            dialog.setContentView(R.layout.dialog_gallery_image);
+            //dialog.setTitle("Title...");
+            ImageView image = (ImageView) dialog.findViewById(R.id.dialog_image);
+            //image.setImageResource(R.drawable.ic_launcher);
+            customPicasso.load(getImageUrl(dialog_media)).into(image);
+
+            Button dialogButton = (Button) dialog.findViewById(R.id.close_button);
+            // if button is clicked, close the custom dialog
+            dialogButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
+        }
+
     }
 
     private static class ViewHolder {
         private TextView name;
         private TextView size;
         private ImageView image;
+        private RelativeLayout singleItem;
 
         public ViewHolder(View v) {
             name = (TextView) v.findViewById(R.id.img_name);
-            image = (ImageView) v.findViewById(R.id.image);
+            image = (ImageView) v.findViewById(R.id.dialog_image);
             size = (TextView) v.findViewById(R.id.img_size);
+            singleItem = (RelativeLayout) v.findViewById(R.id.single_item_gallery);
         }
     }
 
     public String getImageUrl(Media media){
         String path = media.getPath();
-        //Log.i("Path", "http://"+setting.getIpAddress()+":"+setting.getWebServerPort()+"/"+path);
         return "http://"+setting.getIpAddress()+":"+setting.getWebServerPort()+"/"+path;
 
     }
@@ -109,13 +155,9 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
         @Override
         protected HttpURLConnection openConnection(Uri path) throws IOException {
-
             HttpURLConnection c = super.openConnection(path);
             c.setRequestProperty("Authorization", auth.getAuthType()+ " "
                     + Base64.encodeToString((auth.getUsername()+":"+auth.getPassword()).getBytes(), Base64.NO_WRAP));
-
-           // Log.i("Credentials", auth.getAuthType() +" "+ auth.getUsername()+":"+auth.getPassword());
-
             return c;
         }
     }
