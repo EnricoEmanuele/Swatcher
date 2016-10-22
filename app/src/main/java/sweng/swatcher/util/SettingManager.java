@@ -67,7 +67,7 @@ public class SettingManager {
         editor.commit();
     }
 
-    public void setSecurtySetting(Setting stg){
+    public void setSecuritySetting(Setting stg){
         editor.putString(PreferecesKeys.NEW_USR, stg.getNewUsername().toString());
         editor.putString(PreferecesKeys.NEW_PSW, stg.getNewPassword().toString());
         editor.commit();
