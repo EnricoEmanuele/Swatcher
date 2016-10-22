@@ -51,6 +51,7 @@ public class MediaSettingFragment extends Fragment {
     private FloatingActionButton updateButton;
     private FloatingActionButton saveButton;
     private Switch snapshotSwitch;
+    private Switch movieSwitch;
     private MediaSettingReadCommand mediaSettingReadCommand;
     private MediaSettingWriteCommand mediaSettingWriteCommand;
     private SettingManager sm;
@@ -99,8 +100,18 @@ public class MediaSettingFragment extends Fragment {
         updateButton = (FloatingActionButton) msView.findViewById(R.id.update_ms_button);
         saveButton = (FloatingActionButton) msView.findViewById(R.id.save_ms_button);
         snapshotSwitch = (Switch) msView.findViewById(R.id.snapshot_switch);
+        movieSwitch = (Switch) msView.findViewById(R.id.movie_switch);
         updateButton.setOnClickListener(updateListener);
         saveButton.setOnClickListener(saveListener);
+        movieSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if(checked)
+                    movieSwitch.setText("Enabled");
+                else
+                    movieSwitch.setText("Disabled");
+            }
+        });
         snapshotSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
