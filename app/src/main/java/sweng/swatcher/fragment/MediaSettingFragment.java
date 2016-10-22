@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,7 @@ public class MediaSettingFragment extends Fragment {
     private View msView;
     private FloatingActionButton updateButton;
     private FloatingActionButton saveButton;
-    private Switch mediaSwitch;
+    private Switch snapshotSwitch;
     private MediaSettingReadCommand mediaSettingReadCommand;
     private MediaSettingWriteCommand mediaSettingWriteCommand;
     private SettingManager sm;
@@ -99,16 +98,16 @@ public class MediaSettingFragment extends Fragment {
         msView = inflater.inflate(R.layout.fragment_media_setting, container, false);
         updateButton = (FloatingActionButton) msView.findViewById(R.id.update_ms_button);
         saveButton = (FloatingActionButton) msView.findViewById(R.id.save_ms_button);
-        mediaSwitch = (Switch) msView.findViewById(R.id.snapshot_switch);
+        snapshotSwitch = (Switch) msView.findViewById(R.id.snapshot_switch);
         updateButton.setOnClickListener(updateListener);
         saveButton.setOnClickListener(saveListener);
-        mediaSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        snapshotSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if(checked)
-                    mediaSwitch.setText("Enabled");
+                    snapshotSwitch.setText("Enabled");
                 else
-                    mediaSwitch.setText("Disabled");
+                    snapshotSwitch.setText("Disabled");
             }
         });
 
