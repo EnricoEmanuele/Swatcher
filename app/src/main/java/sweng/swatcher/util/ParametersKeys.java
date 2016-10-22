@@ -12,5 +12,6 @@ public class ParametersKeys {
     public static final String OUTPUT_PICTURES = "output_pictures";
     public static final String THRESHOLD = "threshold";
     public static final String SNAPSHOT_INTERVAL = "snapshot_interval";
+    public static final String OUTPUT_MOVIES = "ffmpeg_output_movies";
 
 }
