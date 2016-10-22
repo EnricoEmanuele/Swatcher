@@ -17,10 +17,12 @@ import android.widget.Switch;
 import sweng.swatcher.R;
 import sweng.swatcher.command.MediaSettingReadCommand;
 import sweng.swatcher.command.MediaSettingWriteCommand;
+import sweng.swatcher.command.RestartCommand;
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.model.Setting;
 import sweng.swatcher.request.HttpRequest;
 import sweng.swatcher.request.ReadMediaSettingRequest;
+import sweng.swatcher.request.RestartRequest;
 import sweng.swatcher.request.SetMediaSettingRequest;
 import sweng.swatcher.request.WriteMediaSettingRequest;
 import sweng.swatcher.util.SettingManager;
@@ -56,6 +58,7 @@ public class MediaSettingFragment extends Fragment {
     private Switch movieSwitch;
     private MediaSettingReadCommand mediaSettingReadCommand;
     private MediaSettingWriteCommand mediaSettingWriteCommand;
+    private RestartCommand restartCommand;
     private SettingManager sm;
     private Setting setting;
 
@@ -336,6 +339,10 @@ public class MediaSettingFragment extends Fragment {
             mediaSettingWriteCommand.execute();
 
             //restart server here....
+            HttpRequest restartRequest = new RestartRequest(setting.getIpAddress(), setting.getCommandPort(),
+                    new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0);
+            restartCommand = new RestartCommand(getContext(),restartRequest,msView);
+            restartCommand.execute();
 
             if(settingError){
                 Snackbar.make(view, "Error writing setting on Server: ", Snackbar.LENGTH_LONG).setAction("Action", null).show();

@@ -41,7 +41,7 @@ public class RestartCommand implements CommandInterface {
             @Override
             public void onResponse(String response) {
                 Log.i("RESTART SERVER", response);
-                Snackbar.make(view, "Server Restarted: "+response, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(view, "RESTART SERVER: "+response, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 request.setResponse(response);
             }
 
