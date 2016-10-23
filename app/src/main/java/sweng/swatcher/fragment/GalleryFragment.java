@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,9 @@ import android.widget.ListView;
 
 import sweng.swatcher.R;
 import sweng.swatcher.util.PreferecesKeys;
-import sweng.swatcher.util.SettingManager;
 import sweng.swatcher.command.GalleryCommand;
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.model.Media;
-import sweng.swatcher.model.Setting;
 import sweng.swatcher.request.GalleryRequest;
 
 import static java.lang.Thread.sleep;
@@ -43,11 +42,11 @@ public class GalleryFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener interactionListener;
 
     private ArrayAdapter<Media> mediaAdapter;
-    private ListView listview;
-    private FloatingActionButton gallery_button;
+    private ListView listView;
+    private FloatingActionButton galleryButton;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -75,8 +74,8 @@ public class GalleryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            this.mParam1 = getArguments().getString(ARG_PARAM1);
+            this.mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -86,17 +85,17 @@ public class GalleryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
-        listview = (ListView) view.findViewById(R.id.galleryListView);
-        gallery_button = (FloatingActionButton)view.findViewById(R.id.gallery_button);
-        gallery_button.setOnClickListener(galleryListner);
+        this.listView = (ListView) view.findViewById(R.id.gallery_list_view);
+        this.galleryButton = (FloatingActionButton)view.findViewById(R.id.gallery_button);
+        this.galleryButton.setOnClickListener(this.galleryListner);
 
         return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+        if (this.interactionListener != null) {
+            this.interactionListener.onFragmentInteraction(uri);
         }
     }
 
@@ -104,8 +103,12 @@ public class GalleryFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
+            this.interactionListener = (OnFragmentInteractionListener) context;
+        }
+        else {
+            Log.i("on Attach:","Context is not instance of OnFragmentInteractionListener"
+                    + "in onAttach Method of GalleryFragment.");
+
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -114,7 +117,7 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        this.interactionListener = null;
     }
 
     /**
@@ -133,21 +136,38 @@ public class GalleryFragment extends Fragment {
     }
 
 
-
-
     private View.OnClickListener galleryListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
 
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-
             Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
+
             GalleryRequest gallery = new GalleryRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.WEB_PORT,""),auth);
-            GalleryCommand gc = new GalleryCommand(gallery, getContext(), listview);
+            GalleryCommand gc = new GalleryCommand(gallery, getContext(), listView);
+
             gc.execute();
 
         }
     };
 
+    public ListView getListView() {
+        return listView;
+    }
 
+    public ArrayAdapter<Media> getMediaAdapter() {
+        return mediaAdapter;
+    }
+
+    public FloatingActionButton getGalleryButton() {
+        return galleryButton;
+    }
+
+    public View.OnClickListener getGalleryListner() {
+        return galleryListner;
+    }
+
+    public OnFragmentInteractionListener getInteractionListener() {
+        return interactionListener;
+    }
 }
