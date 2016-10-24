@@ -1,17 +1,13 @@
 package sweng.swatcher.command;
 
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 
-import sweng.swatcher.R;
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.request.HttpRequest;
-import sweng.swatcher.request.StreamRequest;
 import sweng.swatcher.util.MediaButtonSet;
 
 /**
@@ -22,22 +18,22 @@ public class StreamCommand implements CommandInterface {
 
     private WebView webView;
     private View view;
-    private HttpRequest request;
+    private HttpRequest httpRequest;
     private MediaButtonSet mediaButtonSet;
 
-    public StreamCommand(WebView webView,View view, HttpRequest request, MediaButtonSet mediaButtonSet) {
+    public StreamCommand(WebView webView, View view, HttpRequest httpRequest, MediaButtonSet mediaButtonSet) {
         this.webView = webView;
-        this.request = request;
+        this.httpRequest = httpRequest;
         this.view = view;
         this.mediaButtonSet = mediaButtonSet;
     }
 
     public void execute(){
-        webView.setWebViewClient(new Streaming(request.getAuthorization()));
+        webView.setWebViewClient(new Streaming(httpRequest.getAuthorization()));
         webView.getSettings().setLoadsImagesAutomatically(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        webView.loadUrl(request.getURL());
+        webView.loadUrl(httpRequest.getURL());
 
         Snackbar.make(view, "Successful Connected", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         displayMediaButton();
@@ -77,4 +73,21 @@ public class StreamCommand implements CommandInterface {
         }
 
     }
+
+    public WebView getWebView() {
+        return webView;
+    }
+
+    public View getView() {
+        return view;
+    }
+
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
+    }
+
+    public MediaButtonSet getMediaButtonSet() {
+        return mediaButtonSet;
+    }
+
 }
