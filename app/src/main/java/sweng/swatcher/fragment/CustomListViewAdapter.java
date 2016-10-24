@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,27 +31,30 @@ import sweng.swatcher.model.Setting;
 
 public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
-    private Context context;
-    private SettingManager settingManager;
+    private Context ctx;
+    private SettingManager sm;
     private Setting setting;
-    private Authorization authorization;
+    private Authorization auth;
 
     Media media;
     Picasso customPicasso;
 
-    public CustomListViewAdapter(Context context, int resource, List<Media> mediaList, Authorization authorization) {
-        super(context, resource, mediaList);
-        this.context = context;
-        this.authorization = authorization;
-        this.settingManager = new SettingManager(context);
-        this.setting = settingManager.getSetting();
+    public CustomListViewAdapter(Context ctx, int resource, List<Media> mediaList, Authorization auth) {
+        super(ctx, resource, mediaList);
+        this.ctx = ctx;
+        this.auth = auth;
+        this.sm = new SettingManager(ctx);
+        this.setting = sm.getSetting();
+
+
     }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         ViewHolder holder = null;
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         // If holder not exist then locate all view from UI file.
         if (convertView == null) {
             // inflate UI from XML file
@@ -61,8 +63,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
             holder = new ViewHolder(convertView);
             // set tag for holder
             convertView.setTag(holder);
-        }
-        else {
+        } else {
             // if holder created, get tag from view
             holder = (ViewHolder) convertView.getTag();
         }
@@ -71,10 +72,10 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
         holder.name.setText(media.getName());
         holder.size.setText(media.getSize());
-        
-        Picasso.Builder builder = new Picasso.Builder(context);
+
+        Picasso.Builder builder = new Picasso.Builder(ctx);
         builder.listener(new CustomPicassoListner());
-        customPicasso = builder.downloader(new CustomPicassoLoader(context)).build();
+        customPicasso = builder.downloader(new CustomPicassoLoader(ctx)).build();
         customPicasso.load(getImageUrl(media)).into(holder.image);
 
         DialogListner dialogListner = new DialogListner(media);
@@ -89,30 +90,29 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         @Override
         public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
         {
-            Log.e("Image Load Failed:","CustomPicassoListener in CustomListViewAdapter");
             exception.printStackTrace();
         }
     }
 
     private class DialogListner implements View.OnClickListener
     {
-        Media dialogMedia;
+        Media dialog_media;
 
-        public DialogListner(Media dialogMedia) {
-            this.dialogMedia = dialogMedia;
+        public DialogListner(Media dialog_media) {
+            this.dialog_media = dialog_media;
         }
 
         @Override
         public void onClick(View v)
         {
-           // Log.i("Immagine cliccata: ",getImageUrl(dialogMedia));
+           // Log.i("Immagine cliccata: ",getImageUrl(dialog_media));
 
-            final Dialog dialog = new Dialog(context);
+            final Dialog dialog = new Dialog(ctx);
             dialog.setContentView(R.layout.dialog_gallery_image);
             //dialog.setTitle("Title...");
             ImageView image = (ImageView) dialog.findViewById(R.id.dialog_image);
             //image.setImageResource(R.drawable.ic_launcher);
-            customPicasso.load(getImageUrl(dialogMedia)).into(image);
+            customPicasso.load(getImageUrl(dialog_media)).into(image);
 
             Button dialogButton = (Button) dialog.findViewById(R.id.close_button);
             // if button is clicked, close the custom dialog
@@ -156,37 +156,10 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         @Override
         protected HttpURLConnection openConnection(Uri path) throws IOException {
             HttpURLConnection c = super.openConnection(path);
-            c.setRequestProperty("Authorization", authorization.getAuthType()+ " "
-                    + Base64.encodeToString((authorization.getUsername()+":"+ authorization.getPassword()).getBytes(), Base64.NO_WRAP));
+            c.setRequestProperty("Authorization", auth.getAuthType()+ " "
+                    + Base64.encodeToString((auth.getUsername()+":"+auth.getPassword()).getBytes(), Base64.NO_WRAP));
             return c;
         }
-    }
-
-
-    @NonNull
-    @Override
-    public Context getContext() {
-        return context;
-    }
-
-    public SettingManager getSettingManager() {
-        return settingManager;
-    }
-
-    public Setting getSetting() {
-        return setting;
-    }
-
-    public Authorization getAuthorization() {
-        return authorization;
-    }
-
-    public Media getMedia() {
-        return media;
-    }
-
-    public Picasso getCustomPicasso() {
-        return customPicasso;
     }
 
 }

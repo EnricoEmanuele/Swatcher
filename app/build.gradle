@@ -19,6 +19,8 @@ android {
     }
 
 
+
+
 }
 
 
@@ -34,3 +36,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
 }
+
+
