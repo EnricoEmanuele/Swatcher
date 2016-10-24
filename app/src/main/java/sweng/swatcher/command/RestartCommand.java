@@ -24,46 +24,59 @@ import sweng.swatcher.request.HttpRequest;
 
 public class RestartCommand implements CommandInterface {
 
-    private Context ctx;
-    private HttpRequest request;
+    private Context context;
+    private HttpRequest httpRequest;
     private View view;
 
-    public RestartCommand(Context ctx, HttpRequest request, View view) {
-        this.ctx = ctx;
-        this.request = request;
+    public RestartCommand(Context context, HttpRequest httpRequest, View view) {
+        this.context = context;
+        this.httpRequest = httpRequest;
         this.view = view;
     }
 
     @Override
     public void execute() {
-        RequestQueue queue = Volley.newRequestQueue(ctx);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, request.getURL(), new Response.Listener<String>()  {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, httpRequest.getURL(), new Response.Listener<String>()  {
             @Override
             public void onResponse(String response) {
-                Log.i("RESTART SERVER", response);
+                Log.i("RESTART SERVER", "onResponse: " + response);
                 Snackbar.make(view, "RESTART SERVER: "+response, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                request.setResponse(response);
+                httpRequest.setResponse(response);
             }
 
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error){
-                Log.i("RESTART SERVER", error.getMessage());
+                Log.i("RESTART SERVER", "onErrorResponse: " + error.getMessage());
                 Snackbar.make(view, "Error Restarting Server: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                request.setResponse(error.getMessage());
+                httpRequest.setResponse(error.getMessage());
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 // add headers <key,value>
-                String credentials = request.getAuthorization().getUsername()+":"+request.getAuthorization().getPassword();
-                String auth = request.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
+                String credentials = httpRequest.getAuthorization().getUsername()+":"+ httpRequest.getAuthorization().getPassword();
+                String auth = httpRequest.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
                 headers.put("Authorization", auth);
                 return headers;
             }
         };
-        // Add the request to the RequestQueue.
+        // Add the httpRequest to the RequestQueue.
         queue.add(stringRequest);
     }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
+    }
+
+    public View getView() {
+        return view;
+    }
+
 }
