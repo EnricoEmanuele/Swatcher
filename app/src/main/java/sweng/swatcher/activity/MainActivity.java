@@ -13,6 +13,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import sweng.swatcher.R;
 import sweng.swatcher.fragment.AboutFragment;
 import sweng.swatcher.fragment.ConnectionSettingsFragment;
@@ -38,6 +41,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        /************Notification***************/
+        FirebaseMessaging.getInstance().subscribeToTopic("test");
+        FirebaseInstanceId.getInstance().getToken();
 
         /****************Test Fragment******************/
         Fragment fragment = null;
