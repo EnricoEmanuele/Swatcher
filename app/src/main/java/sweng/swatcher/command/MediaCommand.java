@@ -16,7 +16,6 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-import sweng.swatcher.command.CommandInterface;
 import sweng.swatcher.request.HttpRequest;
 
 /**
@@ -25,26 +24,26 @@ import sweng.swatcher.request.HttpRequest;
 
 public class MediaCommand implements CommandInterface {
 
-    private Context ctx;
-    private HttpRequest request;
+    private Context context;
+    private HttpRequest httpRequest;
     private View view;
 
-    public MediaCommand(Context ctx, HttpRequest request, View view){
-        this.ctx = ctx;
-        this.request = request;
+    public MediaCommand(Context context, HttpRequest httpRequest, View view){
+        this.context = context;
+        this.httpRequest = httpRequest;
         this.view = view;
     }
 
     public void execute(){
-        RequestQueue queue = Volley.newRequestQueue(ctx);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, request.getURL(), new Response.Listener<String>()
+        RequestQueue queue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, httpRequest.getURL(), new Response.Listener<String>()
         {
             @Override
             public void onResponse(String response)
             {
-                Log.i("Volley Res:", response);
-                request.setResponse(response);
-                Snackbar.make(view, request.getResponse(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Log.i("MediaCommand", "Volley Res onResponse:" + response);
+                httpRequest.setResponse(response);
+                Snackbar.make(view, httpRequest.getResponse(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
 
         }, new Response.ErrorListener()
@@ -52,24 +51,34 @@ public class MediaCommand implements CommandInterface {
             @Override
             public void onErrorResponse(VolleyError error)
             {
-                Log.i("Volley Res:", error.getMessage());
+                Log.i("MediaCommand", "Volley Res onErrorResponse: " + error.getMessage());
                 //Snackbar.make(view, "Snapshot not taken: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                request.setResponse(error.getMessage());
-
+                httpRequest.setResponse(error.getMessage());
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 // add headers <key,value>
-                String credentials = request.getAuthorization().getUsername()+":"+request.getAuthorization().getPassword();
-                String auth = request.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
+                String credentials = httpRequest.getAuthorization().getUsername()+":"+ httpRequest.getAuthorization().getPassword();
+                String auth = httpRequest.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
                 headers.put("Authorization", auth);
                 return headers;
             }
         };
-        // Add the request to the RequestQueue.
+        // Add the httpRequest to the RequestQueue.
         queue.add(stringRequest);
     }
 
+    public Context getContext() {
+        return context;
+    }
+
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
+    }
+
+    public View getView() {
+        return view;
+    }
 }
