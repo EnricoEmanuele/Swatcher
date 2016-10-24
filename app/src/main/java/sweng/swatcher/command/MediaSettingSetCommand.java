@@ -63,4 +63,16 @@ public class MediaSettingSetCommand implements CommandInterface {
         // Add the httpRequest to the RequestQueue.
         queue.add(stringRequest);
     }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
+    }
+
+    public View getView() {
+        return view;
+    }
 }
