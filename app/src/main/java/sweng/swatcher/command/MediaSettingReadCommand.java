@@ -31,7 +31,7 @@ public class MediaSettingReadCommand implements CommandInterface {
 
     private static final String TEXT_ENABLED = "Enabled";
     private static final String TEXT_DISABLED = "Disabled";
-    final String VALUE_ON = "on";
+    private static final String VALUE_ON = "on";
 
     private Context context;
     private HttpRequest httpRequest;
