@@ -19,13 +19,13 @@ import sweng.swatcher.request.HttpRequest;
  * Created by antoniods311 on 21/10/16.
  */
 
-public class MediaSettingWriteCommand implements CommandInterface {
+public class MediaSettingSetCommand implements CommandInterface {
 
     private Context ctx;
     private HttpRequest request;
     private View view;
 
-    public MediaSettingWriteCommand(Context ctx, HttpRequest request, View view){
+    public MediaSettingSetCommand(Context ctx, HttpRequest request, View view){
         this.ctx = ctx;
         this.request = request;
         this.view = view;

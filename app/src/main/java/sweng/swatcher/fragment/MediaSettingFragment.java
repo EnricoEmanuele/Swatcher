@@ -17,7 +17,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import sweng.swatcher.R;
 import sweng.swatcher.command.MediaSettingReadCommand;
-import sweng.swatcher.command.MediaSettingWriteCommand;
+import sweng.swatcher.command.MediaSettingSetCommand;
 import sweng.swatcher.command.RestartCommand;
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.model.Setting;
@@ -69,7 +69,7 @@ public class MediaSettingFragment extends Fragment {
     private Switch movieSwitch;
 
     private MediaSettingReadCommand mediaSettingReadCommand;
-    private MediaSettingWriteCommand mediaSettingWriteCommand;
+    private MediaSettingSetCommand mediaSettingSetCommand;
     private RestartCommand restartCommand;
 
 
@@ -286,8 +286,8 @@ public class MediaSettingFragment extends Fragment {
             if(qualityValue!=null){
                 quality = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                         new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,QUALITY_PARAMETER,qualityValue);
-                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),quality, mediaSettingView);
-                mediaSettingWriteCommand.execute();
+                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),quality, mediaSettingView);
+                mediaSettingSetCommand.execute();
             }
             else {
                 settingError = true;
@@ -299,8 +299,8 @@ public class MediaSettingFragment extends Fragment {
             if(picTypeValue!=null){
                 pictureType = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                         new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,PICTURE_TYPE,picTypeValue);
-                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),pictureType, mediaSettingView);
-                mediaSettingWriteCommand.execute();
+                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),pictureType, mediaSettingView);
+                mediaSettingSetCommand.execute();
             }
             else {
                 settingError = true;
@@ -319,8 +319,8 @@ public class MediaSettingFragment extends Fragment {
 
             HttpRequest outputMovie = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,OUTPUT_MOVIES,recMovieValue);
-            mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),outputMovie, mediaSettingView);
-            mediaSettingWriteCommand.execute();
+            mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),outputMovie, mediaSettingView);
+            mediaSettingSetCommand.execute();
 
             //set max movie time parameter
             String maxMovieTimeValue = maxMovieTimeEditText.getText().toString();
@@ -328,8 +328,8 @@ public class MediaSettingFragment extends Fragment {
             if(maxMovieTimeValue!=null){
                 maxMovieTime = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                         new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,MAX_MOVIE_TIME,maxMovieTimeValue);
-                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),maxMovieTime, mediaSettingView);
-                mediaSettingWriteCommand.execute();
+                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),maxMovieTime, mediaSettingView);
+                mediaSettingSetCommand.execute();
             }
             else {settingError = true;}
 
@@ -346,8 +346,8 @@ public class MediaSettingFragment extends Fragment {
 
             HttpRequest snapshotOnDetection = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,OUTPUT_PICTURES,outPicValue);
-            mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),snapshotOnDetection, mediaSettingView);
-            mediaSettingWriteCommand.execute();
+            mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),snapshotOnDetection, mediaSettingView);
+            mediaSettingSetCommand.execute();
 
             //set threshold parameter
             String thresholdValue = thresholdEditText.getText().toString();
@@ -355,8 +355,8 @@ public class MediaSettingFragment extends Fragment {
             if(thresholdValue!=null){
                 threshold = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                         new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,THRESHOLD,thresholdValue);
-                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),threshold, mediaSettingView);
-                mediaSettingWriteCommand.execute();
+                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),threshold, mediaSettingView);
+                mediaSettingSetCommand.execute();
             }
             else{
                 settingError = true;
@@ -368,8 +368,8 @@ public class MediaSettingFragment extends Fragment {
             if(snapIntervalValue!=null){
                 snapshotInterval = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                         new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,SNAPSHOT_INTERVAL,snapIntervalValue);
-                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),snapshotInterval, mediaSettingView);
-                mediaSettingWriteCommand.execute();
+                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),snapshotInterval, mediaSettingView);
+                mediaSettingSetCommand.execute();
             }
             else{
                 settingError = true;
@@ -378,9 +378,9 @@ public class MediaSettingFragment extends Fragment {
             //write new config on Server
             HttpRequest writeRequest = new WriteMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0);
-            mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),writeRequest, mediaSettingView);
+            mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),writeRequest, mediaSettingView);
 
-            mediaSettingWriteCommand.execute();
+            mediaSettingSetCommand.execute();
 
             //restart server here....
             HttpRequest restartRequest = new RestartRequest(setting.getIpAddress(), setting.getCommandPort(),
