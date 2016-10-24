@@ -1,11 +1,17 @@
 package sweng.swatcher.fragment;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
@@ -15,8 +21,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
+
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.UrlConnectionDownloader;
 import sweng.swatcher.R;
@@ -31,7 +40,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
     private Context ctx;
     private SettingManager sm;
     private Setting setting;
-    private Authorization auth;
+    private Authorization authorization;
     public static final String JPEG = "jpeg";
     public static final String JPG = "jpg";
     public static final String PPM = "ppm";
@@ -39,16 +48,13 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
     Media media;
     Picasso customPicasso;
 
-    public CustomListViewAdapter(Context ctx, int resource, List<Media> mediaList, Authorization auth) {
+    public CustomListViewAdapter(Context ctx, int resource, List<Media> mediaList, Authorization authorization) {
         super(ctx, resource, mediaList);
         this.ctx = ctx;
-        this.auth = auth;
+        this.authorization = authorization;
         this.sm = new SettingManager(ctx);
         this.setting = sm.getSetting();
-
-
     }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -107,19 +113,24 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         {
             //Log.i("Immagine cliccata: ",dialog_media.getExtension());
             final Dialog dialog = new Dialog(ctx);
+            Button dialogButton;
             String extension = dialog_media.getExtension();
+            MediaController mediaController = new MediaController(ctx);
+            Map<String,String> headers;
 
-            //if media is an image
+            /*
+             * if media is an Image
+             */
             if(extension.equalsIgnoreCase(JPEG) ||extension.equalsIgnoreCase(JPG)|| extension.equalsIgnoreCase(PPM)){
-                Log.i("Immagine cliccata: ",dialog_media.getExtension());
+                Log.i("Image selected: ",dialog_media.getExtension());
                 dialog.setContentView(R.layout.dialog_gallery_image);
                 //dialog.setTitle("Title...");
                 ImageView image = (ImageView) dialog.findViewById(R.id.dialog_image);
                 //image.setImageResource(R.drawable.ic_launcher);
                 customPicasso.load(getMediaUrl(dialog_media)).into(image);
 
-                Button dialogButton = (Button) dialog.findViewById(R.id.close_button);
                 // if button is clicked, close the custom dialog
+                dialogButton = (Button) dialog.findViewById(R.id.close_button);
                 dialogButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -128,16 +139,55 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
                 });
             }
             else{
-                //if media is a video
+                /*
+                 * if media is a Video
+                 */
                 Log.i("Video selected: ",dialog_media.getExtension());
+                dialog.setContentView(R.layout.dialog_gallery_video);
+                final VideoView videoView = (VideoView) dialog.findViewById(R.id.video_view);
 
+                //set controllers
+                videoView.setMediaController(mediaController);
+
+                //set headers
+                headers = new HashMap<String,String>();
+                String credentials = authorization.getUsername()+":"+ authorization.getPassword();
+                String auth = authorization.getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+                //videoView.setVideoURI(Uri.parse(getMediaUrl(dialog_media)),headers);
+                try{
+                    Method setVideoURIMethod = videoView.getClass().getMethod("setVideoURI", Uri.class, Map.class);
+                    setVideoURIMethod.invoke(videoView,Uri.parse(getMediaUrl(dialog_media)),headers);
+                }
+                catch (java.lang.NoSuchMethodException e){
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+
+                videoView.requestFocus();
+                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mediaPlayer) {
+                        videoView.seekTo(0);
+                        videoView.start();
+                    }
+                });
+
+                // if button is clicked, close the custom dialog
+                dialogButton = (Button) dialog.findViewById(R.id.close_video_button);
+                dialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
             }
-
-
-
             dialog.show();
         }
-
     }
 
     private static class ViewHolder {
@@ -156,7 +206,9 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
     public String getMediaUrl(Media media){
         String path = media.getPath();
-        return "http://"+setting.getIpAddress()+":"+setting.getWebServerPort()+"/"+path;
+        String uri = "http://"+setting.getIpAddress()+":"+setting.getWebServerPort()+"/"+path;
+        Log.i("media uri",uri);
+        return uri;
 
     }
 
@@ -168,8 +220,8 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         @Override
         protected HttpURLConnection openConnection(Uri path) throws IOException {
             HttpURLConnection c = super.openConnection(path);
-            c.setRequestProperty("Authorization", auth.getAuthType()+ " "
-                    + Base64.encodeToString((auth.getUsername()+":"+auth.getPassword()).getBytes(), Base64.NO_WRAP));
+            c.setRequestProperty("Authorization", authorization.getAuthType()+ " "
+                    + Base64.encodeToString((authorization.getUsername()+":"+ authorization.getPassword()).getBytes(), Base64.NO_WRAP));
             return c;
         }
     }
