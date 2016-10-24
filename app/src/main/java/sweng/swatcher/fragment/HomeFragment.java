@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,9 @@ import android.webkit.WebView;
 
 import sweng.swatcher.R;
 import sweng.swatcher.util.PreferecesKeys;
-import sweng.swatcher.util.SettingManager;
 import sweng.swatcher.command.StreamCommand;
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.command.MediaCommand;
-import sweng.swatcher.model.Setting;
 import sweng.swatcher.request.MovieRequest;
 import sweng.swatcher.request.SnapshotRequest;
 import sweng.swatcher.request.StreamRequest;
@@ -43,26 +42,25 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private String ip;
+    private String port;
 
-    private WebView webview_streaming;
-    private String ip, port;
-    private FloatingActionButton play_button;
-    private FloatingActionButton stop_button;
-    private FloatingActionButton snapshot_button;
-    private FloatingActionButton record_button;
+    private WebView webViewStreaming;
+    private OnFragmentInteractionListener interactionListener;
+
+    private MediaButtonSet mediaButtonSet;
+
+    private FloatingActionButton playButton;
+    private FloatingActionButton stopButton;
+
+    private FloatingActionButton snapshotButton;
+    private FloatingActionButton recordButton;
 
     private StreamRequest streaming;
     private SnapshotRequest snapshot;
     private MovieRequest movie;
-    private MediaButtonSet mediaButtonSet;
 
     private StreamCommand streamCommand;
-
-
-
-
-
 
     String res;
 
@@ -111,8 +109,8 @@ public class HomeFragment extends Fragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+        if (this.interactionListener != null) {
+            this.interactionListener.onFragmentInteraction(uri);
         }
     }
 
@@ -120,8 +118,12 @@ public class HomeFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
+            this.interactionListener = (OnFragmentInteractionListener) context;
+        }
+        else {
+            Log.i("on Attach:","Context is not instance of OnFragmentInteractionListener"
+                    + "in onAttach Method of HomeFragment.");
+
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -130,7 +132,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        this.interactionListener = null;
     }
 
     /**
@@ -157,35 +159,34 @@ public class HomeFragment extends Fragment {
 
         Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
 
-        webview_streaming = (WebView)view.findViewById(R.id.webview_streaming);
-        streaming = new StreamRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.STREAM_PORT,""),auth);
-        snapshot = new SnapshotRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.CMD_PORT,""),auth,0,view);
-        movie = new MovieRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.CMD_PORT,""),auth,0,view);
+        this.webViewStreaming = (WebView)view.findViewById(R.id.webview_streaming);
+        this.streaming = new StreamRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.STREAM_PORT,""),auth);
+        this.snapshot = new SnapshotRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.CMD_PORT,""),auth,0,view);
+        this.movie = new MovieRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.CMD_PORT,""),auth,0,view);
 
-        play_button = (FloatingActionButton) view.findViewById(R.id.play);
-        stop_button = (FloatingActionButton) view.findViewById(R.id.stop);
-        snapshot_button = (FloatingActionButton) view.findViewById(R.id.snapshot);
-        record_button = (FloatingActionButton) view.findViewById(R.id.record);
+        this.playButton = (FloatingActionButton) view.findViewById(R.id.play);
+        this.stopButton = (FloatingActionButton) view.findViewById(R.id.stop);
+        this.snapshotButton = (FloatingActionButton) view.findViewById(R.id.snapshot);
+        this.recordButton = (FloatingActionButton) view.findViewById(R.id.record);
 
-        play_button.setOnClickListener(playListner);
-        stop_button.setOnClickListener(stopListner);
-        snapshot_button.setOnClickListener(snapshotListner);
-        record_button.setOnClickListener(recordListner);
+        this.playButton.setOnClickListener(playListner);
+        this.stopButton.setOnClickListener(stopListner);
+        this.snapshotButton.setOnClickListener(snapshotListner);
+        this.recordButton.setOnClickListener(recordListner);
 
-        mediaButtonSet = new MediaButtonSet(view);
+        this.mediaButtonSet = new MediaButtonSet(view);
 
-        mediaButtonSet.addToStopList(play_button);
-        mediaButtonSet.addToPlayList(stop_button);
-        mediaButtonSet.addToPlayList(snapshot_button);
-        mediaButtonSet.addToPlayList(record_button);
-
+        this.mediaButtonSet.addToStopList(this.playButton);
+        this.mediaButtonSet.addToPlayList(this.stopButton);
+        this.mediaButtonSet.addToPlayList(this.snapshotButton);
+        this.mediaButtonSet.addToPlayList(this.recordButton);
 
     }
 
     private View.OnClickListener playListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            streamCommand = new StreamCommand(webview_streaming, view, streaming, mediaButtonSet);
+            streamCommand = new StreamCommand(webViewStreaming, view, streaming, mediaButtonSet);
             streamCommand.execute();
         }
     };
@@ -213,9 +214,6 @@ public class HomeFragment extends Fragment {
             cmd.execute();
         }
     };
-
-
-
 
 }
 

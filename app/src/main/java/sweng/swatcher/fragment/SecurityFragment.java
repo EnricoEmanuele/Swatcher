@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +17,8 @@ import android.widget.ProgressBar;
 import sweng.swatcher.R;
 import sweng.swatcher.command.SecurityCommand;
 import sweng.swatcher.model.Authorization;
-import sweng.swatcher.model.Setting;
 import sweng.swatcher.request.SecurityRequest;
 import sweng.swatcher.util.PreferecesKeys;
-import sweng.swatcher.util.SettingManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,11 +38,12 @@ public class SecurityFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener interactionListener;
 
     private FloatingActionButton changeButton;
-    private EditText new_username_text;
-    private EditText new_password_text;
+
+    private EditText newUsernameText;
+    private EditText newPasswordText;
 
     private ProgressBar spinner;
 
@@ -86,10 +86,10 @@ public class SecurityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_security, container, false);
 
         changeButton = (FloatingActionButton) view.findViewById(R.id.change_button);
-        new_username_text = (EditText) view.findViewById(R.id.new_username);
-        new_password_text = (EditText) view.findViewById(R.id.new_password);
-        spinner = (ProgressBar)view.findViewById(R.id.progressBar);
-        spinner.setVisibility(View.GONE);
+        this.newUsernameText = (EditText) view.findViewById(R.id.new_username);
+        this.newPasswordText = (EditText) view.findViewById(R.id.new_password);
+        this.spinner = (ProgressBar)view.findViewById(R.id.progressBar);
+        this.spinner.setVisibility(View.GONE);
 
         changeButton.setOnClickListener(changeListner);
 
@@ -98,8 +98,8 @@ public class SecurityFragment extends Fragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+        if (interactionListener != null) {
+            interactionListener.onFragmentInteraction(uri);
         }
     }
 
@@ -107,8 +107,12 @@ public class SecurityFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
+            interactionListener = (OnFragmentInteractionListener) context;
+        }
+        else {
+            Log.i("on Attach:","Context is not instance of OnFragmentInteractionListener"
+                    + "in onAttach Method of SecurityFragment");
+
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -117,7 +121,7 @@ public class SecurityFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        interactionListener = null;
     }
 
     /**
@@ -139,8 +143,8 @@ public class SecurityFragment extends Fragment {
         @Override
         public void onClick(View view) {
             spinner.setVisibility(View.VISIBLE);
-            String new_username = new_username_text.getText().toString();
-            String new_password = new_password_text.getText().toString();
+            String new_username = newUsernameText.getText().toString();
+            String new_password = newPasswordText.getText().toString();
 
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
 

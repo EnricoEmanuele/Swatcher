@@ -19,48 +19,60 @@ import sweng.swatcher.request.HttpRequest;
  * Created by antoniods311 on 21/10/16.
  */
 
-public class MediaSettingWriteCommand implements CommandInterface {
+public class MediaSettingSetCommand implements CommandInterface {
 
-    private Context ctx;
-    private HttpRequest request;
+    private Context context;
+    private HttpRequest httpRequest;
     private View view;
 
-    public MediaSettingWriteCommand(Context ctx, HttpRequest request, View view){
-        this.ctx = ctx;
-        this.request = request;
+    public MediaSettingSetCommand(Context context, HttpRequest httpRequest, View view){
+        this.context = context;
+        this.httpRequest = httpRequest;
         this.view = view;
     }
 
     @Override
     public void execute() {
-        RequestQueue queue = Volley.newRequestQueue(ctx);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, request.getURL(), new Response.Listener<String>()  {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, httpRequest.getURL(), new Response.Listener<String>()  {
             @Override
             public void onResponse(String response) {
-                Log.i("MEDIA_SETTING_WRITE", response);
+                Log.i("MEDIA_SETTING_WRITE", "onResponse: " + response);
                 //Snackbar.make(view, "Settings writed on Server: "+response, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                request.setResponse(response);
+                httpRequest.setResponse(response);
             }
 
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error){
-                Log.i("MEDIA_SETTING_WRITE", error.getMessage());
+                Log.i("MEDIA_SETTING_WRITE", "onErrorResponse: " + error.getMessage());
                 Snackbar.make(view, "Error writing setting on Server: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                request.setResponse(error.getMessage());
+                httpRequest.setResponse(error.getMessage());
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 // add headers <key,value>
-                String credentials = request.getAuthorization().getUsername()+":"+request.getAuthorization().getPassword();
-                String auth = request.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
+                String credentials = httpRequest.getAuthorization().getUsername()+":"+ httpRequest.getAuthorization().getPassword();
+                String auth = httpRequest.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
                 headers.put("Authorization", auth);
                 return headers;
             }
         };
-        // Add the request to the RequestQueue.
+        // Add the httpRequest to the RequestQueue.
         queue.add(stringRequest);
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
+    }
+
+    public View getView() {
+        return view;
     }
 }

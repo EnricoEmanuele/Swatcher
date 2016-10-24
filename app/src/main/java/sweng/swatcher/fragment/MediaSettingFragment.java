@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import sweng.swatcher.R;
 import sweng.swatcher.command.MediaSettingReadCommand;
-import sweng.swatcher.command.MediaSettingWriteCommand;
+import sweng.swatcher.command.MediaSettingSetCommand;
 import sweng.swatcher.command.RestartCommand;
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.model.Setting;
@@ -43,6 +44,10 @@ import static sweng.swatcher.util.ParametersKeys.SNAPSHOT_INTERVAL;
  * create an instance of this fragment.
  */
 public class MediaSettingFragment extends Fragment {
+
+    private static final String TEXT_ENABLED = "Enabled";
+    private static final String TEXT_DISABLED = "Disabled";
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -50,17 +55,23 @@ public class MediaSettingFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private OnFragmentInteractionListener mListener;
-    private View msView;
+
+    private Setting setting;
+    private SettingManager settingManager;
+
+    private OnFragmentInteractionListener interactionListener;
+    private View mediaSettingView;
+
     private FloatingActionButton updateButton;
     private FloatingActionButton saveButton;
+
     private Switch snapshotSwitch;
     private Switch movieSwitch;
+
     private MediaSettingReadCommand mediaSettingReadCommand;
-    private MediaSettingWriteCommand mediaSettingWriteCommand;
+    private MediaSettingSetCommand mediaSettingSetCommand;
     private RestartCommand restartCommand;
-    private SettingManager sm;
-    private Setting setting;
+
 
     public MediaSettingFragment() {
         // Required empty public constructor
@@ -97,54 +108,58 @@ public class MediaSettingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Settings
-        sm = new SettingManager(getContext());
-        setting = sm.getSetting();
+        this.settingManager = new SettingManager(getContext());
+        setting = this.settingManager.getSetting();
 
         //View informations
-        msView = inflater.inflate(R.layout.fragment_media_setting, container, false);
-        updateButton = (FloatingActionButton) msView.findViewById(R.id.update_ms_button);
-        saveButton = (FloatingActionButton) msView.findViewById(R.id.save_ms_button);
-        snapshotSwitch = (Switch) msView.findViewById(R.id.snapshot_switch);
-        movieSwitch = (Switch) msView.findViewById(R.id.movie_switch);
-        updateButton.setOnClickListener(updateListener);
-        saveButton.setOnClickListener(saveListener);
-        movieSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        this.mediaSettingView = inflater.inflate(R.layout.fragment_media_setting, container, false);
+        this.updateButton = (FloatingActionButton) this.mediaSettingView.findViewById(R.id.update_ms_button);
+        this.saveButton = (FloatingActionButton) this.mediaSettingView.findViewById(R.id.save_ms_button);
+        this.snapshotSwitch = (Switch) this.mediaSettingView.findViewById(R.id.snapshot_switch);
+        this.movieSwitch = (Switch) this.mediaSettingView.findViewById(R.id.movie_switch);
+        this.updateButton.setOnClickListener(updateListener);
+        this.saveButton.setOnClickListener(saveListener);
+        this.movieSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                if(checked)
-                    movieSwitch.setText("Enabled");
-                else
-                    movieSwitch.setText("Disabled");
+                if(checked) {
+                    movieSwitch.setText(TEXT_ENABLED);
+                }
+                else {
+                    movieSwitch.setText(TEXT_DISABLED);
+                }
             }
         });
-        snapshotSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        this.snapshotSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                if(checked)
-                    snapshotSwitch.setText("Enabled");
-                else
-                    snapshotSwitch.setText("Disabled");
+                if(checked) {
+                    snapshotSwitch.setText(TEXT_ENABLED);
+                }
+                else {
+                    snapshotSwitch.setText(TEXT_DISABLED);
+                }
             }
         });
 
         //Disable save button. First read settings from Server
-        saveButton.setEnabled(false);
-        saveButton.setClickable(false);
+        this.saveButton.setEnabled(false);
+        this.saveButton.setClickable(false);
 
         //Set spinner entries
-        Spinner spinner = (Spinner) msView.findViewById(R.id.picture_type);
+        Spinner spinner = (Spinner) this.mediaSettingView.findViewById(R.id.picture_type);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.picture_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        return msView;
+        return this.mediaSettingView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+        if (this.interactionListener != null) {
+            this.interactionListener.onFragmentInteraction(uri);
         }
     }
 
@@ -152,8 +167,12 @@ public class MediaSettingFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
+            this.interactionListener = (OnFragmentInteractionListener) context;
+        }
+        else {
+            Log.i("on Attach:","Context is not instance of OnFragmentInteractionListener"
+                    + "in onAttach Method of MediaSettingFragment.");
+
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -162,7 +181,7 @@ public class MediaSettingFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        this.interactionListener = null;
     }
 
     /**
@@ -191,49 +210,49 @@ public class MediaSettingFragment extends Fragment {
             HttpRequest qualityImage = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, QUALITY_PARAMETER);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), qualityImage, msView);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), qualityImage, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read picture type parameter
             HttpRequest pictureType = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, PICTURE_TYPE);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), pictureType, msView);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), pictureType, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read movie on detection parameter
             HttpRequest movieOnDetection = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, OUTPUT_MOVIES);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), movieOnDetection, msView);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), movieOnDetection, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read max movie time
             HttpRequest maxMovieTime = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, MAX_MOVIE_TIME);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), maxMovieTime, msView);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), maxMovieTime, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read snapshot on detection parameter
             HttpRequest snapshotOnDetection = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, OUTPUT_PICTURES);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotOnDetection, msView);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotOnDetection, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read threshold parameter
             HttpRequest threshold = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, THRESHOLD);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), threshold, msView);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), threshold, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read continuous snapshot interval parameter
             HttpRequest snapshotInterval = new ReadMediaSettingRequest(setting.getIpAddress(),
                     setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"), 0, SNAPSHOT_INTERVAL);
-            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotInterval, msView);
+            mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotInterval, mediaSettingView);
             mediaSettingReadCommand.execute();
 
         }
@@ -243,19 +262,23 @@ public class MediaSettingFragment extends Fragment {
      * Update media parameters on Server
      */
     private View.OnClickListener saveListener = new View.OnClickListener() {
+
+        final String VALUE_ON = "on";
+        final String VALUE_OFF = "off";
+
         @Override
         public void onClick(View view) {
 
             boolean settingError = false;
 
             //View resources
-            EditText qualityImageEditText = (EditText) msView.findViewById(R.id.quality_image);
-            Spinner pictureTypeSpinenr = (Spinner) msView.findViewById(R.id.picture_type);
-            Switch movieSwitch = (Switch) msView.findViewById(R.id.movie_switch);
-            EditText maxMovieTimeEditText = (EditText) msView.findViewById(R.id.max_movie_time);
-            Switch snapshotSwitch = (Switch) msView.findViewById(R.id.snapshot_switch);
-            EditText thresholdEditText = (EditText) msView.findViewById(R.id.threshold);
-            EditText snapshotIntervalEditText = (EditText) msView.findViewById(R.id.snapshot_interval);
+            EditText qualityImageEditText = (EditText) mediaSettingView.findViewById(R.id.quality_image);
+            Spinner pictureTypeSpinenr = (Spinner) mediaSettingView.findViewById(R.id.picture_type);
+            Switch movieSwitch = (Switch) mediaSettingView.findViewById(R.id.movie_switch);
+            EditText maxMovieTimeEditText = (EditText) mediaSettingView.findViewById(R.id.max_movie_time);
+            Switch snapshotSwitch = (Switch) mediaSettingView.findViewById(R.id.snapshot_switch);
+            EditText thresholdEditText = (EditText) mediaSettingView.findViewById(R.id.threshold);
+            EditText snapshotIntervalEditText = (EditText) mediaSettingView.findViewById(R.id.snapshot_interval);
 
             //set image quality parameter
             HttpRequest quality;
@@ -263,10 +286,12 @@ public class MediaSettingFragment extends Fragment {
             if(qualityValue!=null){
                 quality = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                         new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,QUALITY_PARAMETER,qualityValue);
-                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),quality,msView);
-                mediaSettingWriteCommand.execute();
+                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),quality, mediaSettingView);
+                mediaSettingSetCommand.execute();
             }
-            else {settingError = true;}
+            else {
+                settingError = true;
+            }
 
             //set picture type parameter
             String picTypeValue = pictureTypeSpinenr.getSelectedItem().toString();
@@ -274,20 +299,28 @@ public class MediaSettingFragment extends Fragment {
             if(picTypeValue!=null){
                 pictureType = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                         new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,PICTURE_TYPE,picTypeValue);
-                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),pictureType,msView);
-                mediaSettingWriteCommand.execute();
+                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),pictureType, mediaSettingView);
+                mediaSettingSetCommand.execute();
             }
-            else {settingError = true;}
+            else {
+                settingError = true;
+            }
 
             //set record movie on detection
             boolean recordMovieEnabled = movieSwitch.isChecked();
             String recMovieValue;
-            if(recordMovieEnabled){recMovieValue = "on";}
-            else {recMovieValue = "off";}
+
+            if(recordMovieEnabled){
+                recMovieValue = VALUE_ON ;
+            }
+            else {
+                recMovieValue = VALUE_OFF ;
+            }
+
             HttpRequest outputMovie = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,OUTPUT_MOVIES,recMovieValue);
-            mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),outputMovie,msView);
-            mediaSettingWriteCommand.execute();
+            mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),outputMovie, mediaSettingView);
+            mediaSettingSetCommand.execute();
 
             //set max movie time parameter
             String maxMovieTimeValue = maxMovieTimeEditText.getText().toString();
@@ -295,20 +328,26 @@ public class MediaSettingFragment extends Fragment {
             if(maxMovieTimeValue!=null){
                 maxMovieTime = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                         new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,MAX_MOVIE_TIME,maxMovieTimeValue);
-                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),maxMovieTime,msView);
-                mediaSettingWriteCommand.execute();
+                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),maxMovieTime, mediaSettingView);
+                mediaSettingSetCommand.execute();
             }
             else {settingError = true;}
 
             //set output picture parameter
             boolean outputPicEnabled = snapshotSwitch.isChecked();
             String outPicValue;
-            if(outputPicEnabled) {outPicValue = "on";}
-            else {outPicValue = "off";}
+
+            if(outputPicEnabled) {
+                outPicValue = VALUE_ON ;
+            }
+            else {
+                outPicValue = VALUE_OFF ;
+            }
+
             HttpRequest snapshotOnDetection = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,OUTPUT_PICTURES,outPicValue);
-            mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),snapshotOnDetection,msView);
-            mediaSettingWriteCommand.execute();
+            mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),snapshotOnDetection, mediaSettingView);
+            mediaSettingSetCommand.execute();
 
             //set threshold parameter
             String thresholdValue = thresholdEditText.getText().toString();
@@ -316,10 +355,12 @@ public class MediaSettingFragment extends Fragment {
             if(thresholdValue!=null){
                 threshold = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                         new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,THRESHOLD,thresholdValue);
-                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),threshold,msView);
-                mediaSettingWriteCommand.execute();
+                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),threshold, mediaSettingView);
+                mediaSettingSetCommand.execute();
             }
-            else{settingError = true;}
+            else{
+                settingError = true;
+            }
 
             //set snapshot interval
             String snapIntervalValue = snapshotIntervalEditText.getText().toString();
@@ -327,21 +368,25 @@ public class MediaSettingFragment extends Fragment {
             if(snapIntervalValue!=null){
                 snapshotInterval = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                         new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,SNAPSHOT_INTERVAL,snapIntervalValue);
-                mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),snapshotInterval,msView);
-                mediaSettingWriteCommand.execute();
+                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),snapshotInterval, mediaSettingView);
+                mediaSettingSetCommand.execute();
             }
-            else{settingError = true;}
+            else{
+                settingError = true;
+            }
 
             //write new config on Server
             HttpRequest writeRequest = new WriteMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0);
-            mediaSettingWriteCommand = new MediaSettingWriteCommand(getContext(),writeRequest,msView);
-            mediaSettingWriteCommand.execute();
+            mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),writeRequest, mediaSettingView);
+
+            mediaSettingSetCommand.execute();
 
             //restart server here....
             HttpRequest restartRequest = new RestartRequest(setting.getIpAddress(), setting.getCommandPort(),
                     new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0);
-            restartCommand = new RestartCommand(getContext(),restartRequest,msView);
+            restartCommand = new RestartCommand(getContext(),restartRequest, mediaSettingView);
+
             restartCommand.execute();
 
             if(settingError){
