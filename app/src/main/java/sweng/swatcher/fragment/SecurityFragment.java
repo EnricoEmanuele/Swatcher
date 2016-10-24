@@ -150,7 +150,7 @@ public class SecurityFragment extends Fragment {
 
             Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
             SecurityRequest security = new SecurityRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.WEB_PORT,""),auth);
-            SecurityCommand sc = new SecurityCommand(security, getContext(), view, spinner, new_username, new_password);
+            SecurityCommand sc = new SecurityCommand(getContext(), security, view, spinner, new_username, new_password);
             sc.execute();
         }
     };
