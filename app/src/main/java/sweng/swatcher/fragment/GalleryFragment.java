@@ -144,7 +144,7 @@ public class GalleryFragment extends Fragment {
             Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
 
             GalleryRequest gallery = new GalleryRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.WEB_PORT,""),auth);
-            GalleryCommand gc = new GalleryCommand(gallery, getContext(), listView);
+            GalleryCommand gc = new GalleryCommand(getContext(), gallery, listView);
 
             gc.execute();
 

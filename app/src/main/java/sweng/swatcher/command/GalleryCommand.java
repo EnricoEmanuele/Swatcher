@@ -31,39 +31,38 @@ import sweng.swatcher.request.HttpRequest;
 
 public class GalleryCommand implements CommandInterface {
 
-    private Context ctx;
-    private HttpRequest request;
+    private Context context;
+    private HttpRequest httpRequest;
     private List<Media> mediaCollection;
-    private ListView gallery_listview;
+    private ListView galleryListView;
     private ArrayAdapter<Media> mediaAdapter;
 
 
-    public GalleryCommand(HttpRequest request, Context ctx, ListView gallery_listview) {
-        this.request = request;
-        this.ctx = ctx;
-        this.gallery_listview = gallery_listview;
+    public GalleryCommand(Context context, HttpRequest httpRequest, ListView galleryListView) {
+        this.context = context;
+        this.httpRequest = httpRequest;
+        this.galleryListView = galleryListView;
     }
 
     public void execute(){
-        RequestQueue queue = Volley.newRequestQueue(ctx);
-        JsonArrayRequest jsonArReq = new JsonArrayRequest(Request.Method.GET, request.getURL(), null, new Response.Listener<JSONArray>()
+        RequestQueue queue = Volley.newRequestQueue(context);
+        JsonArrayRequest jsonArReq = new JsonArrayRequest(Request.Method.GET, httpRequest.getURL(), null, new Response.Listener<JSONArray>()
         {
             @Override
             public void onResponse(JSONArray response)
             {
-                Log.i("Volley Res:", String.valueOf(response.length()));
+                Log.i("GalleryCommand", "Volley Res onResponse: " + String.valueOf(response.length()));
 
                 try {
                     mediaCollection = MediaParser.parse(response);
-                    request.setResponse("Length: "+response.length());
+                    httpRequest.setResponse("Length: "+response.length());
 
-                    ////////////////////////////////
-                    mediaAdapter = new CustomListViewAdapter(ctx, R.layout.item_gallery, mediaCollection,request.getAuthorization());
-                    gallery_listview.setAdapter(mediaAdapter);
+                    mediaAdapter = new CustomListViewAdapter(context, R.layout.item_gallery, mediaCollection, httpRequest.getAuthorization());
+                    galleryListView.setAdapter(mediaAdapter);
 
-
-
-                } catch (JSONException e) {
+                }
+                catch (JSONException e) {
+                    Log.e("GalleryCommand","An Exception occurs in onResponse method.");
                     e.printStackTrace();
                 }
             }
@@ -73,27 +72,43 @@ public class GalleryCommand implements CommandInterface {
             @Override
             public void onErrorResponse(VolleyError error)
             {
-                Log.i("Volley Res:", error.getMessage());
+                Log.i("GalleryCommand", "Volley Res onErrorResponse: " + error.getMessage());
                 //Snackbar.make(view, "Snapshot not taken: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                request.setResponse(error.getMessage());
-
+                httpRequest.setResponse(error.getMessage());
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 // add headers <key,value>
-                String credentials = request.getAuthorization().getUsername()+":"+request.getAuthorization().getPassword();
-                String auth = request.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
+                String credentials = httpRequest.getAuthorization().getUsername()+":"+ httpRequest.getAuthorization().getPassword();
+                String auth = httpRequest.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
                 headers.put("Authorization", auth);
                 return headers;
             }
         };
-        // Add the request to the RequestQueue.
+        // Add the httpRequest to the RequestQueue.
         queue.add(jsonArReq);
     }
 
     public List<Media> getMediaCollection(){
         return mediaCollection;
     }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
+    }
+
+    public ListView getGalleryListView() {
+        return galleryListView;
+    }
+
+    public ArrayAdapter<Media> getMediaAdapter() {
+        return mediaAdapter;
+    }
+
 }
