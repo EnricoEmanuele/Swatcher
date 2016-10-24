@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 
+
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.3'
@@ -18,9 +19,6 @@ android {
         }
     }
 
-
-
-
 }
 
 
@@ -35,6 +33,13 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
+
+    compile 'com.google.firebase:firebase-core:9.2.0'        // this line must be included to integrate with Firebase
+    compile 'com.google.firebase:firebase-messaging:9.2.0'   // this line must be included to use FCM
+
+    //compile 'com.squareup.okhttp3:okhttp:3.4.1'
 }
+
+apply plugin: 'com.google.gms.google-services'
 
 
