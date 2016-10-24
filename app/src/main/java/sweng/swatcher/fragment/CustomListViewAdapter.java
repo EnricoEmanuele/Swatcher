@@ -3,7 +3,6 @@ package sweng.swatcher.fragment;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.List;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -18,10 +17,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.UrlConnectionDownloader;
-
 import sweng.swatcher.R;
 import sweng.swatcher.util.SettingManager;
 import sweng.swatcher.model.Authorization;
@@ -35,6 +32,9 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
     private SettingManager sm;
     private Setting setting;
     private Authorization auth;
+    public static final String JPEG = "jpeg";
+    public static final String JPG = "jpg";
+    public static final String PPM = "ppm";
 
     Media media;
     Picasso customPicasso;
@@ -76,7 +76,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         Picasso.Builder builder = new Picasso.Builder(ctx);
         builder.listener(new CustomPicassoListner());
         customPicasso = builder.downloader(new CustomPicassoLoader(ctx)).build();
-        customPicasso.load(getImageUrl(media)).into(holder.image);
+        customPicasso.load(getMediaUrl(media)).into(holder.image);
 
         DialogListner dialogListner = new DialogListner(media);
 
@@ -105,23 +105,35 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         @Override
         public void onClick(View v)
         {
-           // Log.i("Immagine cliccata: ",getImageUrl(dialog_media));
-
+            //Log.i("Immagine cliccata: ",dialog_media.getExtension());
             final Dialog dialog = new Dialog(ctx);
-            dialog.setContentView(R.layout.dialog_gallery_image);
-            //dialog.setTitle("Title...");
-            ImageView image = (ImageView) dialog.findViewById(R.id.dialog_image);
-            //image.setImageResource(R.drawable.ic_launcher);
-            customPicasso.load(getImageUrl(dialog_media)).into(image);
+            String extension = dialog_media.getExtension();
 
-            Button dialogButton = (Button) dialog.findViewById(R.id.close_button);
-            // if button is clicked, close the custom dialog
-            dialogButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
+            //if media is an image
+            if(extension.equalsIgnoreCase(JPEG) ||extension.equalsIgnoreCase(JPG)|| extension.equalsIgnoreCase(PPM)){
+                Log.i("Immagine cliccata: ",dialog_media.getExtension());
+                dialog.setContentView(R.layout.dialog_gallery_image);
+                //dialog.setTitle("Title...");
+                ImageView image = (ImageView) dialog.findViewById(R.id.dialog_image);
+                //image.setImageResource(R.drawable.ic_launcher);
+                customPicasso.load(getMediaUrl(dialog_media)).into(image);
+
+                Button dialogButton = (Button) dialog.findViewById(R.id.close_button);
+                // if button is clicked, close the custom dialog
+                dialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+            else{
+                //if media is a video
+                Log.i("Video selected: ",dialog_media.getExtension());
+
+            }
+
+
 
             dialog.show();
         }
@@ -142,7 +154,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         }
     }
 
-    public String getImageUrl(Media media){
+    public String getMediaUrl(Media media){
         String path = media.getPath();
         return "http://"+setting.getIpAddress()+":"+setting.getWebServerPort()+"/"+path;
 

@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class MediaTest {
     @Test
     public void getPath() throws Exception {
-        assertEquals(5, 2 + 2);
+        assertEquals(4, 2 + 2);
     }
 
     @Test
