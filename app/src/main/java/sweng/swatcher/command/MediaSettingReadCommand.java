@@ -29,13 +29,17 @@ import sweng.swatcher.util.ParametersKeys;
 
 public class MediaSettingReadCommand implements CommandInterface {
 
-    private Context ctx;
-    private HttpRequest request;
+    private static final String TEXT_ENABLED = "Enabled";
+    private static final String TEXT_DISABLED = "Disabled";
+    final String VALUE_ON = "on";
+
+    private Context context;
+    private HttpRequest httpRequest;
     private View view;
 
-    public MediaSettingReadCommand(Context ctx, HttpRequest request, View view){
-        this.request = request;
-        this.ctx = ctx;
+    public MediaSettingReadCommand(Context context, HttpRequest httpRequest, View view){
+        this.httpRequest = httpRequest;
+        this.context = context;
         this.view = view;
     }
 
@@ -44,14 +48,14 @@ public class MediaSettingReadCommand implements CommandInterface {
      */
     public void execute() {
 
-        RequestQueue queue = Volley.newRequestQueue(ctx);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, request.getURL(), new Response.Listener<String>()
+        RequestQueue queue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, httpRequest.getURL(), new Response.Listener<String>()
         {
             @Override
             public void onResponse(String response)
             {
                 //Log.i("Volley Res", response);
-                request.setResponse(response);
+                httpRequest.setResponse(response);
 
                 //Parsing Response
                 StringTokenizer tokenizer = new StringTokenizer(response);
@@ -72,7 +76,7 @@ public class MediaSettingReadCommand implements CommandInterface {
                         //Set picture type parameter
                         Spinner spinner = (Spinner) view.findViewById(R.id.picture_type);
                         if(!parameterValue.equals(null)){
-                            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(ctx, R.array.picture_types, android.R.layout.simple_spinner_item);
+                            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.picture_types, android.R.layout.simple_spinner_item);
                             int spinnerPosition = adapter.getPosition(parameterValue);
                             spinner.setSelection(spinnerPosition);
                             Log.i("MEDIA_SETTING_READER",ParametersKeys.PICTURE_TYPE+" read "+parameterValue);
@@ -82,12 +86,13 @@ public class MediaSettingReadCommand implements CommandInterface {
                     case ParametersKeys.OUTPUT_MOVIES: {
                         //Set movie enabled parameter
                         Switch movieSwitch = (Switch) view.findViewById(R.id.movie_switch);
-                        if (parameterValue.equalsIgnoreCase("on")) {
+                        if (parameterValue.equalsIgnoreCase(VALUE_ON)) {
                             movieSwitch.setChecked(true);
-                            movieSwitch.setText("Enabled");
-                        } else {
+                            movieSwitch.setText(TEXT_ENABLED);
+                        }
+                        else {
                             movieSwitch.setChecked(false);
-                            movieSwitch.setText("Disabled");
+                            movieSwitch.setText(TEXT_DISABLED);
                         }
                         Log.i("MEDIA_SETTING_READER", ParametersKeys.OUTPUT_MOVIES + " read " + parameterValue);
                         break;
@@ -102,13 +107,13 @@ public class MediaSettingReadCommand implements CommandInterface {
                     case ParametersKeys.OUTPUT_PICTURES: {
                         //Set snapshot enabled parameter
                         Switch snapshotSwitch = (Switch) view.findViewById(R.id.snapshot_switch);
-                        if(parameterValue.equalsIgnoreCase("on")) {
+                        if(parameterValue.equalsIgnoreCase(VALUE_ON)) {
                             snapshotSwitch.setChecked(true);
-                            snapshotSwitch.setText("Enabled");
+                            snapshotSwitch.setText(TEXT_ENABLED);
                         }
                         else{
                             snapshotSwitch.setChecked(false);
-                            snapshotSwitch.setText("Disabled");
+                            snapshotSwitch.setText(TEXT_DISABLED);
                         }
                         Log.i("MEDIA_SETTING_READER",ParametersKeys.OUTPUT_PICTURES+" read "+parameterValue);
                         break;
@@ -137,22 +142,34 @@ public class MediaSettingReadCommand implements CommandInterface {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.i("Volley Res:", error.getMessage());
+                Log.i("MediaSettingReadCommand", "onErrorResponse Volley Res: " + error.getMessage());
                 Snackbar.make(view, "Error reading current setting on Server: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                request.setResponse(error.getMessage());
+                httpRequest.setResponse(error.getMessage());
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 // add headers <key,value>
-                String credentials = request.getAuthorization().getUsername()+":"+request.getAuthorization().getPassword();
-                String auth = request.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
+                String credentials = httpRequest.getAuthorization().getUsername()+":"+ httpRequest.getAuthorization().getPassword();
+                String auth = httpRequest.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
                 headers.put("Authorization", auth);
                 return headers;
             }
         };
-        // Add the request to the RequestQueue.
+        // Add the httpRequest to the RequestQueue.
         queue.add(stringRequest);
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
+    }
+
+    public View getView() {
+        return view;
     }
 }
