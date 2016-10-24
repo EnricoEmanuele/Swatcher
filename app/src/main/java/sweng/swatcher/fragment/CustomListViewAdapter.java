@@ -72,7 +72,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
         holder.name.setText(media.getName());
         holder.size.setText(media.getSize());
-        
+
         Picasso.Builder builder = new Picasso.Builder(ctx);
         builder.listener(new CustomPicassoListner());
         customPicasso = builder.downloader(new CustomPicassoLoader(ctx)).build();
