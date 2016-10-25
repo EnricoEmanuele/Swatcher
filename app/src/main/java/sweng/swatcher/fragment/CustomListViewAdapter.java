@@ -38,30 +38,31 @@ import sweng.swatcher.model.Setting;
 
 public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
-    private Context ctx;
-    private SettingManager sm;
+    private static final String JPEG_IMAGE_EXTENSION = "jpeg";
+    private static final String JPG_IMAGE_EXTENSION = "jpg";
+    private static final String PPM_IMAGE_EXTENSION = "ppm";
+
+    private Context context;
+    private SettingManager settingManager;
     private Setting setting;
     private Authorization authorization;
-    public static final String JPEG = "jpeg";
-    public static final String JPG = "jpg";
-    public static final String PPM = "ppm";
 
-    Media media;
-    Picasso customPicasso;
+    private Media media;
+    private Picasso customPicasso;
 
-    public CustomListViewAdapter(Context ctx, int resource, List<Media> mediaList, Authorization authorization) {
-        super(ctx, resource, mediaList);
-        this.ctx = ctx;
+    public CustomListViewAdapter(Context context, int resource, List<Media> mediaList, Authorization authorization) {
+        super(context, resource, mediaList);
+        this.context = context;
         this.authorization = authorization;
-        this.sm = new SettingManager(ctx);
-        this.setting = sm.getSetting();
+        this.settingManager = new SettingManager(context);
+        this.setting = settingManager.getSetting();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         ViewHolder holder = null;
-        LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         // If holder not exist then locate all view from UI file.
         if (convertView == null) {
             // inflate UI from XML file
@@ -70,7 +71,8 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
             holder = new ViewHolder(convertView);
             // set tag for holder
             convertView.setTag(holder);
-        } else {
+        }
+        else {
             // if holder created, get tag from view
             holder = (ViewHolder) convertView.getTag();
         }
@@ -80,9 +82,9 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         holder.name.setText(media.getName());
         holder.size.setText(media.getSize());
 
-        Picasso.Builder builder = new Picasso.Builder(ctx);
+        Picasso.Builder builder = new Picasso.Builder(context);
         builder.listener(new CustomPicassoListner());
-        customPicasso = builder.downloader(new CustomPicassoLoader(ctx)).build();
+        customPicasso = builder.downloader(new CustomPicassoLoader(context)).build();
         customPicasso.load(getMediaUrl(media)).into(holder.image);
 
         DialogListner dialogListner = new DialogListner(media);
@@ -103,32 +105,34 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
     private class DialogListner implements View.OnClickListener
     {
-        Media dialog_media;
+        Media dialogMedia;
 
-        public DialogListner(Media dialog_media) {
-            this.dialog_media = dialog_media;
+        public DialogListner(Media dialogMedia) {
+            this.dialogMedia = dialogMedia;
         }
 
         @Override
         public void onClick(View v)
         {
-            //Log.i("Immagine cliccata: ",dialog_media.getExtension());
-            final Dialog dialog = new Dialog(ctx);
+            //Log.i("Immagine cliccata: ",dialogMedia.getExtension());
+            final Dialog dialog = new Dialog(context);
             Button dialogButton;
-            String extension = dialog_media.getExtension();
+            String extension = dialogMedia.getExtension();
             MediaController mediaController;
             Map<String,String> headers;
 
             /*
              * if media is an Image
              */
-            if(extension.equalsIgnoreCase(JPEG) ||extension.equalsIgnoreCase(JPG)|| extension.equalsIgnoreCase(PPM)){
-                Log.i("Image selected: ",dialog_media.getExtension());
+            if(extension.equalsIgnoreCase(JPEG_IMAGE_EXTENSION)
+                    || extension.equalsIgnoreCase(JPG_IMAGE_EXTENSION) || extension.equalsIgnoreCase(PPM_IMAGE_EXTENSION)) {
+
+                Log.i("Image selected: ", dialogMedia.getExtension());
                 dialog.setContentView(R.layout.dialog_gallery_image);
                 //dialog.setTitle("Title...");
                 ImageView image = (ImageView) dialog.findViewById(R.id.dialog_image);
                 //image.setImageResource(R.drawable.ic_launcher);
-                customPicasso.load(getMediaUrl(dialog_media)).into(image);
+                customPicasso.load(getMediaUrl(dialogMedia)).into(image);
 
                 // if button is clicked, close the custom dialog
                 dialogButton = (Button) dialog.findViewById(R.id.close_button);
@@ -143,17 +147,17 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
                 /*
                  * if media is a Video
                  */
-                Log.i("Video selected: ",dialog_media.getExtension());
+                Log.i("Video selected: ", dialogMedia.getExtension());
                 dialog.setContentView(R.layout.dialog_gallery_video);
                 final VideoView videoView = (VideoView) dialog.findViewById(R.id.video_view);
-                final ProgressDialog progressDialog = new ProgressDialog(ctx);
+                final ProgressDialog progressDialog = new ProgressDialog(context);
                 progressDialog.setTitle("Download Video");
                 progressDialog.setMessage("downloading...");
                 progressDialog.setCancelable(false);
                 progressDialog.show();
 
                 //set controllers
-                mediaController = new MediaController(ctx);
+                mediaController = new MediaController(context);
                 mediaController.setAnchorView(videoView);
                 mediaController.setMediaPlayer(videoView);
                 videoView.setMediaController(mediaController);
@@ -163,18 +167,20 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
                 String credentials = authorization.getUsername()+":"+ authorization.getPassword();
                 String auth = authorization.getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
                 headers.put("Authorization", auth);
-                //videoView.setVideoURI(Uri.parse(getMediaUrl(dialog_media)),headers);
+                //videoView.setVideoURI(Uri.parse(getMediaUrl(dialogMedia)),headers);
                 try{
                     Method setVideoURIMethod = videoView.getClass().getMethod("setVideoURI", Uri.class, Map.class);
-                    setVideoURIMethod.invoke(videoView,Uri.parse(getMediaUrl(dialog_media)),headers);
+                    setVideoURIMethod.invoke(videoView,Uri.parse(getMediaUrl(dialogMedia)),headers);
                 }
                 catch (java.lang.NoSuchMethodException nsme){
                     Log.i("exception","no such method");
                     nsme.printStackTrace();
-                } catch (InvocationTargetException ite) {
+                }
+                catch (InvocationTargetException ite) {
                     Log.i("exception","invocation target");
                     ite.printStackTrace();
-                } catch (IllegalAccessException iae) {
+                }
+                catch (IllegalAccessException iae) {
                     Log.i("exception","illegal access");
                     iae.printStackTrace();
                 }
