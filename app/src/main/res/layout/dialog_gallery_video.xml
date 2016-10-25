@@ -4,7 +4,7 @@
 
     <VideoView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/video_view" />
 
     <Button
@@ -14,4 +14,5 @@
         android:id="@+id/close_video_button"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

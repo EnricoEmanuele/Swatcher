@@ -10,6 +10,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -115,7 +116,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
             final Dialog dialog = new Dialog(ctx);
             Button dialogButton;
             String extension = dialog_media.getExtension();
-            MediaController mediaController = new MediaController(ctx);
+            MediaController mediaController;
             Map<String,String> headers;
 
             /*
@@ -145,8 +146,16 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
                 Log.i("Video selected: ",dialog_media.getExtension());
                 dialog.setContentView(R.layout.dialog_gallery_video);
                 final VideoView videoView = (VideoView) dialog.findViewById(R.id.video_view);
+                final ProgressDialog progressDialog = new ProgressDialog(ctx);
+                progressDialog.setTitle("Download Video");
+                progressDialog.setMessage("downloading...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
 
                 //set controllers
+                mediaController = new MediaController(ctx);
+                mediaController.setAnchorView(videoView);
+                mediaController.setMediaPlayer(videoView);
                 videoView.setMediaController(mediaController);
 
                 //set headers
@@ -159,19 +168,22 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
                     Method setVideoURIMethod = videoView.getClass().getMethod("setVideoURI", Uri.class, Map.class);
                     setVideoURIMethod.invoke(videoView,Uri.parse(getMediaUrl(dialog_media)),headers);
                 }
-                catch (java.lang.NoSuchMethodException e){
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                catch (java.lang.NoSuchMethodException nsme){
+                    Log.i("exception","no such method");
+                    nsme.printStackTrace();
+                } catch (InvocationTargetException ite) {
+                    Log.i("exception","invocation target");
+                    ite.printStackTrace();
+                } catch (IllegalAccessException iae) {
+                    Log.i("exception","illegal access");
+                    iae.printStackTrace();
                 }
-
 
                 videoView.requestFocus();
                 videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
+                        progressDialog.dismiss();
                         videoView.seekTo(0);
                         videoView.start();
                     }
@@ -182,6 +194,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
                 dialogButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        progressDialog.dismiss();
                         dialog.dismiss();
                     }
                 });
