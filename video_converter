@@ -1,0 +1,5 @@
+#!/bin/bash
+# My first script
+
+ffmpeg -i $1 -acodec libfaac -flags +aic+mv4 $1.mp4
+rm $1
