@@ -1,32 +1,26 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title></title>
-    </head>
-    <body>
-        <?php
+ <?php
         
         class Media{
             var $name;
             var $extension;
             var $size;
             var $date;
-            
-            function __construct($name, $extension, $size, $date) {
+	    var $path;  
+          
+            function __construct($name, $extension, $size, $date, $dir) {
                 $this->name = $name;
                 $this->extension = $extension;
                 $this->size = $size;
                 $this->date = $date;
+		$this->path = $dir."/".$name;
             }
             
             function getName() {
                 return $this->name;
+            }
+
+	    function getPath() {
+                return $this->path;
             }
 
             function getExtension() {
@@ -44,7 +38,10 @@ and open the template in the editor.
             function setName($name) {
                 $this->name = $name;
             }
-
+	    
+	    function setPath($path) {
+                $this->path = $path;
+            }
             function setExtension($extension) {
                 $this->extension = $extension;
             }
@@ -63,7 +60,7 @@ and open the template in the editor.
         
         }
         
-        $dir = "/mnt/picam";
+        $dir = "picam";
         $mediaArray = [];
         
         // Open a directory, and read its contents
@@ -75,8 +72,10 @@ and open the template in the editor.
                         $extension = pathinfo($dir . '/' . $file, PATHINFO_EXTENSION);
                         $date = date("F d Y H:i:s.",filemtime($dir . '/' . $file));
                         $size = filesize($dir . '/' . $file);
-                        $media = new Media($name, $extension, $size, $date);
-                        array_push($mediaArray, $media);
+                        $media = new Media($name, $extension, $size, $date, $dir);
+						if($media->getExtension() !== "avi"){
+                        	array_push($mediaArray, $media);
+						}
                         //echo $media->toString();
                     }
                 }
@@ -86,6 +85,4 @@ and open the template in the editor.
         
         echo json_encode($mediaArray);
         
-        ?>
-    </body>
-</html>
+?>
