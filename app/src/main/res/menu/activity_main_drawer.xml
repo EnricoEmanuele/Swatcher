@@ -4,19 +4,19 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/home"
-            android:icon="@drawable/ic_menu_send"
+            android:icon="@drawable/ic_home"
             android:title="Home" />
         <item
             android:id="@+id/connection_settings"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_connection_settings"
             android:title="Connection Settings" />
         <item
             android:id="@+id/media_settings"
-            android:icon="@drawable/vector_drawable_lock"
+            android:icon="@drawable/ic_media_settings"
             android:title="Media Settings" />
         <item
             android:id="@+id/security_settings"
-            android:icon="@drawable/vector_drawable_lock"
+            android:icon="@drawable/ic_security_settings"
             android:title="Security Settings" />
         <item
             android:id="@+id/nav_gallery"
@@ -28,7 +28,7 @@
         <menu>
             <item
                 android:id="@+id/about"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_about"
                 android:title="About Us" />
         </menu>
     </item>
