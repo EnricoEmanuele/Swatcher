@@ -7,7 +7,6 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -26,7 +25,6 @@ import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
-
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.UrlConnectionDownloader;
 import sweng.swatcher.R;
@@ -116,7 +114,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
             final Dialog dialog = new Dialog(ctx);
             Button dialogButton;
             String extension = dialog_media.getExtension();
-            MediaController mediaController;
+            final MediaController mediaController;
             Map<String,String> headers;
 
             /*
@@ -183,12 +181,32 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
                 videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
+                        /*mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+                            @Override
+                            public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i1) {
+                                MediaController mc = new MediaController(ctx);
+                                videoView.setMediaController(mc);
+                                mc.setAnchorView(videoView);
+                            }
+                        });*/
                         progressDialog.dismiss();
+                        videoView.setMediaController(mediaController);
+                        mediaController.setAnchorView(videoView);
                         videoView.seekTo(0);
+                        videoView.requestFocus();
                         videoView.start();
+                        mediaController.show();
                     }
                 });
-
+                videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        if (progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        //mp.release();
+                    }
+                });
                 // if button is clicked, close the custom dialog
                 dialogButton = (Button) dialog.findViewById(R.id.close_video_button);
                 dialogButton.setOnClickListener(new View.OnClickListener() {
