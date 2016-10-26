@@ -7,9 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import sweng.swatcher.R;
+
+
+
 
 
 /**
@@ -31,10 +33,6 @@ public class AboutFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
-
-    private Button settings;
-    private Button streaming;
 
     public AboutFragment() {
         // Required empty public constructor
@@ -72,6 +70,7 @@ public class AboutFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_about, container, false);
+
         handleAbout(view);
         return view;
     }
@@ -117,7 +116,9 @@ public class AboutFragment extends Fragment {
 
     private void handleAbout(View view){
 
+
     }
+
 
 
 

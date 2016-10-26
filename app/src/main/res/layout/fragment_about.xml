@@ -10,46 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="is a project developed during the &quot;Software Engineering&quot; course at University of Sannio, 2014/2015"
-            android:gravity="center_horizontal|fill_vertical"
-            android:id="@+id/textView6" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="SWATCHER"
-            android:id="@+id/textView5"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="144dp" />
-
-        <Button
-            android:text="Streaming"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/button_settings"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="60dp"
-            android:layout_marginEnd="60dp"
-            android:id="@+id/button_streaming" />
-
-        <Button
-            android:text="Settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="11dp"
-            android:layout_marginEnd="11dp"
-            android:layout_marginBottom="87dp"
-            android:id="@+id/button_settings"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/textView5"
-            android:layout_toStartOf="@+id/textView5" />
-
 
     </RelativeLayout>
 
