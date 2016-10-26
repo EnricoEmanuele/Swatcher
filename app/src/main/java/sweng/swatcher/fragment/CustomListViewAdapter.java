@@ -117,7 +117,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
             final Dialog dialog = new Dialog(context);
             Button dialogButton;
             String extension = dialogMedia.getExtension();
-            MediaController mediaController;
+            final MediaController mediaController;
             Map<String,String> headers;
 
             /*
