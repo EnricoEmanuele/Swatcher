@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Base64;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.UrlConnectionDownloader;
+
 import sweng.swatcher.R;
 import sweng.swatcher.util.SettingManager;
 import sweng.swatcher.model.Authorization;
@@ -82,8 +85,15 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
         Picasso.Builder builder = new Picasso.Builder(context);
         builder.listener(new CustomPicassoListner());
-        customPicasso = builder.downloader(new CustomPicassoLoader(context)).build();
-        customPicasso.load(getMediaUrl(media)).into(holder.image);
+
+        if(isImage(media)){
+            customPicasso = builder.downloader(new CustomPicassoLoader(context)).build();
+            customPicasso.load(getMediaUrl(media)).into(holder.image);
+        }
+        else{
+            holder.image.setImageResource(R.drawable.video_icon);
+        }
+
 
         DialogListner dialogListner = new DialogListner(media);
 
@@ -112,18 +122,17 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         @Override
         public void onClick(View v)
         {
+
             //Log.i("Immagine cliccata: ",dialogMedia.getExtension());
             final Dialog dialog = new Dialog(context);
             Button dialogButton;
-            String extension = dialogMedia.getExtension();
             final MediaController mediaController;
             Map<String,String> headers;
 
             /*
              * if media is an Image
              */
-            if(extension.equalsIgnoreCase(JPEG_IMAGE_EXTENSION)
-                    || extension.equalsIgnoreCase(JPG_IMAGE_EXTENSION) || extension.equalsIgnoreCase(PPM_IMAGE_EXTENSION)) {
+            if(isImage(dialogMedia)){
 
                 Log.i("Image selected: ", dialogMedia.getExtension());
                 dialog.setContentView(R.layout.dialog_gallery_image);
@@ -148,6 +157,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
                 Log.i("Video selected: ", dialogMedia.getExtension());
                 dialog.setContentView(R.layout.dialog_gallery_video);
                 final VideoView videoView = (VideoView) dialog.findViewById(R.id.video_view);
+
                 final ProgressDialog progressDialog = new ProgressDialog(context);
                 progressDialog.setTitle("Download Video");
                 progressDialog.setMessage("downloading...");
@@ -261,6 +271,14 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
                     + Base64.encodeToString((authorization.getUsername()+":"+ authorization.getPassword()).getBytes(), Base64.NO_WRAP));
             return c;
         }
+    }
+
+    private boolean isImage(Media media){
+        String ext = media.getExtension();
+        if(ext.equalsIgnoreCase(JPEG_IMAGE_EXTENSION) || ext.equalsIgnoreCase(JPG_IMAGE_EXTENSION) || ext.equalsIgnoreCase(PPM_IMAGE_EXTENSION)){
+            return true;
+        }
+        else return false;
     }
 
 }
