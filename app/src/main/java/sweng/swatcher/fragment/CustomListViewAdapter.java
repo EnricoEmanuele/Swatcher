@@ -61,10 +61,13 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        ViewHolder holder = null;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+        media = getItem(position);
+
         // If holder not exist then locate all view from UI file.
+        ViewHolder holder = null;
+
         if (convertView == null) {
             // inflate UI from XML file
             convertView = inflater.inflate(R.layout.item_gallery, parent, false);
@@ -78,8 +81,6 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        media = getItem(position);
-
         holder.name.setText(media.getName());
         holder.size.setText(media.getSize());
 
@@ -91,12 +92,11 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
             customPicasso.load(getMediaUrl(media)).into(holder.image);
         }
         else{
+            //Media is a Video
             holder.image.setImageResource(R.drawable.video_icon);
         }
 
-
         DialogListner dialogListner = new DialogListner(media);
-
         holder.singleItem.setOnClickListener(dialogListner);
 
         return convertView;
@@ -122,81 +122,86 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         @Override
         public void onClick(View v)
         {
-
             //Log.i("Immagine cliccata: ",dialogMedia.getExtension());
             final Dialog dialog = new Dialog(context);
-            Button dialogButton;
-            final MediaController mediaController;
-            Map<String,String> headers;
+            Button dialogButton = null;
 
-            /*
-             * if media is an Image
-             */
             if(isImage(dialogMedia)){
-
-                Log.i("Image selected: ", dialogMedia.getExtension());
-                dialog.setContentView(R.layout.dialog_gallery_image);
-                //dialog.setTitle("Title...");
-                ImageView image = (ImageView) dialog.findViewById(R.id.dialog_image);
-                //image.setImageResource(R.drawable.ic_launcher);
-                customPicasso.load(getMediaUrl(dialogMedia)).into(image);
-
-                // if button is clicked, close the custom dialog
-                dialogButton = (Button) dialog.findViewById(R.id.close_button);
-                dialogButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
+                // Media is an Image
+                onImageClick(dialog, dialogButton );
             }
             else{
-                /*
-                 * if media is a Video
-                 */
-                Log.i("Video selected: ", dialogMedia.getExtension());
-                dialog.setContentView(R.layout.dialog_gallery_video);
-                final VideoView videoView = (VideoView) dialog.findViewById(R.id.video_view);
+                // media is a Video
+                onVideoClick(dialog, dialogButton );
+            }
+            dialog.show();
+        }
 
-                final ProgressDialog progressDialog = new ProgressDialog(context);
-                progressDialog.setTitle("Download Video");
-                progressDialog.setMessage("downloading...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
+        // auxiliary method used in onClick(View v)
+        private void onImageClick(final Dialog dialog, Button dialogButton ){
+            Log.i("Image selected: ", dialogMedia.getExtension());
+            dialog.setContentView(R.layout.dialog_gallery_image);
+            //dialog.setTitle("Title...");
+            ImageView image = (ImageView) dialog.findViewById(R.id.dialog_image);
+            //image.setImageResource(R.drawable.ic_launcher);
+            customPicasso.load(getMediaUrl(dialogMedia)).into(image);
 
-                //set controllers
-                mediaController = new MediaController(context);
-                mediaController.setAnchorView(videoView);
-                mediaController.setMediaPlayer(videoView);
-                videoView.setMediaController(mediaController);
+            // if button is clicked, close the custom dialog
+            dialogButton = (Button) dialog.findViewById(R.id.close_button);
+            dialogButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+        }
 
-                //set headers
-                headers = new HashMap<String,String>();
-                String credentials = authorization.getUsername()+":"+ authorization.getPassword();
-                String auth = authorization.getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                //videoView.setVideoURI(Uri.parse(getMediaUrl(dialogMedia)),headers);
-                try{
-                    Method setVideoURIMethod = videoView.getClass().getMethod("setVideoURI", Uri.class, Map.class);
-                    setVideoURIMethod.invoke(videoView,Uri.parse(getMediaUrl(dialogMedia)),headers);
-                }
-                catch (java.lang.NoSuchMethodException nsme){
-                    Log.i("exception","no such method");
-                    nsme.printStackTrace();
-                }
-                catch (InvocationTargetException ite) {
-                    Log.i("exception","invocation target");
-                    ite.printStackTrace();
-                }
-                catch (IllegalAccessException iae) {
-                    Log.i("exception","illegal access");
-                    iae.printStackTrace();
-                }
+        // auxiliary method used in onClick(View v)
+        private void onVideoClick(final Dialog dialog, Button dialogButton ){
+            Log.i("Video selected: ", dialogMedia.getExtension());
+            dialog.setContentView(R.layout.dialog_gallery_video);
+            final VideoView videoView = (VideoView) dialog.findViewById(R.id.video_view);
 
-                videoView.requestFocus();
-                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mediaPlayer) {
+            // Progress Dialog For Downloading...
+            final ProgressDialog progressDialog = new ProgressDialog(context);
+            progressDialog.setTitle("Download Video");
+            progressDialog.setMessage("downloading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
+            //set controllers
+            final MediaController mediaController = new MediaController(context);
+            videoView.setMediaController(mediaController);
+            mediaController.setAnchorView(videoView);
+            mediaController.setMediaPlayer(videoView);
+
+            //set headers
+            Map<String,String> headers = new HashMap<String,String>();
+            String credentials = authorization.getUsername()+":"+ authorization.getPassword();
+            String auth = authorization.getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
+            headers.put("Authorization", auth);
+            //videoView.setVideoURI(Uri.parse(getMediaUrl(dialogMedia)),headers);
+            try{
+                Method setVideoURIMethod = videoView.getClass().getMethod("setVideoURI", Uri.class, Map.class);
+                setVideoURIMethod.invoke(videoView,Uri.parse(getMediaUrl(dialogMedia)),headers);
+            }
+            catch (java.lang.NoSuchMethodException nsme){
+                Log.i("exception","no such method");
+                nsme.printStackTrace();
+            }
+            catch (InvocationTargetException ite) {
+                Log.i("exception","invocation target");
+                ite.printStackTrace();
+            }
+            catch (IllegalAccessException iae) {
+                Log.i("exception","illegal access");
+                iae.printStackTrace();
+            }
+
+            videoView.requestFocus();
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
                         /*mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
                             @Override
                             public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i1) {
@@ -205,36 +210,36 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
                                 mc.setAnchorView(videoView);
                             }
                         });*/
+                    progressDialog.dismiss();
+                    videoView.setMediaController(mediaController);
+                    mediaController.setAnchorView(videoView);
+                    videoView.seekTo(0);
+                    videoView.requestFocus();
+                    videoView.start();
+                    mediaController.show();
+                }
+            });
+            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
-                        videoView.setMediaController(mediaController);
-                        mediaController.setAnchorView(videoView);
-                        videoView.seekTo(0);
-                        videoView.requestFocus();
-                        videoView.start();
-                        mediaController.show();
                     }
-                });
-                videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        if (progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                        //mp.release();
-                    }
-                });
-                // if button is clicked, close the custom dialog
-                dialogButton = (Button) dialog.findViewById(R.id.close_video_button);
-                dialogButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        progressDialog.dismiss();
-                        dialog.dismiss();
-                    }
-                });
-            }
-            dialog.show();
+                    //mp.release();
+                }
+            });
+            // if button is clicked, close the custom dialog
+            dialogButton = (Button) dialog.findViewById(R.id.close_video_button);
+            dialogButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    progressDialog.dismiss();
+                    dialog.dismiss();
+                }
+            });
         }
+        // end of onVideoClick method implementation
+
     }
 
     private static class ViewHolder {
