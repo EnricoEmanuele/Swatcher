@@ -47,8 +47,7 @@ public class GalleryCommand implements CommandInterface {
 
     public void execute(){
         RequestQueue queue = Volley.newRequestQueue(context);
-        JsonArrayRequest jsonArReq = new JsonArrayRequest(Request.Method.GET, httpRequest.getURL(), null, new Response.Listener<JSONArray>()
-        {
+        JsonArrayRequest jsonArReq = new JsonArrayRequest(Request.Method.GET, httpRequest.getURL(), null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response)
             {

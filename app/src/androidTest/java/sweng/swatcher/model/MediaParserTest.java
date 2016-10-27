@@ -1,4 +1,4 @@
-package sweng.swatcher;
+package sweng.swatcher.model;
 
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
@@ -57,7 +57,6 @@ public class MediaParserTest {
         oracleMediaArrayList.add(media2);
 
     }
-
 
     @Test
     public void test_parse() throws JSONException {

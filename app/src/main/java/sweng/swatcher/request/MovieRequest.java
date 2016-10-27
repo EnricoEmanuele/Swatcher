@@ -30,5 +30,4 @@ public class MovieRequest extends HttpRequest{
                 "/"+threadNumber+
                 "/action/makemovie";
     }
-
 }
