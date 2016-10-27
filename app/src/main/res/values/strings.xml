@@ -14,5 +14,13 @@
         <item>ppm</item>
     </string-array>
 
+    <string-array name="on_detection_values">
+        <item>on</item>
+        <item>off</item>
+        <item>first</item>
+        <item>center</item>
+        <item>best</item>
+    </string-array>
+
 </resources>
 

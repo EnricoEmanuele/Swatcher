@@ -7,7 +7,7 @@ package sweng.swatcher.model;
 public class MediaSetting {
 
     private int maxMovieTime;     //massima durata del video registrato
-    private String outputPicture; //snapshot quando rileva movimento (on/off)
+    private String outputPicture; //snapshot quando rileva movimento (on/off/first/center/best)
     private int qualityImage;     //Qualità della compressione immagine 0-99%
     private String pictureType;   //type image jpeg o ppm
     private int threshold;        //Soglia pixel che cambiano per far scattare detection (1500 def)
