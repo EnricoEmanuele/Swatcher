@@ -46,7 +46,5 @@ public class Authorization {
     public String encodeAuthorization(){
         String auth = username + ":" + password;
         return Base64.encodeToString(auth.getBytes(),Base64.NO_WRAP);
-
-
     }
 }

@@ -1,5 +1,9 @@
 package sweng.swatcher.model;
 
+import android.animation.ObjectAnimator;
+
+import java.util.Objects;
+
 /**
  * Created by ee on 07/10/16.
  */
@@ -58,7 +62,10 @@ public class Media {
 
     // equals is null safe but s taken for granted that all proprties
     // of this Object are always different from null
-    public boolean equals(Media otherMedia){
+
+    @Override
+    public boolean equals(Object object){
+        Media otherMedia = (Media) object;
         if (otherMedia == null)
             return false;
 

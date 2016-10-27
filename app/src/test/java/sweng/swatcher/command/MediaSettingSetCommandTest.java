@@ -8,13 +8,4 @@ import org.junit.Test;
 
 public class MediaSettingSetCommandTest {
 
-    @Test
-    public void test_MediaSettingSetCommand(){
-
-    }
-
-    @Test void test_execute(){
-
-    }
-
 }

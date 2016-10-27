@@ -111,8 +111,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         }
     }
 
-    private class DialogListner implements View.OnClickListener
-    {
+    private class DialogListner implements View.OnClickListener {
         Media dialogMedia;
 
         public DialogListner(Media dialogMedia) {
@@ -120,8 +119,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         }
 
         @Override
-        public void onClick(View v)
-        {
+        public void onClick(View v) {
             //Log.i("Immagine cliccata: ",dialogMedia.getExtension());
             final Dialog dialog = new Dialog(context);
             Button dialogButton = null;
