@@ -23,6 +23,7 @@ import java.util.Map;
 import sweng.swatcher.fragment.CustomListViewAdapter;
 import sweng.swatcher.R;
 import sweng.swatcher.model.Media;
+import sweng.swatcher.model.MediaParser;
 import sweng.swatcher.request.HttpRequest;
 
 /**

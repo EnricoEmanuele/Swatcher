@@ -1,4 +1,4 @@
-package sweng.swatcher.command;
+package sweng.swatcher.model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -7,14 +7,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import sweng.swatcher.model.Media;
-
 /**
- * Created by ee on 18/10/16.
+ * Created by WILMER on 27/10/2016.
  */
 
 public class MediaParser {
-
     public static List<Media> parse(JSONArray jsonArray) throws JSONException {
 
         List<Media> mediaArrayList = new ArrayList<Media>();
