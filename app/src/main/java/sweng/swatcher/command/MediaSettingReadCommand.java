@@ -106,16 +106,13 @@ public class MediaSettingReadCommand implements CommandInterface {
                     }
                     case ParametersKeys.OUTPUT_PICTURES: {
                         //Set snapshot enabled parameter
-                        Switch snapshotSwitch = (Switch) view.findViewById(R.id.snapshot_switch);
-                        if(parameterValue.equalsIgnoreCase(VALUE_ON)) {
-                            snapshotSwitch.setChecked(true);
-                            snapshotSwitch.setText(TEXT_ENABLED);
+                        Spinner snapshotSpinner = (Spinner) view.findViewById(R.id.snapshot_spinner);
+                        if(!parameterValue.equals(null)){
+                            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.on_detection_values, android.R.layout.simple_spinner_item);
+                            int spinnerPosition = adapter.getPosition(parameterValue);
+                            snapshotSpinner.setSelection(spinnerPosition);
+                            Log.i("MEDIA_SETTING_READER",ParametersKeys.OUTPUT_PICTURES+" read "+parameterValue);
                         }
-                        else{
-                            snapshotSwitch.setChecked(false);
-                            snapshotSwitch.setText(TEXT_DISABLED);
-                        }
-                        Log.i("MEDIA_SETTING_READER",ParametersKeys.OUTPUT_PICTURES+" read "+parameterValue);
                         break;
                     }
                     case ParametersKeys.THRESHOLD: {
