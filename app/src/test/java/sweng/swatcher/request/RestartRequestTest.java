@@ -18,8 +18,8 @@ public class RestartRequestTest {
 
     @Before
     public void setUp(){
-        oracleURL = "http://127.0.0.1:80/0/action/restart";
-        restartRequest = new RestartRequest("127.0.0.1","80",new Authorization("user","password","Basic"),0);
+        oracleURL = "http://127.0.0.1:4321/0/action/restart";
+        restartRequest = new RestartRequest("127.0.0.1","4321",new Authorization("user","password","Basic"),0);
     }
 
     @Test

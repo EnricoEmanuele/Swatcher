@@ -19,8 +19,8 @@ public class ReadMediaSettingRequestTest {
 
     @Before
     public void setUp(){
-        oracleURL = "http://127.0.0.1:80/0/config/get?query=picture_type";
-        readMediaSettingRequest = new ReadMediaSettingRequest("127.0.0.1","80",new Authorization("user","password","Basic"),0,parameter);
+        oracleURL = "http://127.0.0.1:4321/0/config/get?query=picture_type";
+        readMediaSettingRequest = new ReadMediaSettingRequest("127.0.0.1","4321",new Authorization("user","password","Basic"),0,parameter);
     }
 
     @Test

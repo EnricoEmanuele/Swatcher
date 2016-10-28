@@ -20,8 +20,8 @@ public class WriteMediaSettingRequestTest {
 
     @Before
     public void setUp(){
-        oracleURL = "http://127.0.0.1:80/0/config/write";
-        writeMediaSettingRequest = new WriteMediaSettingRequest("127.0.0.1","80",new Authorization("user","password","Basic"),0);
+        oracleURL = "http://127.0.0.1:4321/0/config/write";
+        writeMediaSettingRequest = new WriteMediaSettingRequest("127.0.0.1","4321",new Authorization("user","password","Basic"),0);
     }
 
     @Test

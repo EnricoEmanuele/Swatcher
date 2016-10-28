@@ -21,8 +21,8 @@ public class SetMediaSettingRequestTest {
 
     @Before
     public void setUp(){
-        oracleURL = "http://127.0.0.1:80/0/config/set?output_pictures=on";
-        setMediaSettingRequest = new SetMediaSettingRequest("127.0.0.1","80",new Authorization("user","password","Basic"),0,parameter,value);
+        oracleURL = "http://127.0.0.1:4321/0/config/set?output_pictures=on";
+        setMediaSettingRequest = new SetMediaSettingRequest("127.0.0.1","4321",new Authorization("user","password","Basic"),0,parameter,value);
     }
 
     @Test

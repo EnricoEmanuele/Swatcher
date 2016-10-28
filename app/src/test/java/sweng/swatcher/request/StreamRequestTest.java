@@ -21,8 +21,8 @@ public class StreamRequestTest {
 
     @Before
     public void setUp(){
-        oracleURL = "http://127.0.0.1:80";
-        streamRequest = new StreamRequest("127.0.0.1","80",new Authorization("user","password","Basic"));
+        oracleURL = "http://127.0.0.1:5432";
+        streamRequest = new StreamRequest("127.0.0.1","5432",new Authorization("user","password","Basic"));
     }
 
     @Test

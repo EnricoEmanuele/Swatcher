@@ -22,8 +22,8 @@ public class MovieRequestTest {
 
     @Before
     public void setUp(){
-        oracleURL = "http://127.0.0.1:80/0/action/makemovie";
-        movieRequest = new MovieRequest("127.0.0.1","80",new Authorization("user","password","Basic"),0,view);
+        oracleURL = "http://127.0.0.1:4321/0/action/makemovie";
+        movieRequest = new MovieRequest("127.0.0.1","4321",new Authorization("user","password","Basic"),0,view);
     }
 
     @Test
