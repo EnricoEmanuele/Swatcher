@@ -2,7 +2,6 @@ package sweng.swatcher.util;
 
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
-
 import java.util.ArrayList;
 import java.util.List;
 

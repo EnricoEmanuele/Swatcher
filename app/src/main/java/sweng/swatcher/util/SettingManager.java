@@ -3,7 +3,6 @@ package sweng.swatcher.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-
 import sweng.swatcher.model.Setting;
 
 /**

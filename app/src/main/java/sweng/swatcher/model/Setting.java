@@ -118,5 +118,41 @@ public class Setting {
         this.password = password;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Setting setting = (Setting) o;
+
+        if (!ipAddress.equals(setting.ipAddress)) return false;
+        if (!ip1.equals(setting.ip1)) return false;
+        if (!ip2.equals(setting.ip2)) return false;
+        if (!ip3.equals(setting.ip3)) return false;
+        if (!ip4.equals(setting.ip4)) return false;
+        if (!streamingPort.equals(setting.streamingPort)) return false;
+        if (!commandPort.equals(setting.commandPort)) return false;
+        if (!webServerPort.equals(setting.webServerPort)) return false;
+        if (!username.equals(setting.username)) return false;
+        if (!password.equals(setting.password)) return false;
+        if (!newUsername.equals(setting.newUsername)) return false;
+        return newPassword.equals(setting.newPassword);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = ipAddress.hashCode();
+        result = 31 * result + ip1.hashCode();
+        result = 31 * result + ip2.hashCode();
+        result = 31 * result + ip3.hashCode();
+        result = 31 * result + ip4.hashCode();
+        result = 31 * result + streamingPort.hashCode();
+        result = 31 * result + commandPort.hashCode();
+        result = 31 * result + webServerPort.hashCode();
+        result = 31 * result + username.hashCode();
+        result = 31 * result + password.hashCode();
+        result = 31 * result + newUsername.hashCode();
+        result = 31 * result + newPassword.hashCode();
+        return result;
+    }
 }
