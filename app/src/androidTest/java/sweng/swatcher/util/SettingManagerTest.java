@@ -1,4 +1,4 @@
-package sweng.swatcher;
+package sweng.swatcher.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
