@@ -13,12 +13,12 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsInstanceOf;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import sweng.swatcher.R;
-
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -40,12 +40,19 @@ public class MediaSettingFragmentTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    private ConnectionSettingFragmentTest connSettingTest;
+
+    @Before
+    public void setUp(){
+        connSettingTest = new ConnectionSettingFragmentTest();
+    }
 
     @Test
     public void mediaSettingFragmentTest() {
 
         //Connection Settings
-        ViewInteraction appCompatImageButton = onView(
+
+        /*ViewInteraction appCompatImageButton = onView(
                 allOf(withContentDescription("Open Menu"),
                         withParent(withId(R.id.toolbar)),
                         isDisplayed()));
@@ -102,12 +109,17 @@ public class MediaSettingFragmentTest {
         ViewInteraction floatingActionButton = onView(
                 allOf(withId(R.id.save_button), isDisplayed()));
         floatingActionButton.perform(click());
+        */
+
+        connSettingTest.setUp();
+        connSettingTest.connectionSettingFragmentTest();
 
         ViewInteraction appCompatImageButton2 = onView(
                 allOf(withContentDescription("Open Menu"),
                         withParent(withId(R.id.toolbar)),
                         isDisplayed()));
         appCompatImageButton2.perform(click());
+
 
         //Media Settings
         ViewInteraction appCompatCheckedTextView2 = onView(

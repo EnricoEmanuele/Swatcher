@@ -47,8 +47,6 @@ public class ConnectionSettingFragmentTest {
     @Before
     public void setUp(){
 
-        //Update: read all from SP
-
         //set up ip
         ip1 = "79";
         ip2 = "36";
