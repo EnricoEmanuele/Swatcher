@@ -141,10 +141,7 @@ public class MediaSettingFragmentTest {
 
         ViewInteraction msButton = onView(withId(R.id.save_ms_button));
         msButton.check(matches(not(isClickable())));
-
-        ViewInteraction appCompatEditText12 = onView(
-                allOf(withId(R.id.max_movie_time), isDisplayed()));
-        appCompatEditText12.perform(click());
+        
 
         ViewInteraction editText = onView(
                 allOf(withId(R.id.quality_image),
