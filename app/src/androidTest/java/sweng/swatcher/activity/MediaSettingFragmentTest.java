@@ -25,6 +25,7 @@ import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
@@ -41,9 +42,21 @@ public class MediaSettingFragmentTest {
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
     private ConnectionSettingFragmentTest connSettingTest;
+    private String qualityImage, pictureType, maxMovieTime, snapOnDetect, threshold, snapInterval;
+    private boolean recordOnDetect;
 
     @Before
     public void setUp(){
+
+        //set up oracle parameters
+        qualityImage = "75";
+        pictureType = "jpeg";
+        recordOnDetect = true;
+        maxMovieTime = "30";
+        snapOnDetect = "best";
+        threshold = "1500";
+        snapInterval = "0";
+        //run connection test
         connSettingTest = new ConnectionSettingFragmentTest();
     }
 
@@ -141,7 +154,7 @@ public class MediaSettingFragmentTest {
                                         0),
                                 2),
                         isDisplayed()));
-        editText.check(matches(withText("")));
+        editText.check(matches(withText(""))); // empty String is default value
 
         ViewInteraction textView = onView(
                 allOf(withId(android.R.id.text1), withText("jpeg"),
@@ -152,7 +165,7 @@ public class MediaSettingFragmentTest {
                                                 4)),
                                 0),
                         isDisplayed()));
-        textView.check(matches(withText("jpeg")));
+        textView.check(matches(withText("jpeg"))); // "jpeg" = default value
 
         ViewInteraction switch_ = onView(
                 allOf(withId(R.id.movie_switch),
@@ -172,7 +185,7 @@ public class MediaSettingFragmentTest {
                                         0),
                                 9),
                         isDisplayed()));
-        editText2.check(matches(withText("")));
+        editText2.check(matches(withText(""))); // empty String is default value
 
         ViewInteraction textView2 = onView(
                 allOf(withId(android.R.id.text1), withText("on"),
@@ -183,7 +196,7 @@ public class MediaSettingFragmentTest {
                                                 11)),
                                 0),
                         isDisplayed()));
-        textView2.check(matches(withText("on")));
+        textView2.check(matches(withText("on"))); // "on" = default value
 
         ViewInteraction editText3 = onView(
                 allOf(withId(R.id.threshold),
@@ -193,7 +206,7 @@ public class MediaSettingFragmentTest {
                                         0),
                                 13),
                         isDisplayed()));
-        editText3.check(matches(withText("")));
+        editText3.check(matches(withText(""))); // empty String is default value
 
         ViewInteraction editText4 = onView(
                 allOf(withId(R.id.snapshot_interval),
@@ -203,7 +216,87 @@ public class MediaSettingFragmentTest {
                                         0),
                                 15),
                         isDisplayed()));
-        editText4.check(matches(withText("")));
+        editText4.check(matches(withText(""))); // empty String is default value
+
+        /*
+         *  Read values from server
+         */
+        ViewInteraction floatingActionButton2 = onView(
+                allOf(withId(R.id.update_ms_button), isDisplayed()));
+        floatingActionButton2.perform(click());
+
+        ViewInteraction editTextRead = onView(
+                allOf(withId(R.id.quality_image), withText("75"),
+                        childAtPosition(
+                                childAtPosition(
+                                        IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class),
+                                        0),
+                                2),
+                        isDisplayed()));
+        editTextRead.check(matches(withText(qualityImage)));
+
+        ViewInteraction textViewRead = onView(
+                allOf(withId(android.R.id.text1), withText("jpeg"),
+                        childAtPosition(
+                                allOf(withId(R.id.picture_type),
+                                        childAtPosition(
+                                                IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
+                                                4)),
+                                0),
+                        isDisplayed()));
+        textViewRead.check(matches(withText(pictureType)));
+
+        ViewInteraction switchRead = onView(
+                allOf(withId(R.id.movie_switch),
+                        childAtPosition(
+                                childAtPosition(
+                                        IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class),
+                                        0),
+                                7),
+                        isDisplayed()));
+        if(recordOnDetect) switchRead.check(matches(isChecked()));
+        else switchRead.check(matches(not(isChecked())));
+
+        ViewInteraction editTextRead2 = onView(
+                allOf(withId(R.id.max_movie_time), withText("30"),
+                        childAtPosition(
+                                childAtPosition(
+                                        IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class),
+                                        0),
+                                9),
+                        isDisplayed()));
+        editTextRead2.check(matches(withText(maxMovieTime)));
+
+        ViewInteraction textViewRead2 = onView(
+                allOf(withId(android.R.id.text1), withText("best"),
+                        childAtPosition(
+                                allOf(withId(R.id.snapshot_spinner),
+                                        childAtPosition(
+                                                IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
+                                                11)),
+                                0),
+                        isDisplayed()));
+        textViewRead2.check(matches(withText(snapOnDetect)));
+
+        ViewInteraction editTextRead3 = onView(
+                allOf(withId(R.id.threshold), withText("1500"),
+                        childAtPosition(
+                                childAtPosition(
+                                        IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class),
+                                        0),
+                                13),
+                        isDisplayed()));
+        editTextRead3.check(matches(withText(threshold)));
+
+        ViewInteraction editTextRead4 = onView(
+                allOf(withId(R.id.snapshot_interval), withText("0"),
+                        childAtPosition(
+                                childAtPosition(
+                                        IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class),
+                                        0),
+                                15),
+                        isDisplayed()));
+        editTextRead4.check(matches(withText(snapInterval)));
 
     }
 

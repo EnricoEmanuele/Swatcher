@@ -7,13 +7,9 @@ import android.support.test.InstrumentationRegistry;
 import android.test.mock.MockContext;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import sweng.swatcher.model.Setting;
-import sweng.swatcher.util.PreferecesKeys;
-import sweng.swatcher.util.SettingManager;
-
 import static org.junit.Assert.assertEquals;
 /**
  * Created by WILMER on 22/10/2016.
