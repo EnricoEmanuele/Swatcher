@@ -1,10 +1,10 @@
 package sweng.swatcher.activity;
 
-
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -14,6 +14,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,23 +42,17 @@ public class MediaSettingFragmentTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
-    private ConnectionSettingFragmentTest connSettingTest;
-    private String qualityImage, pictureType, maxMovieTime, snapOnDetect, threshold, snapInterval;
-    private boolean recordOnDetect;
+    private static ConnectionSettingFragmentTest connSettingTest;
+    private static String qualityImage, pictureType, maxMovieTime, snapOnDetect, threshold, snapInterval;
+    private static boolean recordOnDetect;
 
-    @Before
-    public void setUp(){
-
+    @BeforeClass
+    public static void setUp(){
         //set up oracle parameters
-        qualityImage = "75";
-        pictureType = "jpeg";
-        recordOnDetect = true;
-        maxMovieTime = "30";
-        snapOnDetect = "best";
-        threshold = "1500";
-        snapInterval = "0";
+        setOracles();
         //run connection test
         connSettingTest = new ConnectionSettingFragmentTest();
+        Log.d("MEDIA_SETTING_TEST","SetUp done!");
     }
 
     @Test
@@ -141,7 +136,6 @@ public class MediaSettingFragmentTest {
 
         ViewInteraction msButton = onView(withId(R.id.save_ms_button));
         msButton.check(matches(not(isClickable())));
-        
 
         ViewInteraction editText = onView(
                 allOf(withId(R.id.quality_image),
@@ -295,6 +289,50 @@ public class MediaSettingFragmentTest {
                         isDisplayed()));
         editTextRead4.check(matches(withText(snapInterval)));
 
+        Log.d("MEDIA_SETTING_TEST","msft done!");
+    }
+
+    @Test
+    public void changeQualityImageTest(){
+
+        ViewInteraction appCompatImageButton2 = onView(
+                allOf(withContentDescription("Open Menu"),
+                        withParent(withId(R.id.toolbar)),
+                        isDisplayed()));
+        appCompatImageButton2.perform(click());
+
+        //go in Media Settings
+        ViewInteraction appCompatCheckedTextView2 = onView(
+                allOf(withId(R.id.design_menu_item_text), withText("Media Settings"), isDisplayed()));
+        appCompatCheckedTextView2.perform(click());
+
+        //click update button
+        ViewInteraction floatingActionButton2 = onView(
+                allOf(withId(R.id.update_ms_button), isDisplayed()));
+        floatingActionButton2.perform(click());
+
+        //change quality image value
+        ViewInteraction appCompatEditText10 = onView(
+                allOf(withId(R.id.quality_image), isDisplayed()));
+        appCompatEditText10.perform(click());
+        appCompatEditText10.perform(replaceText("80"), closeSoftKeyboard());
+
+        Log.d("MEDIA_SETTING_TEST","change quality value done!");
+
+        //aggiungere click su salva.
+
+        //aggiungere ripristino valore precedente. (o tramite interfaccia oppure inviando direttamente una richiesta al server (in questo caso forse conviene @AfterClass) )
+
+    }
+
+    private static void setOracles(){
+        qualityImage = "75";
+        pictureType = "jpeg";
+        recordOnDetect = true;
+        maxMovieTime = "30";
+        snapOnDetect = "best";
+        threshold = "1500";
+        snapInterval = "0";
     }
 
     private static Matcher<View> childAtPosition(
