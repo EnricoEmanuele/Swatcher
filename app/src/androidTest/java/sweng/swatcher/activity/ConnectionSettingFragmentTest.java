@@ -48,10 +48,10 @@ public class ConnectionSettingFragmentTest {
     public void setUp(){
 
         //set up ip
-        ip1 = "82";
-        ip2 = "49";
-        ip3 = "5";
-        ip4 = "100";
+        ip1 = "95";
+        ip2 = "235";
+        ip3 = "192";
+        ip4 = "137";
         //set up ports
         streamPort =  "5432";
         cmdPort = "4321";
