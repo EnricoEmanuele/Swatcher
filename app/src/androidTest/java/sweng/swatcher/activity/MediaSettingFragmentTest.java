@@ -338,7 +338,7 @@ public class MediaSettingFragmentTest {
 
         //change threshold value
         ViewInteraction appCompatEditText13 = onView(
-                allOf(withId(R.id.threshold), withText("1500"), isDisplayed()));
+                allOf(withId(R.id.threshold), isDisplayed()));
         appCompatEditText13.perform(replaceText("1400"), closeSoftKeyboard());
     }
 
@@ -351,7 +351,7 @@ public class MediaSettingFragmentTest {
 
         //change snapshot interval value
         ViewInteraction appCompatEditText14 = onView(
-                allOf(withId(R.id.snapshot_interval), withText("0"), isDisplayed()));
+                allOf(withId(R.id.snapshot_interval), isDisplayed()));
         appCompatEditText14.perform(replaceText("10"), closeSoftKeyboard());
     }
 
