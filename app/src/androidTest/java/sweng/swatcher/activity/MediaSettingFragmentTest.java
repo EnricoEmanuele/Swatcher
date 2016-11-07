@@ -69,7 +69,7 @@ public class MediaSettingFragmentTest {
     }
 
     @Before
-    public void myBeforeMethod(){
+    public void beforeTestSetUp(){
         //run connection setting test
         connSettingTest.setUp();
         connSettingTest.connectionSettingFragmentTest();
