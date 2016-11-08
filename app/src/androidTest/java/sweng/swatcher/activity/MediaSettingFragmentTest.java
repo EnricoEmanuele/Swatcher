@@ -1,8 +1,13 @@
 package sweng.swatcher.activity;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.IdlingResourceTimeoutException;
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -89,8 +94,14 @@ public class MediaSettingFragmentTest {
     @Test
     public void mediaSettingFragmentTest() {
 
-        ViewInteraction msButton = onView(withId(R.id.save_ms_button));
-        msButton.check(matches(not(isClickable())));
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        /*ViewInteraction msButton = onView(withId(R.id.save_ms_button));
+        msButton.check(matches(not(isClickable())));*/
 
         ViewInteraction editText = onView(
                 allOf(withId(R.id.quality_image),
@@ -248,36 +259,51 @@ public class MediaSettingFragmentTest {
     }
 
     @Test
-    public void allTests(){
+    public void changeParamsValuesTest(){
 
+        //read values from Server
         ViewInteraction floatingActionButton2 = onView(
                 allOf(withId(R.id.update_ms_button), isDisplayed()));
         floatingActionButton2.perform(click());
 
-        changeQualityImageTest();
-        changePictureTypeTest();
+        //change values
+        changeQualityImageTest("75");
+        /*changePictureTypeTest();
         changeRecMovieOnDetectTest();
         changeMaxMovieTimeTest();
         changeSnapOnDetectTest();
         changeThresholdTest();
-        changeSnapIntervalTest();
+        changeSnapIntervalTest();*/
 
+        //save new values on Server
         ViewInteraction buttonSave = onView(
                 allOf(withId(R.id.save_ms_button), isDisplayed()));
         buttonSave.perform(click());
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        floatingActionButton2.perform(click()); //read new value from server
+        //add assert
+
+        //reset values
+        changeQualityImageTest("90");
+        buttonSave.perform(click());
+
     }
 
-    public void changeQualityImageTest(){
+    private void changeQualityImageTest(String value){
         //change quality image value
-        ViewInteraction appCompatEditText10 = onView(
+        ViewInteraction qualityEditText = onView(
                 allOf(withId(R.id.quality_image), isDisplayed()));
-        appCompatEditText10.perform(click());
-        appCompatEditText10.perform(replaceText("90"), closeSoftKeyboard());
-
-        Log.i("MEDIA_SETTING_TEST","change quality value done!");
+        qualityEditText.perform(click());
+        qualityEditText.perform(replaceText(value), closeSoftKeyboard());
     }
 
-    public void changePictureTypeTest(){
+    private void changePictureTypeTest(){
         //change pivture type value
         ViewInteraction picTypeSpinner = onView(
                 allOf(withId(R.id.picture_type), isDisplayed()));
@@ -288,21 +314,21 @@ public class MediaSettingFragmentTest {
         appCompatCheckedTextView3.perform(click());
     }
 
-    public void changeRecMovieOnDetectTest(){
+    private void changeRecMovieOnDetectTest(){
         //change switch value
         ViewInteraction switch_ = onView(
                 allOf(withId(R.id.movie_switch), withText("Enabled"), isDisplayed()));
         switch_.perform(click());
     }
 
-    public void changeMaxMovieTimeTest(){
+    private void changeMaxMovieTimeTest(){
         //change max movie time value
         ViewInteraction appCompatEditText12 = onView(
                 allOf(withId(R.id.max_movie_time), isDisplayed()));
         appCompatEditText12.perform(replaceText("25"), closeSoftKeyboard());
     }
 
-    public void changeSnapOnDetectTest(){
+    private void changeSnapOnDetectTest(){
         //change snapshot on detection value
         ViewInteraction appCompatSpinner2 = onView(
                 allOf(withId(R.id.snapshot_spinner), isDisplayed()));
@@ -313,14 +339,14 @@ public class MediaSettingFragmentTest {
         appCompatCheckedTextView4.perform(click());
     }
 
-    public void changeThresholdTest(){
+    private void changeThresholdTest(){
         //change threshold value
         ViewInteraction appCompatEditText13 = onView(
                 allOf(withId(R.id.threshold), isDisplayed()));
         appCompatEditText13.perform(replaceText("1400"), closeSoftKeyboard());
     }
 
-    public void changeSnapIntervalTest(){
+    private void changeSnapIntervalTest(){
         //change snapshot interval value
         ViewInteraction appCompatEditText14 = onView(
                 allOf(withId(R.id.snapshot_interval), isDisplayed()));
@@ -369,7 +395,7 @@ public class MediaSettingFragmentTest {
         snapInterval = "0";
     }
 
-    public static void setOracles(){
+    private static void setOracles(){
         qualityImage = "90";
         pictureType = "jpeg";
         recordOnDetect = true;
@@ -396,5 +422,94 @@ public class MediaSettingFragmentTest {
                         && view.equals(((ViewGroup) parent).getChildAt(position));
             }
         };
+    }
+
+    /*
+     * TestHandler resets parameter values on Server
+     */
+    class TestHandler {
+
+        //Empty Constructor
+        public TestHandler(){}
+
+        //reset values on Server
+        public void reset(){
+            Context context = InstrumentationRegistry.getTargetContext();
+            String qualityURL = "http://192.168.1.111:4321/0/config/set?quality=72";
+            RequestQueue queue = Volley.newRequestQueue(context);
+            StringRequest setQuality = new StringRequest(Request.Method.GET, qualityURL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    // add headers <key,value>
+                    String auth = authorization.encodeAuthorization();
+                    headers.put("Authorization", auth);
+                    return headers;
+                }
+            };
+            queue.add(setQuality);
+
+            String writeURL = "http://192.168.1.111:4321/0/config/write";
+            StringRequest write = new StringRequest(Request.Method.GET, writeURL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    // add headers <key,value>
+                    String auth = authorization.encodeAuthorization();
+                    headers.put("Authorization", auth);
+                    return headers;
+                }
+            };
+            queue.add(write);
+
+            String restartURL = "http://192.168.1.111:4321/0/action/restart";
+            StringRequest restart = new StringRequest(Request.Method.GET, restartURL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    // add headers <key,value>
+                    String auth = authorization.encodeAuthorization();
+                    headers.put("Authorization", auth);
+                    return headers;
+                }
+            };
+            queue.add(restart);
+
+        }
+
+        //Other methods ...
+
+
+
     }
 }
