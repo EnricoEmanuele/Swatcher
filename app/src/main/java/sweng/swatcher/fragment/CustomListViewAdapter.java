@@ -248,7 +248,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
 
         public ViewHolder(View v) {
             name = (TextView) v.findViewById(R.id.img_name);
-            image = (ImageView) v.findViewById(R.id.dialog_image);
+            image = (ImageView) v.findViewById(R.id.image);
             size = (TextView) v.findViewById(R.id.img_size);
             singleItem = (RelativeLayout) v.findViewById(R.id.single_item_gallery);
         }

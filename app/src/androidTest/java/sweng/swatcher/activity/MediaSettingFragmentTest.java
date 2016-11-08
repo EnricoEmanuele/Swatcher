@@ -1,7 +1,6 @@
 package sweng.swatcher.activity;
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
@@ -249,12 +248,26 @@ public class MediaSettingFragmentTest {
     }
 
     @Test
-    public void changeQualityImageTest(){
-        //click update button
+    public void allTests(){
+
         ViewInteraction floatingActionButton2 = onView(
                 allOf(withId(R.id.update_ms_button), isDisplayed()));
         floatingActionButton2.perform(click());
 
+        changeQualityImageTest();
+        changePictureTypeTest();
+        changeRecMovieOnDetectTest();
+        changeMaxMovieTimeTest();
+        changeSnapOnDetectTest();
+        changeThresholdTest();
+        changeSnapIntervalTest();
+
+        ViewInteraction buttonSave = onView(
+                allOf(withId(R.id.save_ms_button), isDisplayed()));
+        buttonSave.perform(click());
+    }
+
+    public void changeQualityImageTest(){
         //change quality image value
         ViewInteraction appCompatEditText10 = onView(
                 allOf(withId(R.id.quality_image), isDisplayed()));
@@ -262,20 +275,9 @@ public class MediaSettingFragmentTest {
         appCompatEditText10.perform(replaceText("90"), closeSoftKeyboard());
 
         Log.i("MEDIA_SETTING_TEST","change quality value done!");
-
-        //click save button
-        /*ViewInteraction buttonSave = onView(
-                allOf(withId(R.id.save_ms_button), isDisplayed()));
-        buttonSave.perform(click());*/
     }
 
-    @Test
     public void changePictureTypeTest(){
-        //click update button
-        ViewInteraction floatingActionButton2 = onView(
-                allOf(withId(R.id.update_ms_button), isDisplayed()));
-        floatingActionButton2.perform(click());
-
         //change pivture type value
         ViewInteraction picTypeSpinner = onView(
                 allOf(withId(R.id.picture_type), isDisplayed()));
@@ -286,39 +288,21 @@ public class MediaSettingFragmentTest {
         appCompatCheckedTextView3.perform(click());
     }
 
-    @Test
     public void changeRecMovieOnDetectTest(){
-        //click update button
-        ViewInteraction floatingActionButton2 = onView(
-                allOf(withId(R.id.update_ms_button), isDisplayed()));
-        floatingActionButton2.perform(click());
-
         //change switch value
         ViewInteraction switch_ = onView(
                 allOf(withId(R.id.movie_switch), withText("Enabled"), isDisplayed()));
         switch_.perform(click());
     }
 
-    @Test
     public void changeMaxMovieTimeTest(){
-        //click update button
-        ViewInteraction floatingActionButton2 = onView(
-                allOf(withId(R.id.update_ms_button), isDisplayed()));
-        floatingActionButton2.perform(click());
-
         //change max movie time value
         ViewInteraction appCompatEditText12 = onView(
                 allOf(withId(R.id.max_movie_time), isDisplayed()));
         appCompatEditText12.perform(replaceText("25"), closeSoftKeyboard());
     }
 
-    @Test
     public void changeSnapOnDetectTest(){
-        //click update button
-        ViewInteraction floatingActionButton2 = onView(
-                allOf(withId(R.id.update_ms_button), isDisplayed()));
-        floatingActionButton2.perform(click());
-
         //change snapshot on detection value
         ViewInteraction appCompatSpinner2 = onView(
                 allOf(withId(R.id.snapshot_spinner), isDisplayed()));
@@ -329,26 +313,14 @@ public class MediaSettingFragmentTest {
         appCompatCheckedTextView4.perform(click());
     }
 
-    @Test
     public void changeThresholdTest(){
-        //click update button
-        ViewInteraction floatingActionButton2 = onView(
-                allOf(withId(R.id.update_ms_button), isDisplayed()));
-        floatingActionButton2.perform(click());
-
         //change threshold value
         ViewInteraction appCompatEditText13 = onView(
                 allOf(withId(R.id.threshold), isDisplayed()));
         appCompatEditText13.perform(replaceText("1400"), closeSoftKeyboard());
     }
 
-    @Test
     public void changeSnapIntervalTest(){
-        //click update button
-        ViewInteraction floatingActionButton2 = onView(
-                allOf(withId(R.id.update_ms_button), isDisplayed()));
-        floatingActionButton2.perform(click());
-
         //change snapshot interval value
         ViewInteraction appCompatEditText14 = onView(
                 allOf(withId(R.id.snapshot_interval), isDisplayed()));

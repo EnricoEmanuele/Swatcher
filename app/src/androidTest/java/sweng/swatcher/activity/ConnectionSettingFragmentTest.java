@@ -8,7 +8,6 @@ import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -17,9 +16,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import sweng.swatcher.R;
-
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -48,10 +45,10 @@ public class ConnectionSettingFragmentTest {
     public void setUp(){
 
         //set up ip
-        ip1 = "95";
-        ip2 = "235";
-        ip3 = "192";
-        ip4 = "137";
+        ip1 = "192";
+        ip2 = "168";
+        ip3 = "1";
+        ip4 = "111";
         //set up ports
         streamPort =  "5432";
         cmdPort = "4321";
