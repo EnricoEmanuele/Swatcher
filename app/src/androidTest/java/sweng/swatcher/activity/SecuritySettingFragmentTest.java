@@ -17,6 +17,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import sweng.swatcher.R;
 import sweng.swatcher.util.TestUtilValues;
 import static android.support.test.espresso.Espresso.onView;
