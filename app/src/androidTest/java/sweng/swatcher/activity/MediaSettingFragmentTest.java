@@ -1,13 +1,8 @@
 package sweng.swatcher.activity;
 
-import android.app.Instrumentation;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
-import android.support.test.espresso.IdlingResource;
-import android.support.test.espresso.IdlingResourceTimeoutException;
 import android.support.test.espresso.ViewInteraction;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -37,8 +32,6 @@ import sweng.swatcher.R;
 import sweng.swatcher.model.Authorization;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
@@ -68,8 +61,6 @@ public class MediaSettingFragmentTest {
         setOracles();
         //run connection test
         connSettingTest = new ConnectionSettingFragmentTest();
-
-        Log.i("MEDIA_SETTING_TEST","SetUp done!");
     }
 
     @Before
@@ -94,14 +85,8 @@ public class MediaSettingFragmentTest {
     @Test
     public void mediaSettingFragmentTest() {
 
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        /*ViewInteraction msButton = onView(withId(R.id.save_ms_button));
-        msButton.check(matches(not(isClickable())));*/
+        ViewInteraction msButton = onView(withId(R.id.save_ms_button));
+        msButton.check(matches(not(isClickable())));
 
         ViewInteraction editText = onView(
                 allOf(withId(R.id.quality_image),
@@ -256,143 +241,6 @@ public class MediaSettingFragmentTest {
         editTextRead4.check(matches(withText(snapInterval)));
 
         Log.i("MEDIA_SETTING_TEST","msft done!");
-    }
-
-    @Test
-    public void changeParamsValuesTest(){
-
-        //read values from Server
-        ViewInteraction floatingActionButton2 = onView(
-                allOf(withId(R.id.update_ms_button), isDisplayed()));
-        floatingActionButton2.perform(click());
-
-        //change values
-        changeQualityImageTest("75");
-        /*changePictureTypeTest();
-        changeRecMovieOnDetectTest();
-        changeMaxMovieTimeTest();
-        changeSnapOnDetectTest();
-        changeThresholdTest();
-        changeSnapIntervalTest();*/
-
-        //save new values on Server
-        ViewInteraction buttonSave = onView(
-                allOf(withId(R.id.save_ms_button), isDisplayed()));
-        buttonSave.perform(click());
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        floatingActionButton2.perform(click()); //read new value from server
-        //add assert
-
-        //reset values
-        changeQualityImageTest("90");
-        buttonSave.perform(click());
-
-    }
-
-    private void changeQualityImageTest(String value){
-        //change quality image value
-        ViewInteraction qualityEditText = onView(
-                allOf(withId(R.id.quality_image), isDisplayed()));
-        qualityEditText.perform(click());
-        qualityEditText.perform(replaceText(value), closeSoftKeyboard());
-    }
-
-    private void changePictureTypeTest(){
-        //change pivture type value
-        ViewInteraction picTypeSpinner = onView(
-                allOf(withId(R.id.picture_type), isDisplayed()));
-        picTypeSpinner.perform(click());
-
-        ViewInteraction appCompatCheckedTextView3 = onView(
-                allOf(withId(android.R.id.text1), withText("ppm"), isDisplayed()));
-        appCompatCheckedTextView3.perform(click());
-    }
-
-    private void changeRecMovieOnDetectTest(){
-        //change switch value
-        ViewInteraction switch_ = onView(
-                allOf(withId(R.id.movie_switch), withText("Enabled"), isDisplayed()));
-        switch_.perform(click());
-    }
-
-    private void changeMaxMovieTimeTest(){
-        //change max movie time value
-        ViewInteraction appCompatEditText12 = onView(
-                allOf(withId(R.id.max_movie_time), isDisplayed()));
-        appCompatEditText12.perform(replaceText("25"), closeSoftKeyboard());
-    }
-
-    private void changeSnapOnDetectTest(){
-        //change snapshot on detection value
-        ViewInteraction appCompatSpinner2 = onView(
-                allOf(withId(R.id.snapshot_spinner), isDisplayed()));
-        appCompatSpinner2.perform(click());
-
-        ViewInteraction appCompatCheckedTextView4 = onView(
-                allOf(withId(android.R.id.text1), withText("center"), isDisplayed()));
-        appCompatCheckedTextView4.perform(click());
-    }
-
-    private void changeThresholdTest(){
-        //change threshold value
-        ViewInteraction appCompatEditText13 = onView(
-                allOf(withId(R.id.threshold), isDisplayed()));
-        appCompatEditText13.perform(replaceText("1400"), closeSoftKeyboard());
-    }
-
-    private void changeSnapIntervalTest(){
-        //change snapshot interval value
-        ViewInteraction appCompatEditText14 = onView(
-                allOf(withId(R.id.snapshot_interval), isDisplayed()));
-        appCompatEditText14.perform(replaceText("10"), closeSoftKeyboard());
-    }
-
-    private static void setOracles_remove(){
-
-        Context context = InstrumentationRegistry.getTargetContext();
-        String url = "http://82.49.5.100:4321/0/config/list";
-        RequestQueue queue = Volley.newRequestQueue(context);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                Log.i("antonioTest",response);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i("MEDIA_SETTING_TEST", "Volley Res onErrorResponse: " + error.getMessage());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                // add headers <key,value>
-                String credentials = authorization.getUsername()+":"+authorization.getPassword();
-                Log.i("antonioTest",credentials);
-                //String auth = authorization.getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
-                String auth = authorization.encodeAuthorization();
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
-        // Add the httpRequest to the RequestQueue.
-        queue.add(stringRequest);
-
-        qualityImage = "75";
-        pictureType = "jpeg";
-        recordOnDetect = true;
-        maxMovieTime = "30";
-        snapOnDetect = "best";
-        threshold = "1500";
-        snapInterval = "0";
     }
 
     private static void setOracles(){
