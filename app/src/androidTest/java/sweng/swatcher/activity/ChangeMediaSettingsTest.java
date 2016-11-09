@@ -16,6 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import sweng.swatcher.R;
+import sweng.swatcher.util.TestUtilValues;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -38,7 +39,6 @@ public class ChangeMediaSettingsTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
-    private static final int MOTION_RESTART_TIME = 10000;
     private static ConnectionSettingFragmentTest connSettingTest;
     private static String qualityImage, pictureType, maxMovieTime, snapOnDetect, threshold, snapInterval;
     private static String qualityImageTestIn, pictureTypeTestIn, maxMovieTimeTestIn, snapOnDetectTestIn, thresholdTestIn, snapIntervalTestIn;
@@ -96,7 +96,7 @@ public class ChangeMediaSettingsTest {
         buttonSave.perform(click());
 
         try {
-            Thread.sleep(MOTION_RESTART_TIME); //waiting for Motion restart
+            Thread.sleep(TestUtilValues.MOTION_RESTART_TIME); //waiting for Motion restart
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

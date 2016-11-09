@@ -18,10 +18,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import sweng.swatcher.R;
+import sweng.swatcher.util.TestUtilValues;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -71,7 +71,7 @@ public class SecuritySettingFragmentTest {
         changePassword(newPassword);
 
         try{
-            Thread.sleep(10000);
+            Thread.sleep(TestUtilValues.MOTION_RESTART_TIME);
         }catch (InterruptedException e) {
             e.printStackTrace();
         }
