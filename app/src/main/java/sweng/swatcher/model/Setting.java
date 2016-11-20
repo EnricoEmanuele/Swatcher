@@ -4,7 +4,7 @@ package sweng.swatcher.model;
  * Created by ee on 10/10/16.
  */
 
-public class Setting {
+public class Setting implements Cloneable{
 
     private String ipAddress;
     private String ip1;
@@ -154,5 +154,10 @@ public class Setting {
         result = 31 * result + newUsername.hashCode();
         result = 31 * result + newPassword.hashCode();
         return result;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

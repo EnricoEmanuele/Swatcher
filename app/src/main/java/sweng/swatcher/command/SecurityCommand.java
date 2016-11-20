@@ -1,11 +1,11 @@
 package sweng.swatcher.command;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -13,13 +13,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
-
+import sweng.swatcher.model.Setting;
 import sweng.swatcher.request.HttpRequest;
+import sweng.swatcher.util.SettingManager;
 
 /**
  * Created by ee on 20/10/16.
@@ -55,8 +54,23 @@ public class SecurityCommand implements CommandInterface {
                 Log.i("SecurityCommand", "onResponse Volley Res: " + response.toString());
                 httpRequest.setResponse(response.toString());
                 spinner.setVisibility(View.GONE);
-                Snackbar.make(view, response.toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
+                //Set new credentials in Shared Preferences
+                SettingManager settingManager = new SettingManager(context);
+                SharedPreferences sharedPreferences = settingManager.getSharedPreferences();
+                Setting currentSettings, newSettings;
+                currentSettings = settingManager.getSetting();
+                try {
+                    newSettings = (Setting) currentSettings.clone();
+                    Log.i("CLONE",newSettings.getIpAddress()+" "+newSettings.getUsername()+":"+newSettings.getPassword());
+                    newSettings.setUsername(newUsr);
+                    newSettings.setPassword(newPsw);
+                    settingManager.setConnectionSetting(newSettings);
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+
+                Snackbar.make(view, response.toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
 
         }, new Response.ErrorListener()
