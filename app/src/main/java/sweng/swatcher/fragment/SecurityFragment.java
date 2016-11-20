@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,6 +48,8 @@ public class SecurityFragment extends Fragment {
 
     private ProgressBar spinner;
 
+    private static final String EMPTY_STRING = "";
+    private static final String CREDENTIAL_ERROR_INPUT_MESSAGE = "Username or Password empty!";
 
     public SecurityFragment() {
         // Required empty public constructor
@@ -146,12 +149,17 @@ public class SecurityFragment extends Fragment {
             String new_username = newUsernameText.getText().toString();
             String new_password = newPasswordText.getText().toString();
 
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+            if(new_username.equalsIgnoreCase(EMPTY_STRING) || new_password.equalsIgnoreCase(EMPTY_STRING)){
+                Snackbar.make(view, CREDENTIAL_ERROR_INPUT_MESSAGE, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+            else{
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-            Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
-            SecurityRequest security = new SecurityRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.WEB_PORT,""),auth);
-            SecurityCommand sc = new SecurityCommand(getContext(), security, view, spinner, new_username, new_password);
-            sc.execute();
+                Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
+                SecurityRequest security = new SecurityRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.WEB_PORT,""),auth);
+                SecurityCommand sc = new SecurityCommand(getContext(), security, view, spinner, new_username, new_password);
+                sc.execute();
+            }
         }
     };
 }
