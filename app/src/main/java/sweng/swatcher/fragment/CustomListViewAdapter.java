@@ -164,6 +164,7 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         public void onClick(View v) {
             //Log.i("Immagine cliccata: ",dialogMedia.getExtension());
             final Dialog dialog = new Dialog(context);
+
             Button dialogButton = null;
 
             if(isImage(dialogMedia)){
