@@ -59,7 +59,7 @@ public class DeleteMediaCommand implements CommandInterface {
                     JSONObject obj = new JSONObject(String.valueOf(response));
                     if(obj.getString("response").equalsIgnoreCase("true")){
                         Log.i("DeleteMediaCommand", "Media deleted: " + obj.getString("response"));
-                        Snackbar.make(view, "Media deleted", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+//                        Snackbar.make(view, "Media deleted", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                     }
                     else{
                         Log.i("DeleteMediaCommand", "Media deleted: " + obj.getString("response"));

@@ -43,7 +43,7 @@ public class MediaCommand implements CommandInterface {
             {
                 Log.i("MediaCommand", "Volley Res onResponse:" + response);
                 httpRequest.setResponse(response);
-                Snackbar.make(view, httpRequest.getResponse(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(view, "Snapshot taken!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
             }
 
         }, new Response.ErrorListener()

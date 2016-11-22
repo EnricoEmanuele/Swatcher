@@ -46,7 +46,7 @@ public class MediaSettingSetCommand implements CommandInterface {
             @Override
             public void onErrorResponse(VolleyError error){
                 Log.i("MEDIA_SETTING_WRITE", "onErrorResponse: " + error.getMessage());
-                Snackbar.make(view, "Error writing setting on Server: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(view, "Error writing setting on Server: "+error.getMessage(), Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 httpRequest.setResponse(error.getMessage());
             }
         }) {

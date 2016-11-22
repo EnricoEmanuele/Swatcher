@@ -13,30 +13,51 @@
         android:padding="10dp"
         android:weightSum="1">
 
-        <TextView
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="New Username" />
+            android:layout_marginTop="20dp"
+            android:background="?attr/colorControlHighlight">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/new_username" />
+            <TextView
+                android:text="CHANGE ACCESS CREDENTIALS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView5"
+                android:gravity="center_horizontal"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="normal|bold" />
 
-        <TextView
-            android:text="New Password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView15" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="New Username"
+                android:layout_marginTop="15dp"
+                android:paddingLeft="5dp" />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/new_password" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/new_username" />
+
+            <TextView
+                android:text="New Password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView15"
+                android:layout_marginTop="15dp"
+                android:paddingLeft="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/new_password" />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -46,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 app:srcCompat="@android:drawable/ic_menu_send"
                 android:id="@+id/change_button"
                 android:layout_weight="0.03"

@@ -41,7 +41,7 @@ public class RestartCommand implements CommandInterface {
             @Override
             public void onResponse(String response) {
                 Log.i("RESTART SERVER", "onResponse: " + response);
-                Snackbar.make(view, "RESTART SERVER: "+response, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(view, "RESTART SERVER: "+response, Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 httpRequest.setResponse(response);
             }
 
@@ -49,7 +49,7 @@ public class RestartCommand implements CommandInterface {
             @Override
             public void onErrorResponse(VolleyError error){
                 Log.i("RESTART SERVER", "onErrorResponse: " + error.getMessage());
-                Snackbar.make(view, "Error Restarting Server: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(view, "Error Restarting Server: "+error.getMessage(), Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 httpRequest.setResponse(error.getMessage());
             }
         }) {

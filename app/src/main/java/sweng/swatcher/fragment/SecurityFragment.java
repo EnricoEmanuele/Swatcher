@@ -151,6 +151,7 @@ public class SecurityFragment extends Fragment {
 
             if(new_username.equalsIgnoreCase(EMPTY_STRING) || new_password.equalsIgnoreCase(EMPTY_STRING)){
                 Snackbar.make(view, CREDENTIAL_ERROR_INPUT_MESSAGE, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                spinner.setVisibility(View.GONE);
             }
             else{
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());

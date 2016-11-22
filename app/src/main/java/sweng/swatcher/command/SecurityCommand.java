@@ -13,6 +13,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +53,10 @@ public class SecurityCommand implements CommandInterface {
             @Override
             public void onResponse(JSONObject response)
             {
+                try {
+                    JSONObject obj = new JSONObject(String.valueOf(response));
+
+
                 Log.i("SecurityCommand", "onResponse Volley Res: " + response.toString());
                 httpRequest.setResponse(response.toString());
                 spinner.setVisibility(View.GONE);
@@ -70,7 +76,10 @@ public class SecurityCommand implements CommandInterface {
                     e.printStackTrace();
                 }
 
-                Snackbar.make(view, response.toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(view, "New Username: "+ obj.getString("new_username") + " | New Password: " + obj.getString("new_password"), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
         }, new Response.ErrorListener()
@@ -81,7 +90,7 @@ public class SecurityCommand implements CommandInterface {
                 Log.i("SecurityCommand", "onErrorResponse Volley Res: " + error.getMessage());
                 httpRequest.setResponse(error.getMessage());
                 spinner.setVisibility(View.GONE);
-                Snackbar.make(view, "Error", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(view, "Error", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
 
             }
         }) {

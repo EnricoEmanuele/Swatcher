@@ -17,20 +17,21 @@
             android:layout_height="match_parent"
             android:id="@+id/gallery_list_view"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/gallery_button"
+            android:layout_marginBottom="10dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            app:fabSize="mini"
+            app:fabSize="normal"
             app:srcCompat="@android:drawable/ic_menu_rotate"
             android:id="@+id/gallery_button"
             app:elevation="24dp"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp" />
 
     </RelativeLayout>
 

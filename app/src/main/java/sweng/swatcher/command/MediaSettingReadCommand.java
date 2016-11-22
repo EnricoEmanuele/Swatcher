@@ -140,7 +140,7 @@ public class MediaSettingReadCommand implements CommandInterface {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.i("MediaSettingReadCommand", "onErrorResponse Volley Res: " + error.getMessage());
-                Snackbar.make(view, "Error reading current setting on Server: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(view, "Error reading current setting on Server: "+error.getMessage(), Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 httpRequest.setResponse(error.getMessage());
             }
         }) {

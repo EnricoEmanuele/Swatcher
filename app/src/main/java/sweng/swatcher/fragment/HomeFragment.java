@@ -52,9 +52,7 @@ public class HomeFragment extends Fragment {
 
     private FloatingActionButton playButton;
     private FloatingActionButton stopButton;
-
     private FloatingActionButton snapshotButton;
-    private FloatingActionButton recordButton;
 
     private StreamRequest streaming;
     private SnapshotRequest snapshot;
@@ -101,6 +99,8 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         //Chiamata alla funzione di gestione della home.
+        WebView wv = (WebView) view.findViewById(R.id.webview_streaming);
+        wv.loadUrl("file:///android_asset/streamingStop.html");
         handleHome(view);
         return view;
     }
@@ -167,19 +167,19 @@ public class HomeFragment extends Fragment {
         this.playButton = (FloatingActionButton) view.findViewById(R.id.play);
         this.stopButton = (FloatingActionButton) view.findViewById(R.id.stop);
         this.snapshotButton = (FloatingActionButton) view.findViewById(R.id.snapshot);
-        this.recordButton = (FloatingActionButton) view.findViewById(R.id.record);
+
 
         this.playButton.setOnClickListener(playListner);
         this.stopButton.setOnClickListener(stopListner);
         this.snapshotButton.setOnClickListener(snapshotListner);
-        this.recordButton.setOnClickListener(recordListner);
+
 
         this.mediaButtonSet = new MediaButtonSet(view);
 
         this.mediaButtonSet.addToStopList(this.playButton);
         this.mediaButtonSet.addToPlayList(this.stopButton);
         this.mediaButtonSet.addToPlayList(this.snapshotButton);
-        this.mediaButtonSet.addToPlayList(this.recordButton);
+
 
     }
 
@@ -207,13 +207,6 @@ public class HomeFragment extends Fragment {
         }
     };
 
-    private View.OnClickListener recordListner = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            MediaCommand cmd = new MediaCommand(getContext(),movie, view);
-            cmd.execute();
-        }
-    };
 
 }
 

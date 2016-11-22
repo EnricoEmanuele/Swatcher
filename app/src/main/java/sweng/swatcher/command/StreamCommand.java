@@ -35,7 +35,7 @@ public class StreamCommand implements CommandInterface {
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         webView.loadUrl(httpRequest.getURL());
 
-        Snackbar.make(view, "Successful Connected", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        Snackbar.make(view, "Successful Connected", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
         displayMediaButton();
 
     }
@@ -48,7 +48,7 @@ public class StreamCommand implements CommandInterface {
     public void hideMediaButton(){
         mediaButtonSet.hideAllFromPlayList();
         mediaButtonSet.displayAllFromStopList();
-        Snackbar.make(view, "Stop streaming video", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        Snackbar.make(view, "Stop streaming video", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
         webView.loadUrl("file:///android_asset/streamingStop.html");
     }
 
