@@ -1,7 +1,9 @@
 package sweng.swatcher.command;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -11,60 +13,65 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sweng.swatcher.fragment.CustomListViewAdapter;
 import sweng.swatcher.R;
+import sweng.swatcher.fragment.CustomListViewAdapter;
 import sweng.swatcher.model.Media;
 import sweng.swatcher.model.MediaParser;
 import sweng.swatcher.request.HttpRequest;
 
 /**
- * Created by ee on 18/10/16.
+ * Created by ee on 22/11/16.
  */
 
-public class GalleryCommand implements CommandInterface {
+public class DeleteMediaCommand implements CommandInterface {
 
     private Context context;
     private HttpRequest httpRequest;
-    private List<Media> mediaCollection;
-    private ListView galleryListView;
-    private ArrayAdapter<Media> mediaAdapter;
+    private String fileToDelete;
+    private View view;
 
 
-    public GalleryCommand(Context context, HttpRequest httpRequest, ListView galleryListView) {
+    public DeleteMediaCommand(Context context, HttpRequest httpRequest, String fileToDelete, View view) {
         this.context = context;
         this.httpRequest = httpRequest;
-        this.galleryListView = galleryListView;
+        this.fileToDelete = fileToDelete;
+        this.view = view;
     }
 
     public void execute(){
         RequestQueue queue = Volley.newRequestQueue(context);
-        JsonArrayRequest jsonArReq = new JsonArrayRequest(Request.Method.GET, httpRequest.getURL(), null, new Response.Listener<JSONArray>() {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, httpRequest.getURL(), null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response)
+            public void onResponse(JSONObject response)
             {
-                Log.i("GalleryCommand", "Volley Res onResponse: " + String.valueOf(response.length()));
-
                 try {
-                    mediaCollection = MediaParser.parse(response);
-                    httpRequest.setResponse("Length: "+response.length());
+                    JSONObject obj = new JSONObject(String.valueOf(response));
+                    if(obj.getString("response").equalsIgnoreCase("true")){
+                        Log.i("DeleteMediaCommand", "Media deleted: " + obj.getString("response"));
+                        Snackbar.make(view, "Media deleted", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    }
+                    else{
+                        Log.i("DeleteMediaCommand", "Media deleted: " + obj.getString("response"));
+                        Snackbar.make(view, "Error. File not found!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    }
+                    httpRequest.setResponse("Response Media deleted: "+response.toString());
 
-                    mediaAdapter = new CustomListViewAdapter(context, R.layout.item_gallery, mediaCollection, httpRequest.getAuthorization(), galleryListView);
-                    galleryListView.setAdapter(mediaAdapter);
-
-                }
-                catch (JSONException e) {
-                    Log.e("GalleryCommand","An Exception occurs in onResponse method.");
+                } catch (JSONException e) {
                     e.printStackTrace();
+                    httpRequest.setResponse("Response Media deleted: "+response.toString());
                 }
+
             }
 
         }, new Response.ErrorListener()
@@ -72,7 +79,7 @@ public class GalleryCommand implements CommandInterface {
             @Override
             public void onErrorResponse(VolleyError error)
             {
-                Log.i("GalleryCommand", "Volley Res onErrorResponse: " + error.getMessage());
+                Log.i("DeleteMediaCommand", "Volley Res onErrorResponse: " + error.getMessage());
                 //Snackbar.make(view, "Snapshot not taken: "+error.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 httpRequest.setResponse(error.getMessage());
             }
@@ -84,16 +91,16 @@ public class GalleryCommand implements CommandInterface {
                 String credentials = httpRequest.getAuthorization().getUsername()+":"+ httpRequest.getAuthorization().getPassword();
                 String auth = httpRequest.getAuthorization().getAuthType()+ " " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
                 headers.put("Authorization", auth);
+
+                headers.put("fileToDelete", fileToDelete);
+
                 return headers;
             }
         };
         // Add the httpRequest to the RequestQueue.
-        queue.add(jsonArReq);
+        queue.add(jsonObjReq);
     }
 
-    public List<Media> getMediaCollection(){
-        return mediaCollection;
-    }
 
     public Context getContext() {
         return context;
@@ -103,12 +110,5 @@ public class GalleryCommand implements CommandInterface {
         return httpRequest;
     }
 
-    public ListView getGalleryListView() {
-        return galleryListView;
-    }
-
-    public ArrayAdapter<Media> getMediaAdapter() {
-        return mediaAdapter;
-    }
 
 }

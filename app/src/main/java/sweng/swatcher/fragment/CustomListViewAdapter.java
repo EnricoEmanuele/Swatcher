@@ -12,8 +12,11 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +26,7 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,6 +35,11 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.UrlConnectionDownloader;
 
 import sweng.swatcher.R;
+import sweng.swatcher.command.DeleteMediaCommand;
+import sweng.swatcher.command.GalleryCommand;
+import sweng.swatcher.request.DeleteMediaRequest;
+import sweng.swatcher.request.GalleryRequest;
+import sweng.swatcher.util.PreferecesKeys;
 import sweng.swatcher.util.SettingManager;
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.model.Media;
@@ -51,12 +60,17 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
     private Media media;
     private Picasso customPicasso;
 
-    public CustomListViewAdapter(Context context, int resource, List<Media> mediaList, Authorization authorization) {
+    private ListView galleryListView;
+
+
+
+    public CustomListViewAdapter(Context context, int resource, List<Media> mediaList, Authorization authorization, ListView galleryListView ) {
         super(context, resource, mediaList);
         this.context = context;
         this.authorization = authorization;
         this.settingManager = new SettingManager(context);
         this.setting = settingManager.getSetting();
+        this.galleryListView = galleryListView;
     }
 
     @Override
@@ -82,7 +96,9 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         }
 
         holder.name.setText(media.getName());
-        holder.size.setText(media.getSize());
+        holder.size.setText(media.getSize() + " byte" );
+
+
 
         Picasso.Builder builder = new Picasso.Builder(context);
         builder.listener(new CustomPicassoListner());
@@ -99,6 +115,8 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         DialogListner dialogListner = new DialogListner(media);
         holder.singleItem.setOnClickListener(dialogListner);
 
+        holder.deleteButton.setOnClickListener(new deleteButtonListner(media.getName()));
+
         return convertView;
     }
 
@@ -110,6 +128,30 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
             exception.printStackTrace();
         }
     }
+
+    private class deleteButtonListner implements View.OnClickListener{
+        String name;
+        public deleteButtonListner(String name){
+            this.name = name;
+        }
+        @Override
+        public void onClick(View v) {
+           Log.i("name delete:", name);
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+            Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
+
+            DeleteMediaRequest deleteMediaRequest = new DeleteMediaRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.WEB_PORT,""),auth);
+            DeleteMediaCommand mediaCommand = new DeleteMediaCommand(getContext(), deleteMediaRequest, name, v);
+
+            mediaCommand.execute();
+
+            //Ricarica la gallery dopo la cancellazione del singolo media
+            GalleryRequest gallery = new GalleryRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.WEB_PORT,""),auth);
+            GalleryCommand gc = new GalleryCommand(getContext(), gallery, galleryListView);
+            gc.execute();
+        }
+    }
+
 
     private class DialogListner implements View.OnClickListener {
         Media dialogMedia;
@@ -245,12 +287,14 @@ public class CustomListViewAdapter extends ArrayAdapter<Media> {
         private TextView size;
         private ImageView image;
         private RelativeLayout singleItem;
+        private FloatingActionButton deleteButton;
 
         public ViewHolder(View v) {
             name = (TextView) v.findViewById(R.id.img_name);
             image = (ImageView) v.findViewById(R.id.image);
             size = (TextView) v.findViewById(R.id.img_size);
             singleItem = (RelativeLayout) v.findViewById(R.id.single_item_gallery);
+            deleteButton = (FloatingActionButton) v.findViewById(R.id.deleteButton);
         }
     }
 
