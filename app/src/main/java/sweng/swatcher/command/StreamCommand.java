@@ -1,8 +1,11 @@
 package sweng.swatcher.command;
 
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.webkit.HttpAuthHandler;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -70,6 +73,12 @@ public class StreamCommand implements CommandInterface {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             view.loadUrl(url);
             return true;
+        }
+
+        @Override
+        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+            Snackbar.make(view, "Connection Error: "+errorResponse.getReasonPhrase(), Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            super.onReceivedHttpError(view, request, errorResponse);
         }
 
     }
