@@ -45,17 +45,17 @@ public class ConnectionSettingFragmentTest {
     public void setUp(){
 
         //set up ip
-        ip1 = "192";
-        ip2 = "168";
-        ip3 = "1";
-        ip4 = "111";
+        ip1 = "95";
+        ip2 = "239";
+        ip3 = "47";
+        ip4 = "249";
         //set up ports
         streamPort =  "5432";
         cmdPort = "4321";
         webPort = "80";
         //set up username and password
-        user = "u";
-        password = "p";
+        user = "user";
+        password = "password";
         //set up okMessage
         okMessage = "Settings Saved";
     }

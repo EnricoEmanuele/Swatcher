@@ -1,5 +1,6 @@
 package sweng.swatcher.activity;
 
+
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -17,12 +19,15 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import sweng.swatcher.R;
 import sweng.swatcher.util.TestUtilValues;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
@@ -30,11 +35,11 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.core.IsAnything.anything;
+import static org.hamcrest.Matchers.anything;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class GalleryFragmentTest {
+public class SnapshotTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -50,22 +55,38 @@ public class GalleryFragmentTest {
     public void beforeTestSetUp(){
         connSettingTest.setUp();
         connSettingTest.connectionSettingFragmentTest();
+    }
 
-        //open Menu
+    @Test
+    public void secondo() {
+
         ViewInteraction appCompatImageButton2 = onView(
                 allOf(withContentDescription("Open Menu"),
                         withParent(withId(R.id.toolbar)),
                         isDisplayed()));
         appCompatImageButton2.perform(click());
 
-        //open Gallery
-        ViewInteraction appCompatCheckedTextView3 = onView(
-                allOf(withId(R.id.design_menu_item_text), withText("Gallery"), isDisplayed()));
-        appCompatCheckedTextView3.perform(click());
-    }
+        ViewInteraction appCompatCheckedTextView2 = onView(
+                allOf(withId(R.id.design_menu_item_text), withText("Home"), isDisplayed()));
+        appCompatCheckedTextView2.perform(click());
 
-    @Test
-    public void galleryFragmentTest() {
+        ViewInteraction floatingActionButton2 = onView(
+                allOf(withId(R.id.play),
+                        withParent(withId(R.id.relativeLayout)),
+                        isDisplayed()));
+        floatingActionButton2.perform(click());
+
+        try {
+            Thread.sleep(5000); //waiting for play
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction floatingActionButton3 = onView(
+                allOf(withId(R.id.snapshot),
+                        withParent(withId(R.id.relativeLayout)),
+                        isDisplayed()));
+        floatingActionButton3.perform(click());
 
         ViewInteraction appCompatImageButton3 = onView(
                 allOf(withContentDescription("Open Menu"),
@@ -76,6 +97,19 @@ public class GalleryFragmentTest {
         ViewInteraction appCompatCheckedTextView3 = onView(
                 allOf(withId(R.id.design_menu_item_text), withText("Gallery"), isDisplayed()));
         appCompatCheckedTextView3.perform(click());
+
+        try {
+            Thread.sleep(TestUtilValues.GALLERY_TIME); //waiting for snapshot
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction floatingActionButton4 = onView(
+                allOf(withId(R.id.gallery_button),
+                        withParent(withId(R.id.gallery_rel_lay)),
+                        isDisplayed()));
+        floatingActionButton4.check(matches(isDisplayed()));
+        floatingActionButton4.perform(click());
 
         ViewInteraction listView = onView(
                 allOf(withId(R.id.gallery_list_view),
@@ -88,61 +122,16 @@ public class GalleryFragmentTest {
                         isDisplayed()));
         listView.check(matches(isDisplayed()));
 
-        ViewInteraction floatingActionButton2 = onView(
-                allOf(withId(R.id.gallery_button),
-                        withParent(withId(R.id.gallery_rel_lay)),
-                        isDisplayed()));
-        floatingActionButton2.check(matches(isDisplayed()));
-        floatingActionButton2.perform(click());
-
         try {
-            Thread.sleep(TestUtilValues.MOTION_RESTART_TIME); //waiting for Motion restart
+            Thread.sleep(TestUtilValues.GALLERY_TIME); //waiting list
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        ViewInteraction relativeLayout = onView(
-                allOf(withId(R.id.single_item_gallery),
-                        childAtPosition(
-                                allOf(withId(R.id.gallery_list_view),
-                                        childAtPosition(
-                                                withId(R.id.gallery_rel_lay),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        relativeLayout.check(matches(isDisplayed()));
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.img_name), withText("lastsnap.jpg"),isDisplayed()));
+        textView.check(matches(withText("lastsnap.jpg")));
 
-        ViewInteraction imageView = onView(
-                allOf(withId(R.id.image), withContentDescription("Settings"),
-                        childAtPosition(
-                                allOf(withId(R.id.single_item_gallery),
-                                        childAtPosition(
-                                                withId(R.id.gallery_list_view),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        imageView.check(matches(isDisplayed()));
-
-        imageView.perform(click());
-
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.close_button), withText(" CLOSE ")));
-        appCompatButton2.check(matches(isDisplayed()));
-        appCompatButton2.perform(click());
-
-        /*ViewInteraction button = onView(
-                allOf(withId(R.id.close_button),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                1),
-                        isDisplayed()));
-        button.check(matches(isDisplayed()));
-
-        ViewInteraction appCompatButton3 = onView(
-                allOf(withId(R.id.close_button), withText(" CLOSE "), isDisplayed()));
-        appCompatButton3.perform(click());*/
     }
 
     private static Matcher<View> childAtPosition(
