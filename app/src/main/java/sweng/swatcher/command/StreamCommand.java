@@ -75,9 +75,16 @@ public class StreamCommand implements CommandInterface {
             return true;
         }
 
+        @SuppressWarnings("deprecation")
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            Log.i("GENERIC-ERROR", errorCode+"");
+        }
+
         @Override
         public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
             Snackbar.make(view, "Connection Error: "+errorResponse.getReasonPhrase(), Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            Log.i("HTTP-ERROR", errorResponse.getStatusCode()+"");
             super.onReceivedHttpError(view, request, errorResponse);
         }
 
