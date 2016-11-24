@@ -157,24 +157,22 @@ public class HomeFragment extends Fragment {
 
        // SettingManager sm = new SettingManager(getContext());
        // Setting setting = sm.getSetting();
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
+       // SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+        //Authorization auth = new Authorization(sp.getString(PreferecesKeys.USR,""),sp.getString(PreferecesKeys.PSW,""),"Basic");
 
         this.webViewStreaming = (WebView)view.findViewById(R.id.webview_streaming);
-        this.streaming = new StreamRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.STREAM_PORT,""),auth);
-        this.snapshot = new SnapshotRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.CMD_PORT,""),auth,0,view);
-        this.movie = new MovieRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.CMD_PORT,""),auth,0,view);
+      //  this.streaming = new StreamRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.STREAM_PORT,""),auth);
+       // this.snapshot = new SnapshotRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.CMD_PORT,""),auth,0,view);
+       // this.movie = new MovieRequest(sp.getString(PreferecesKeys.IP_ADDR,""),sp.getString(PreferecesKeys.CMD_PORT,""),auth,0,view);
 
         this.playButton = (FloatingActionButton) view.findViewById(R.id.play);
         this.stopButton = (FloatingActionButton) view.findViewById(R.id.stop);
         this.snapshotButton = (FloatingActionButton) view.findViewById(R.id.snapshot);
 
-
         this.playButton.setOnClickListener(playListner);
         this.stopButton.setOnClickListener(stopListner);
         this.snapshotButton.setOnClickListener(snapshotListner);
-
 
         this.mediaButtonSet = new MediaButtonSet(view);
 
@@ -182,12 +180,14 @@ public class HomeFragment extends Fragment {
         this.mediaButtonSet.addToPlayList(this.stopButton);
         this.mediaButtonSet.addToPlayList(this.snapshotButton);
 
-
     }
 
     private View.OnClickListener playListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
+            //webViewStreaming.clearHistory();
+            //webViewStreaming.cancelPendingInputEvents();
 
             boolean error = false;
 
@@ -209,8 +209,10 @@ public class HomeFragment extends Fragment {
 
             if (error) {
                 Snackbar.make(view, "Connection fields empty!\nSet connection parameters", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-
             } else {
+                Authorization auth = new Authorization(setting.getUsername(),setting.getPassword(),"Basic");
+                Log.i("HOME_FRAGMENT",auth.getUsername()+":"+auth.getPassword()+":"+setting.getStreamingPort());
+                streaming = new StreamRequest(setting.getIpAddress(),setting.getStreamingPort(),auth);
                 streamCommand = new StreamCommand(webViewStreaming, view, streaming, mediaButtonSet);
                 streamCommand.execute();
             }
@@ -220,6 +222,8 @@ public class HomeFragment extends Fragment {
     private View.OnClickListener stopListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            //webViewStreaming.clearHistory();
+            //webViewStreaming.cancelPendingInputEvents();
             streamCommand.hideMediaButton();
         }
     };
@@ -227,6 +231,10 @@ public class HomeFragment extends Fragment {
     private View.OnClickListener snapshotListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            SettingManager settingManager = new SettingManager(getContext());
+            Setting setting = settingManager.getSetting();
+            Authorization auth = new Authorization(setting.getUsername(),setting.getPassword(),"Basic");
+            snapshot = new SnapshotRequest(setting.getIpAddress(),setting.getCommandPort(),auth,0,view);
             snapshot.setResponse(null);
             MediaCommand cmd = new MediaCommand(getContext(),snapshot,view);
             cmd.execute();

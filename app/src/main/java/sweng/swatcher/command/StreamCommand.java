@@ -8,7 +8,6 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.request.HttpRequest;
 import sweng.swatcher.util.MediaButtonSet;
@@ -38,7 +37,7 @@ public class StreamCommand implements CommandInterface {
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         webView.loadUrl(httpRequest.getURL());
 
-        Snackbar.make(view, "Successful Connected", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+        //Snackbar.make(view, "Successful Connected", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
         displayMediaButton();
 
     }
@@ -66,6 +65,7 @@ public class StreamCommand implements CommandInterface {
 
         @Override
         public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
+            Log.i("PROCEED", realm+" - "+host+" - ");
             handler.proceed(authorization.getUsername(), authorization.getPassword());
         }
 
@@ -75,19 +75,23 @@ public class StreamCommand implements CommandInterface {
             return true;
         }
 
+        //Streaming Port Error
+        //IP-Address Error (timeout)
         @SuppressWarnings("deprecation")
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            Log.i("GENERIC-ERROR", errorCode+"");
+            Log.i("GENERIC-ERROR", errorCode+" "+description);
+            Snackbar.make(view, "Error: "+errorCode+" "+description, Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            super.onReceivedError(view,errorCode,description,failingUrl);
         }
 
+        //Credentials Error
         @Override
         public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-            Snackbar.make(view, "Connection Error: "+errorResponse.getReasonPhrase(), Snackbar.LENGTH_SHORT).setAction("Action", null).show();
             Log.i("HTTP-ERROR", errorResponse.getStatusCode()+"");
+            //Snackbar.make(view, "Error: "+errorResponse.getStatusCode()+" "+errorResponse.getReasonPhrase(), Snackbar.LENGTH_SHORT).setAction("Action", null).show();
             super.onReceivedHttpError(view, request, errorResponse);
         }
-
     }
 
     public WebView getWebView() {
