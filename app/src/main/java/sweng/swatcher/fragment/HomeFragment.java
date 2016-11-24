@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 import sweng.swatcher.R;
+import sweng.swatcher.model.Setting;
 import sweng.swatcher.util.PreferecesKeys;
 import sweng.swatcher.command.StreamCommand;
 import sweng.swatcher.model.Authorization;
@@ -22,6 +24,7 @@ import sweng.swatcher.request.MovieRequest;
 import sweng.swatcher.request.SnapshotRequest;
 import sweng.swatcher.request.StreamRequest;
 import sweng.swatcher.util.MediaButtonSet;
+import sweng.swatcher.util.SettingManager;
 
 
 /**
@@ -185,8 +188,32 @@ public class HomeFragment extends Fragment {
     private View.OnClickListener playListner = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            streamCommand = new StreamCommand(webViewStreaming, view, streaming, mediaButtonSet);
-            streamCommand.execute();
+
+            boolean error = false;
+
+            SettingManager settingManager = new SettingManager(getContext());
+            Setting setting = settingManager.getSetting();
+
+            //Check if connection parameters are empty
+            if (errorParameterEmpty(setting.getIp1())) error = true;
+            if (errorParameterEmpty(setting.getIp2())) error = true;
+            if (errorParameterEmpty(setting.getIp3())) error = true;
+            if (errorParameterEmpty(setting.getIp4())) error = true;
+
+            if (errorParameterEmpty(setting.getStreamingPort())) error = true;
+            if (errorParameterEmpty(setting.getCommandPort())) error = true;
+            if (errorParameterEmpty(setting.getWebServerPort())) error = true;
+
+            if (errorParameterEmpty(setting.getUsername())) error = true;
+            if (errorParameterEmpty(setting.getPassword())) error = true;
+
+            if (error) {
+                Snackbar.make(view, "Connection fields empty!\nSet connection parameters", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+
+            } else {
+                streamCommand = new StreamCommand(webViewStreaming, view, streaming, mediaButtonSet);
+                streamCommand.execute();
+            }
         }
     };
 
@@ -206,6 +233,15 @@ public class HomeFragment extends Fragment {
         }
     };
 
+
+    private boolean errorParameterEmpty(String parameter){
+
+        boolean error = false;
+
+        if(parameter.equalsIgnoreCase(null) || parameter.equalsIgnoreCase("")) error = true;
+
+        return error;
+    }
 
 }
 
