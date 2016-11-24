@@ -12,10 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-
 import sweng.swatcher.R;
+import sweng.swatcher.util.ConnectionParameterLimit;
 import sweng.swatcher.util.PreferecesKeys;
 import sweng.swatcher.model.Setting;
+import sweng.swatcher.util.ConnectionParameterLimit.*;
 
 
 /**
@@ -188,32 +189,120 @@ public class ConnectionSettingsFragment extends Fragment {
             settingManager.setConnectionSetting(setting);
             */
 
-            // Get Editor from SharedPreferencies
-            SharedPreferences.Editor editor = sharedPreferences.edit();
+            /*
+             *  Check new values
+             */
+            boolean ipError = false;
+            boolean portError = false;
+            boolean credentialsError = false;
 
-            editor.putString(PreferecesKeys.IP1, ip1.getText().toString());
-            editor.putString(PreferecesKeys.IP2, ip2.getText().toString());
-            editor.putString(PreferecesKeys.IP3, ip3.getText().toString());
-            editor.putString(PreferecesKeys.IP4, ip4.getText().toString());
-            editor.putString(PreferecesKeys.IP_ADDR, ip1.getText().toString()+"."+
-                                                     ip2.getText().toString()+"."+
-                                                     ip3.getText().toString()+"."+
-                                                     ip4.getText().toString());
-            editor.putString(PreferecesKeys.STREAM_PORT, streamingPort.getText().toString());
-            editor.putString(PreferecesKeys.CMD_PORT, commandPort.getText().toString());
-            editor.putString(PreferecesKeys.WEB_PORT, webPort.getText().toString());
-            editor.putString(PreferecesKeys.USR, username.getText().toString());
-            editor.putString(PreferecesKeys.PSW, password.getText().toString());
-            // editor.putString(PreferecesKeys.NEW_USR, setting.getNewUsername().toString());
-            // editor.putString(PreferecesKeys.NEW_PSW, setting.getNewPassword().toString());
+            //chek ip1
+            if(errorIP(ip1)) ipError = true;
 
-            editor.commit();
+            //check ip2
+            if(errorIP(ip2)) ipError = true;
 
-            // spinner.setVisibility(View.GONE);
+            //check ip3
+            if(errorIP(ip3)) ipError = true;
 
-            Snackbar.make(view, "Settings Saved", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            //check ip4
+            if(errorIP(ip4)) ipError = true;
+
+            //check stream port
+            if(errorPort(streamingPort)) portError = true;
+
+            //check command port
+            if(errorPort(commandPort)) portError = true;
+
+            //check web port
+            if(errorPort(webPort)) portError = true;
+
+            //check credentials
+            if(errorCredentials(username, password)) credentialsError = true;
+
+            if(ipError){
+                Snackbar.make(view, "ERROR in Ip Address values, settings not saved!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }else{
+               if(portError){
+                   Snackbar.make(view, "ERROR in Ports values, settings not saved!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+               }else{
+                   if(credentialsError){
+                       Snackbar.make(view, "ERROR in Credentials values, settings not saved!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                   }else{
+                       // Get Editor from SharedPreferencies
+                       SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                       editor.putString(PreferecesKeys.IP1, ip1.getText().toString());
+                       editor.putString(PreferecesKeys.IP2, ip2.getText().toString());
+                       editor.putString(PreferecesKeys.IP3, ip3.getText().toString());
+                       editor.putString(PreferecesKeys.IP4, ip4.getText().toString());
+                       editor.putString(PreferecesKeys.IP_ADDR, ip1.getText().toString()+"."+
+                               ip2.getText().toString()+"."+
+                               ip3.getText().toString()+"."+
+                               ip4.getText().toString());
+                       editor.putString(PreferecesKeys.STREAM_PORT, streamingPort.getText().toString());
+                       editor.putString(PreferecesKeys.CMD_PORT, commandPort.getText().toString());
+                       editor.putString(PreferecesKeys.WEB_PORT, webPort.getText().toString());
+                       editor.putString(PreferecesKeys.USR, username.getText().toString());
+                       editor.putString(PreferecesKeys.PSW, password.getText().toString());
+                       // editor.putString(PreferecesKeys.NEW_USR, setting.getNewUsername().toString());
+                       // editor.putString(PreferecesKeys.NEW_PSW, setting.getNewPassword().toString());
+
+                       editor.commit();
+                       // spinner.setVisibility(View.GONE);
+                       Snackbar.make(view, "Settings Saved", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                   }
+               }
+            }
         }
     };
+
+    private boolean errorIP(EditText ip){
+
+        boolean error = false;
+
+        String ipString = ip.getText().toString();
+        int ipInt;
+        if(ipString.equalsIgnoreCase(null) || ipString.equalsIgnoreCase("")){
+            error = true;
+        }else{
+            ipInt  = Integer.parseInt(ipString);
+            if(ipInt < ConnectionParameterLimit.IP_MIN_VALUE || ipInt > ConnectionParameterLimit.IP_MAX_VALUE){
+                error = true;
+            }
+        }
+        return error;
+    }
+
+    private boolean errorPort(EditText port){
+
+        boolean error = false;
+
+        String portString = port.getText().toString();
+        int portInt;
+        if(portString.equalsIgnoreCase(null) || portString.equalsIgnoreCase("")){
+            error = true;
+        }else{
+            portInt = Integer.parseInt(portString);
+            if(portInt < ConnectionParameterLimit.PORT_MIN_VALUE || portInt > ConnectionParameterLimit.PORT_MAX_VALUE){
+                error = true;
+            }
+        }
+        return error;
+    }
+
+    private boolean errorCredentials(EditText usernameET, EditText passwordET){
+
+        boolean error = false;
+        String username = usernameET.getText().toString();
+        String password = passwordET.getText().toString();
+
+        if(username.equalsIgnoreCase(null) || username.equalsIgnoreCase("") || password.equalsIgnoreCase(null) || password.equalsIgnoreCase("")){
+            error = true;
+        }
+
+        return error;
+    }
 
     private void setPreviousValue(){
 
