@@ -1,4 +1,4 @@
-package sweng.swatcher;
+package sweng.swatcher.notificationSystem;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,6 +11,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import android.support.v4.app.NotificationCompat;
 
+import sweng.swatcher.R;
 import sweng.swatcher.activity.MainActivity;
 
 /**

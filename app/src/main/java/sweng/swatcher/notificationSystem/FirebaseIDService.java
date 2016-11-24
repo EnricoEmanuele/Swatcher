@@ -1,4 +1,4 @@
-package sweng.swatcher;
+package sweng.swatcher.notificationSystem;
 
 import android.util.Log;
 
