@@ -287,16 +287,21 @@ public class MediaSettingFragment extends Fragment {
             //set image quality parameter
             HttpRequest quality;
             String qualityValue = qualityImageEditText.getText().toString();
-            int qualityValueInt = Integer.parseInt(qualityValue);
-            if(qualityValue!=null && (qualityValueInt>=MediaParameterLimit.QUALITY_MIN_VALUE && qualityValueInt<=MediaParameterLimit.QUALITY_MAX_VALUE)){
-                quality = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                        new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,QUALITY_PARAMETER,qualityValue);
-                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),quality, mediaSettingView);
-                mediaSettingSetCommand.execute();
-            }
-            else {
+            try {
+                int qualityValueInt = Integer.parseInt(qualityValue);
+                if(qualityValue!=null && (qualityValueInt>=MediaParameterLimit.QUALITY_MIN_VALUE && qualityValueInt<=MediaParameterLimit.QUALITY_MAX_VALUE)){
+                    quality = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                            new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,QUALITY_PARAMETER,qualityValue);
+                    mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),quality, mediaSettingView);
+                    mediaSettingSetCommand.execute();
+                }
+                else {
+                    qualityError = true;
+                }
+            }catch (NumberFormatException ex){
                 qualityError = true;
             }
+
 
             //set picture type parameter
             String picTypeValue = pictureTypeSpinenr.getSelectedItem().toString();
@@ -329,15 +334,19 @@ public class MediaSettingFragment extends Fragment {
 
             //set max movie time parameter
             String maxMovieTimeValue = maxMovieTimeEditText.getText().toString();
-            int maxMovieTimeValueInt = Integer.parseInt(maxMovieTimeValue);
-            HttpRequest maxMovieTime;
-            if(maxMovieTimeValue!=null && (maxMovieTimeValueInt>=MediaParameterLimit.MOVIE_TIME_MIN_VALUE && maxMovieTimeValueInt<=MediaParameterLimit.MOVIE_TIME_MAX_VALUE)){
-                maxMovieTime = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                        new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,MAX_MOVIE_TIME,maxMovieTimeValue);
-                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),maxMovieTime, mediaSettingView);
-                mediaSettingSetCommand.execute();
-            }
-            else {
+            try {
+                int maxMovieTimeValueInt = Integer.parseInt(maxMovieTimeValue);
+                HttpRequest maxMovieTime;
+                if(maxMovieTimeValue!=null && (maxMovieTimeValueInt>=MediaParameterLimit.MOVIE_TIME_MIN_VALUE && maxMovieTimeValueInt<=MediaParameterLimit.MOVIE_TIME_MAX_VALUE)){
+                    maxMovieTime = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                            new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,MAX_MOVIE_TIME,maxMovieTimeValue);
+                    mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),maxMovieTime, mediaSettingView);
+                    mediaSettingSetCommand.execute();
+                }
+                else {
+                    maxMovieTimeError = true;
+                }
+            }catch (NumberFormatException ex){
                 maxMovieTimeError = true;
             }
 
@@ -355,31 +364,41 @@ public class MediaSettingFragment extends Fragment {
 
             //set threshold parameter
             String thresholdValue = thresholdEditText.getText().toString();
-            int thresholdValueInt = Integer.parseInt(thresholdValue);
-            HttpRequest threshold;
-            if(thresholdValue!=null && (thresholdValueInt>=MediaParameterLimit.THRESHOLD_MIN_VALUE && thresholdValueInt<=MediaParameterLimit.THRESHOLD_MAX_VALUE)){
-                threshold = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                        new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,THRESHOLD,thresholdValue);
-                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),threshold, mediaSettingView);
-                mediaSettingSetCommand.execute();
-            }
-            else{
+            try {
+                int thresholdValueInt = Integer.parseInt(thresholdValue);
+                HttpRequest threshold;
+                if(thresholdValue!=null && (thresholdValueInt>=MediaParameterLimit.THRESHOLD_MIN_VALUE && thresholdValueInt<=MediaParameterLimit.THRESHOLD_MAX_VALUE)){
+                    threshold = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                            new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,THRESHOLD,thresholdValue);
+                    mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),threshold, mediaSettingView);
+                    mediaSettingSetCommand.execute();
+                }
+                else{
+                    thresholdError = true;
+                }
+            }catch (NumberFormatException ex){
                 thresholdError = true;
             }
 
+
             //set snapshot interval
             String snapIntervalValue = snapshotIntervalEditText.getText().toString();
-            int snapIntervalValueInt = Integer.parseInt(snapIntervalValue);
-            HttpRequest snapshotInterval;
-            if(snapIntervalValue!=null && snapIntervalValueInt>=MediaParameterLimit.SNAPSHOT_INTERVAL_MIN_VALUE){
-                snapshotInterval = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                        new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,SNAPSHOT_INTERVAL,snapIntervalValue);
-                mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),snapshotInterval, mediaSettingView);
-                mediaSettingSetCommand.execute();
-            }
-            else{
+            try {
+                int snapIntervalValueInt = Integer.parseInt(snapIntervalValue);
+                HttpRequest snapshotInterval;
+                if(snapIntervalValue!=null && snapIntervalValueInt>=MediaParameterLimit.SNAPSHOT_INTERVAL_MIN_VALUE){
+                    snapshotInterval = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                            new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,SNAPSHOT_INTERVAL,snapIntervalValue);
+                    mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),snapshotInterval, mediaSettingView);
+                    mediaSettingSetCommand.execute();
+                }
+                else{
+                    snapIntervalError = true;
+                }
+            }catch (NumberFormatException ex){
                 snapIntervalError = true;
             }
+
 
             if(qualityError || picTypeError || maxMovieTimeError || thresholdError || snapIntervalError || outPicError) {
                 Snackbar.make(view, "Error writing setting on Server!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
