@@ -266,10 +266,15 @@ public class ConnectionSettingsFragment extends Fragment {
         if(ipString.equalsIgnoreCase(null) || ipString.equalsIgnoreCase("")){
             error = true;
         }else{
-            ipInt  = Integer.parseInt(ipString);
-            if(ipInt < ConnectionParameterLimit.IP_MIN_VALUE || ipInt > ConnectionParameterLimit.IP_MAX_VALUE){
+            try{
+                ipInt  = Integer.parseInt(ipString);
+                if(ipInt < ConnectionParameterLimit.IP_MIN_VALUE || ipInt > ConnectionParameterLimit.IP_MAX_VALUE){
+                    error = true;
+                }
+            }catch (NumberFormatException exception){
                 error = true;
             }
+
         }
         return error;
     }
@@ -283,10 +288,15 @@ public class ConnectionSettingsFragment extends Fragment {
         if(portString.equalsIgnoreCase(null) || portString.equalsIgnoreCase("")){
             error = true;
         }else{
-            portInt = Integer.parseInt(portString);
-            if(portInt < ConnectionParameterLimit.PORT_MIN_VALUE || portInt > ConnectionParameterLimit.PORT_MAX_VALUE){
+            try{
+                portInt = Integer.parseInt(portString);
+                if(portInt < ConnectionParameterLimit.PORT_MIN_VALUE || portInt > ConnectionParameterLimit.PORT_MAX_VALUE){
+                    error = true;
+                }
+            }catch(NumberFormatException exception){
                 error = true;
             }
+
         }
         return error;
     }
