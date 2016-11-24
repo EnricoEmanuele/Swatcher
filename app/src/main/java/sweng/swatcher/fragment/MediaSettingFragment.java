@@ -381,7 +381,6 @@ public class MediaSettingFragment extends Fragment {
                 snapIntervalError = true;
             }
 
-
             if(qualityError || picTypeError || maxMovieTimeError || thresholdError || snapIntervalError || outPicError) {
                 Snackbar.make(view, "Error writing setting on Server!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
