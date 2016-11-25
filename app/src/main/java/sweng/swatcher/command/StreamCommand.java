@@ -3,11 +3,13 @@ package sweng.swatcher.command;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.HttpAuthHandler;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
 import sweng.swatcher.model.Authorization;
 import sweng.swatcher.request.HttpRequest;
 import sweng.swatcher.util.MediaButtonSet;
@@ -31,6 +33,8 @@ public class StreamCommand implements CommandInterface {
     }
 
     public void execute(){
+
+
         webView.setWebViewClient(new Streaming(httpRequest.getAuthorization()));
         webView.getSettings().setLoadsImagesAutomatically(true);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -63,14 +67,17 @@ public class StreamCommand implements CommandInterface {
             this.authorization = authorization;
         }
 
+
         @Override
         public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
             Log.i("PROCEED", realm+" - "+host+" - ");
             handler.proceed(authorization.getUsername(), authorization.getPassword());
         }
 
+
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
             view.loadUrl(url);
             return true;
         }

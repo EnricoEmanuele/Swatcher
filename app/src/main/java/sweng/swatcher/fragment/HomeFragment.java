@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import sweng.swatcher.R;
@@ -212,6 +214,7 @@ public class HomeFragment extends Fragment {
             } else {
                 Authorization auth = new Authorization(setting.getUsername(),setting.getPassword(),"Basic");
                 Log.i("HOME_FRAGMENT",auth.getUsername()+":"+auth.getPassword()+":"+setting.getStreamingPort());
+
                 streaming = new StreamRequest(setting.getIpAddress(),setting.getStreamingPort(),auth);
                 streamCommand = new StreamCommand(webViewStreaming, view, streaming, mediaButtonSet);
                 streamCommand.execute();
@@ -243,11 +246,8 @@ public class HomeFragment extends Fragment {
 
 
     private boolean errorParameterEmpty(String parameter){
-
         boolean error = false;
-
         if(parameter.equalsIgnoreCase(null) || parameter.equalsIgnoreCase("")) error = true;
-
         return error;
     }
 

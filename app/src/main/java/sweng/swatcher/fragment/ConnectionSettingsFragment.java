@@ -1,6 +1,8 @@
 package sweng.swatcher.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import sweng.swatcher.R;
+import sweng.swatcher.activity.MainActivity;
 import sweng.swatcher.util.ConnectionParameterLimit;
 import sweng.swatcher.util.PreferecesKeys;
 import sweng.swatcher.model.Setting;
@@ -250,7 +253,8 @@ public class ConnectionSettingsFragment extends Fragment {
 
                        editor.commit();
                        // spinner.setVisibility(View.GONE);
-                       Snackbar.make(view, "Settings Saved", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                       Snackbar.make(view, "Settings Saved!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
                    }
                }
             }
