@@ -16,7 +16,7 @@ public class SetMediaSettingRequestTest {
 
     private String oracleURL;
     private SetMediaSettingRequest setMediaSettingRequest;
-    String parameter = ParametersKeys.OUTPUT_PICTURES; //output_pictures
+    String parameter = sweng.swatcher.util.ParametersKeys.OUTPUT_PICTURES; //output_pictures
     String value = "on";
 
     @Before
