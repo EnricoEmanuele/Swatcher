@@ -263,17 +263,86 @@ public class MediaSettingFragment extends Fragment {
         final String VALUE_ON = "on";
         final String VALUE_OFF = "off";
 
+        private boolean qualityValueIsCorrect(String qualityValue){
+            if( qualityValue!=null && !qualityValue.isEmpty() ) {
+                int qualityValueInt = Integer.parseInt(qualityValue);
+                //check Boundary Values
+                if(qualityValueInt >= MediaParameterLimit.QUALITY_MIN_VALUE
+                        && qualityValueInt <= MediaParameterLimit.QUALITY_MAX_VALUE) {
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else {
+                //qualityValue is null or empty
+                return false;
+            }
+        }
+
+        private boolean maxMovieTimeValueIsCorrect(String maxMovieTimeValue){
+            if( maxMovieTimeValue!=null && !maxMovieTimeValue.isEmpty() ) {
+                int maxMovieTimeValueInt = Integer.parseInt(maxMovieTimeValue);
+                //check Boundary Values
+                if( maxMovieTimeValueInt >= MediaParameterLimit.MOVIE_TIME_MIN_VALUE
+                        && maxMovieTimeValueInt <= MediaParameterLimit.MOVIE_TIME_MAX_VALUE){
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else{
+                //maxMovieTimeValue is null or empty
+                return false;
+            }
+        }
+
+        private boolean thresholdValueIsCorrect(String thresholdValue ){
+            if( thresholdValue!=null && !thresholdValue.isEmpty() ) {
+                int thresholdValueInt = Integer.parseInt(thresholdValue);
+                //check Boundary Values
+                if( thresholdValueInt >= MediaParameterLimit.THRESHOLD_MIN_VALUE
+                        && thresholdValueInt <= MediaParameterLimit.THRESHOLD_MAX_VALUE){
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else{
+                //thresholdValue is null or empty
+                return false;
+            }
+        }
+
+        private boolean snapshotIntervalValueIsCorrect(String snapshotIntervalValue){
+            if( snapshotIntervalValue!=null && !snapshotIntervalValue.isEmpty() ){
+                int snapIntervalValueInt = Integer.parseInt(snapshotIntervalValue);
+                //check Boundary Values
+                if( snapIntervalValueInt >= MediaParameterLimit.SNAPSHOT_INTERVAL_MIN_VALUE ){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{
+                //snapshotIntervalValue is null or empty
+                return false;
+            }
+
+        }
+
         @Override
         public void onClick(View view) {
 
-            boolean settingError = false;
             boolean qualityError = false;
             boolean picTypeError = false;
             boolean maxMovieTimeError = false;
             boolean thresholdError = false;
             boolean snapIntervalError = false;
             boolean outPicError = false;
-
 
             //View resources
             EditText qualityImageEditText = (EditText) mediaSettingView.findViewById(R.id.quality_image);
@@ -288,8 +357,7 @@ public class MediaSettingFragment extends Fragment {
             HttpRequest quality;
             String qualityValue = qualityImageEditText.getText().toString();
             try {
-                int qualityValueInt = Integer.parseInt(qualityValue);
-                if(qualityValue!=null && (qualityValueInt>=MediaParameterLimit.QUALITY_MIN_VALUE && qualityValueInt<=MediaParameterLimit.QUALITY_MAX_VALUE)){
+                if(qualityValueIsCorrect(qualityValue)){
                     quality = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                             new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,QUALITY_PARAMETER,qualityValue);
                     mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),quality, mediaSettingView);
@@ -298,10 +366,10 @@ public class MediaSettingFragment extends Fragment {
                 else {
                     qualityError = true;
                 }
-            }catch (NumberFormatException ex){
+            }
+            catch (NumberFormatException ex){
                 qualityError = true;
             }
-
 
             //set picture type parameter
             String picTypeValue = pictureTypeSpinenr.getSelectedItem().toString();
@@ -335,9 +403,8 @@ public class MediaSettingFragment extends Fragment {
             //set max movie time parameter
             String maxMovieTimeValue = maxMovieTimeEditText.getText().toString();
             try {
-                int maxMovieTimeValueInt = Integer.parseInt(maxMovieTimeValue);
                 HttpRequest maxMovieTime;
-                if(maxMovieTimeValue!=null && (maxMovieTimeValueInt>=MediaParameterLimit.MOVIE_TIME_MIN_VALUE && maxMovieTimeValueInt<=MediaParameterLimit.MOVIE_TIME_MAX_VALUE)){
+                if( maxMovieTimeValueIsCorrect(maxMovieTimeValue) ){
                     maxMovieTime = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                             new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,MAX_MOVIE_TIME,maxMovieTimeValue);
                     mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),maxMovieTime, mediaSettingView);
@@ -346,7 +413,8 @@ public class MediaSettingFragment extends Fragment {
                 else {
                     maxMovieTimeError = true;
                 }
-            }catch (NumberFormatException ex){
+            }
+            catch (NumberFormatException ex){
                 maxMovieTimeError = true;
             }
 
@@ -365,9 +433,8 @@ public class MediaSettingFragment extends Fragment {
             //set threshold parameter
             String thresholdValue = thresholdEditText.getText().toString();
             try {
-                int thresholdValueInt = Integer.parseInt(thresholdValue);
                 HttpRequest threshold;
-                if(thresholdValue!=null && (thresholdValueInt>=MediaParameterLimit.THRESHOLD_MIN_VALUE && thresholdValueInt<=MediaParameterLimit.THRESHOLD_MAX_VALUE)){
+                if(thresholdValueIsCorrect(thresholdValue)){
                     threshold = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                             new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,THRESHOLD,thresholdValue);
                     mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),threshold, mediaSettingView);
@@ -376,17 +443,16 @@ public class MediaSettingFragment extends Fragment {
                 else{
                     thresholdError = true;
                 }
-            }catch (NumberFormatException ex){
+            }
+            catch (NumberFormatException ex){
                 thresholdError = true;
             }
-
 
             //set snapshot interval
             String snapIntervalValue = snapshotIntervalEditText.getText().toString();
             try {
-                int snapIntervalValueInt = Integer.parseInt(snapIntervalValue);
                 HttpRequest snapshotInterval;
-                if(snapIntervalValue!=null && snapIntervalValueInt>=MediaParameterLimit.SNAPSHOT_INTERVAL_MIN_VALUE){
+                if( snapshotIntervalValueIsCorrect(snapIntervalValue) ){
                     snapshotInterval = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
                             new Authorization(setting.getUsername(),setting.getPassword(),"Basic"),0,SNAPSHOT_INTERVAL,snapIntervalValue);
                     mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),snapshotInterval, mediaSettingView);
@@ -395,12 +461,14 @@ public class MediaSettingFragment extends Fragment {
                 else{
                     snapIntervalError = true;
                 }
-            }catch (NumberFormatException ex){
+            }
+            catch (NumberFormatException ex){
                 snapIntervalError = true;
             }
 
 
             if(qualityError || picTypeError || maxMovieTimeError || thresholdError || snapIntervalError || outPicError) {
+                // setting error
                 Snackbar.make(view, "Error writing setting on Server!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
             else{
