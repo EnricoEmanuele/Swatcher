@@ -196,10 +196,6 @@ public class MediaSettingFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private Authorization getBasicAuthorizationInstance(Setting setting){
-        return new Authorization(setting.getUsername(),setting.getPassword(),"Basic");
-    }
-
     /*
      * Read media parameters from Server
      */
@@ -209,43 +205,43 @@ public class MediaSettingFragment extends Fragment {
 
             //read image quality parameter
             HttpRequest qualityImage = new ReadMediaSettingRequest(setting.getIpAddress(),
-                    setting.getCommandPort(), getBasicAuthorizationInstance(setting), 0, QUALITY_PARAMETER);
+                    setting.getCommandPort(), Authorization.getBasicAuthorizationInstance(setting), 0, QUALITY_PARAMETER);
             mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), qualityImage, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read picture type parameter
             HttpRequest pictureType = new ReadMediaSettingRequest(setting.getIpAddress(),
-                    setting.getCommandPort(), getBasicAuthorizationInstance(setting), 0, PICTURE_TYPE);
+                    setting.getCommandPort(), Authorization.getBasicAuthorizationInstance(setting), 0, PICTURE_TYPE);
             mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), pictureType, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read movie on detection parameter
             HttpRequest movieOnDetection = new ReadMediaSettingRequest(setting.getIpAddress(),
-                    setting.getCommandPort(), getBasicAuthorizationInstance(setting), 0, OUTPUT_MOVIES);
+                    setting.getCommandPort(), Authorization.getBasicAuthorizationInstance(setting), 0, OUTPUT_MOVIES);
             mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), movieOnDetection, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read max movie time
             HttpRequest maxMovieTime = new ReadMediaSettingRequest(setting.getIpAddress(),
-                    setting.getCommandPort(), getBasicAuthorizationInstance(setting), 0, MAX_MOVIE_TIME);
+                    setting.getCommandPort(), Authorization.getBasicAuthorizationInstance(setting), 0, MAX_MOVIE_TIME);
             mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), maxMovieTime, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read snapshot on detection parameter
             HttpRequest snapshotOnDetection = new ReadMediaSettingRequest(setting.getIpAddress(),
-                    setting.getCommandPort(), getBasicAuthorizationInstance(setting), 0, OUTPUT_PICTURES);
+                    setting.getCommandPort(), Authorization.getBasicAuthorizationInstance(setting), 0, OUTPUT_PICTURES);
             mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotOnDetection, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read threshold parameter
             HttpRequest threshold = new ReadMediaSettingRequest(setting.getIpAddress(),
-                    setting.getCommandPort(), getBasicAuthorizationInstance(setting), 0, THRESHOLD);
+                    setting.getCommandPort(), Authorization.getBasicAuthorizationInstance(setting), 0, THRESHOLD);
             mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), threshold, mediaSettingView);
             mediaSettingReadCommand.execute();
 
             //read continuous snapshot interval parameter
             HttpRequest snapshotInterval = new ReadMediaSettingRequest(setting.getIpAddress(),
-                    setting.getCommandPort(), getBasicAuthorizationInstance(setting), 0, SNAPSHOT_INTERVAL);
+                    setting.getCommandPort(), Authorization.getBasicAuthorizationInstance(setting), 0, SNAPSHOT_INTERVAL);
             mediaSettingReadCommand = new MediaSettingReadCommand(getContext(), snapshotInterval, mediaSettingView);
             mediaSettingReadCommand.execute();
 
@@ -285,7 +281,7 @@ public class MediaSettingFragment extends Fragment {
             try {
                 if(MediaParameterLimit.qualityValueIsCorrect(qualityValue)){
                     quality = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                                        getBasicAuthorizationInstance(setting),0,QUALITY_PARAMETER,qualityValue);
+                                Authorization.getBasicAuthorizationInstance(setting),0,QUALITY_PARAMETER,qualityValue);
                     mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),quality, mediaSettingView);
                     mediaSettingSetCommand.execute();
                 }
@@ -302,7 +298,7 @@ public class MediaSettingFragment extends Fragment {
             HttpRequest pictureType;
             if(picTypeValue!=null){
                 pictureType = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                                            getBasicAuthorizationInstance(setting),0,PICTURE_TYPE,picTypeValue);
+                                Authorization.getBasicAuthorizationInstance(setting),0,PICTURE_TYPE,picTypeValue);
                 mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),pictureType, mediaSettingView);
                 mediaSettingSetCommand.execute();
             }
@@ -322,7 +318,7 @@ public class MediaSettingFragment extends Fragment {
             }
 
             HttpRequest outputMovie = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                                            getBasicAuthorizationInstance(setting),0,OUTPUT_MOVIES,recMovieValue);
+                                        Authorization.getBasicAuthorizationInstance(setting),0,OUTPUT_MOVIES,recMovieValue);
             mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),outputMovie, mediaSettingView);
             mediaSettingSetCommand.execute();
 
@@ -332,7 +328,7 @@ public class MediaSettingFragment extends Fragment {
                 HttpRequest maxMovieTime;
                 if( MediaParameterLimit.maxMovieTimeValueIsCorrect(maxMovieTimeValue) ){
                     maxMovieTime = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                                            getBasicAuthorizationInstance(setting),0,MAX_MOVIE_TIME,maxMovieTimeValue);
+                                    Authorization.getBasicAuthorizationInstance(setting),0,MAX_MOVIE_TIME,maxMovieTimeValue);
                     mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),maxMovieTime, mediaSettingView);
                     mediaSettingSetCommand.execute();
                 }
@@ -348,7 +344,7 @@ public class MediaSettingFragment extends Fragment {
             String outPicValue = snapshotSpinner.getSelectedItem().toString();
             if(outPicValue!=null){
                 HttpRequest snapshotOnDetection = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                                                        getBasicAuthorizationInstance(setting),0,OUTPUT_PICTURES,outPicValue);
+                                            Authorization.getBasicAuthorizationInstance(setting),0,OUTPUT_PICTURES,outPicValue);
                 mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),snapshotOnDetection, mediaSettingView);
                 mediaSettingSetCommand.execute();
             }
@@ -362,7 +358,7 @@ public class MediaSettingFragment extends Fragment {
                 HttpRequest threshold;
                 if(MediaParameterLimit.thresholdValueIsCorrect(thresholdValue)){
                     threshold = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                                                    getBasicAuthorizationInstance(setting),0,THRESHOLD,thresholdValue);
+                                    Authorization.getBasicAuthorizationInstance(setting),0,THRESHOLD,thresholdValue);
                     mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),threshold, mediaSettingView);
                     mediaSettingSetCommand.execute();
                 }
@@ -380,7 +376,7 @@ public class MediaSettingFragment extends Fragment {
                 HttpRequest snapshotInterval;
                 if( MediaParameterLimit.snapshotIntervalValueIsCorrect(snapIntervalValue) ){
                     snapshotInterval = new SetMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
-                                            getBasicAuthorizationInstance(setting),0,SNAPSHOT_INTERVAL,snapIntervalValue);
+                            Authorization.getBasicAuthorizationInstance(setting), 0, SNAPSHOT_INTERVAL, snapIntervalValue);
                     mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),snapshotInterval, mediaSettingView);
                     mediaSettingSetCommand.execute();
                 }
@@ -399,14 +395,14 @@ public class MediaSettingFragment extends Fragment {
             }
             else{
                 //write new config on Server
-                HttpRequest writeRequest = new WriteMediaSettingRequest(setting.getIpAddress(),
-                                                setting.getCommandPort(), getBasicAuthorizationInstance(setting),0);
+                HttpRequest writeRequest = new WriteMediaSettingRequest(setting.getIpAddress(), setting.getCommandPort(),
+                                                                    Authorization.getBasicAuthorizationInstance(setting),0);
                 mediaSettingSetCommand = new MediaSettingSetCommand(getContext(),writeRequest, mediaSettingView);
                 mediaSettingSetCommand.execute();
 
                 //restart server here....
                 HttpRequest restartRequest = new RestartRequest(setting.getIpAddress(), setting.getCommandPort(),
-                                                                    getBasicAuthorizationInstance(setting),0);
+                                                                    Authorization.getBasicAuthorizationInstance(setting),0);
                 restartCommand = new RestartCommand(getContext(),restartRequest, mediaSettingView);
                 restartCommand.execute();
             }

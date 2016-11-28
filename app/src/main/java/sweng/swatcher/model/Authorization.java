@@ -13,10 +13,20 @@ public class Authorization {
     private String password;
     private String authType;
 
+    /**
+     * Constructor
+     */
     public Authorization(String username, String password, String authType) {
         this.username = username;
         this.authType = authType;
         this.password = password;
+    }
+
+    /**
+     * Factory Method to obtain a Basic Authorization Instance starting from a Setting object only
+     */
+    public static Authorization getBasicAuthorizationInstance(Setting setting){
+        return new Authorization(setting.getUsername(),setting.getPassword(),"Basic");
     }
 
     public String getUsername() {

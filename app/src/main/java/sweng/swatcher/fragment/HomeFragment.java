@@ -211,8 +211,9 @@ public class HomeFragment extends Fragment {
 
             if (error) {
                 Snackbar.make(view, "Connection fields empty!\nSet connection parameters", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-            } else {
-                Authorization auth = new Authorization(setting.getUsername(),setting.getPassword(),"Basic");
+            }
+            else {
+                Authorization auth = Authorization.getBasicAuthorizationInstance(setting);
                 Log.i("HOME_FRAGMENT",auth.getUsername()+":"+auth.getPassword()+":"+setting.getStreamingPort());
 
                 streaming = new StreamRequest(setting.getIpAddress(),setting.getStreamingPort(),auth);
@@ -236,7 +237,7 @@ public class HomeFragment extends Fragment {
         public void onClick(View view) {
             SettingManager settingManager = new SettingManager(getContext());
             Setting setting = settingManager.getSetting();
-            Authorization auth = new Authorization(setting.getUsername(),setting.getPassword(),"Basic");
+            Authorization auth = Authorization.getBasicAuthorizationInstance(setting);
             snapshot = new SnapshotRequest(setting.getIpAddress(),setting.getCommandPort(),auth,0,view);
             snapshot.setResponse(null);
             MediaCommand cmd = new MediaCommand(getContext(),snapshot,view);
