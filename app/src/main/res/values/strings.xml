@@ -22,7 +22,7 @@
         <item>best</item>
     </string-array>
 
-    <string name="new_credentials_test_message">{\"new_username\":\"u\",\"new_password\":\"p\"}</string>
+    <string name="new_credentials_test_message">New Username: user | New Password: password</string>
 
 </resources>
 

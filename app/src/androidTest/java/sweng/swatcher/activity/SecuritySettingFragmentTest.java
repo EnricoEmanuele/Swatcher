@@ -122,8 +122,8 @@ public class SecuritySettingFragmentTest {
     }
 
     private static void setNewCredentials(){ //select current credentials for test
-        newUsername = "u";
-        newPassword = "p";
+        newUsername = "user";
+        newPassword = "password";
     }
 
     private static Matcher<View> childAtPosition(

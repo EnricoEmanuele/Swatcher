@@ -214,7 +214,7 @@ public class ChangeMediaSettingsTest {
     private static void setTestInputs(){
         qualityImageTestIn = "100";
         pictureTypeTestIn = "ppm";
-        maxMovieTimeTestIn = "25";
+        maxMovieTimeTestIn = "60";
         snapOnDetectTestIn = "first";
         thresholdTestIn = "1400";
         snapIntervalTestIn = "20";
