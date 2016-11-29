@@ -35,7 +35,7 @@ public class GalleryCommand implements CommandInterface {
     private List<Media> mediaCollection;
     private ListView galleryListView;
     private ArrayAdapter<Media> mediaAdapter;
-    private final static int MEDIA_LIMIT = 1;
+    private final static int MEDIA_LIMIT = 50;
 
 
     public GalleryCommand(Context context, HttpRequest httpRequest, ListView galleryListView) {
