@@ -52,7 +52,7 @@ public class GalleryCommand implements CommandInterface {
 
                 if (response.length() > MEDIA_LIMIT) {
                     //Warning for user
-                    AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                    /*AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
                     alertDialog.setTitle("Warning");
                     alertDialog.setMessage("Too many media on Server! You shoud delete some pictures or videos!");
 
@@ -61,6 +61,18 @@ public class GalleryCommand implements CommandInterface {
                             //Toast.makeText(getContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
                         }
                     });
+                    alertDialog.show();*/
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());//Context parameter
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do stuff
+                        }
+                    });
+                    builder.setTitle("Warning");
+                    builder.setMessage("Too many media on Server! You shoud delete some pictures or videos!");
+                    AlertDialog alertDialog = builder.create();
                     alertDialog.show();
                 }
 
