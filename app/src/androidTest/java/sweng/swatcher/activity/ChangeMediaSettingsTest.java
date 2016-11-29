@@ -21,6 +21,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.replaceText;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -76,10 +77,20 @@ public class ChangeMediaSettingsTest {
     @Test
     public void changeParamsValuesTest(){
 
+        try {
+            Thread.sleep(TestUtilValues.SNACKBAR_TIME); //waiting for Motion restart
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         //read values from Server
+        /*ViewInteraction floatingActionButton2 = onView(
+                allOf(withId(R.id.update_ms_button)));
+        floatingActionButton2.perform(click());*/
+
         ViewInteraction floatingActionButton2 = onView(
-                allOf(withId(R.id.update_ms_button), isDisplayed()));
-        floatingActionButton2.perform(click());
+                withId(R.id.update_ms_button));
+        floatingActionButton2.perform(scrollTo(), click());
 
         //change values
         changeQualityImageTest(qualityImageTestIn);
@@ -92,8 +103,8 @@ public class ChangeMediaSettingsTest {
 
         //save new values on Server
         ViewInteraction buttonSave = onView(
-                allOf(withId(R.id.save_ms_button), isDisplayed()));
-        buttonSave.perform(click());
+                allOf(withId(R.id.save_ms_button)));
+        buttonSave.perform(scrollTo(),click());
 
         try {
             Thread.sleep(TestUtilValues.MOTION_RESTART_TIME); //waiting for Motion restart
@@ -101,7 +112,7 @@ public class ChangeMediaSettingsTest {
             e.printStackTrace();
         }
 
-        floatingActionButton2.perform(click()); //read new value from server
+        floatingActionButton2.perform(scrollTo(),click()); //read new value from server
 
         //assert
         qualityEditText.check(matches(withText(qualityImageTestIn)));
@@ -121,7 +132,7 @@ public class ChangeMediaSettingsTest {
         changeThresholdTest(threshold);
         changeSnapIntervalTest(snapInterval);
 
-        buttonSave.perform(click());
+        buttonSave.perform(scrollTo(),click());
 
         /*
          * possible update: assert after reset
@@ -136,41 +147,41 @@ public class ChangeMediaSettingsTest {
     private void changeQualityImageTest(String value){
         //change quality image value
         qualityEditText = onView(
-                allOf(withId(R.id.quality_image), isDisplayed()));
-        qualityEditText.perform(click());
-        qualityEditText.perform(replaceText(value), closeSoftKeyboard());
+                allOf(withId(R.id.quality_image)));
+        qualityEditText.perform(scrollTo(),click());
+        qualityEditText.perform(scrollTo(),replaceText(value), closeSoftKeyboard());
     }
 
     private void changePictureTypeTest(String value){
         //change pivture type value
         picTypeSpinner = onView(
-                allOf(withId(R.id.picture_type), isDisplayed()));
-        picTypeSpinner.perform(click());
+                allOf(withId(R.id.picture_type)));
+        picTypeSpinner.perform(scrollTo(),click());
 
         ViewInteraction appCompatCheckedTextView3 = onView(
-                allOf(withId(android.R.id.text1), withText(value), isDisplayed()));
+                allOf(withId(android.R.id.text1), withText(value)));
         appCompatCheckedTextView3.perform(click());
     }
 
     private void changeRecMovieOnDetectTest(){
         //change switch value
         recMovieSwitch = onView(
-                allOf(withId(R.id.movie_switch), isDisplayed()));
-        recMovieSwitch.perform(click());
+                allOf(withId(R.id.movie_switch)));
+        recMovieSwitch.perform(scrollTo(),click());
     }
 
     private void changeMaxMovieTimeTest(String value){
         //change max movie time value
         maxMovieTimeEditText = onView(
-                allOf(withId(R.id.max_movie_time), isDisplayed()));
-        maxMovieTimeEditText.perform(replaceText(value), closeSoftKeyboard());
+                allOf(withId(R.id.max_movie_time)));
+        maxMovieTimeEditText.perform(scrollTo(),replaceText(value), closeSoftKeyboard());
     }
 
     private void changeSnapOnDetectTest(String value){
         //change snapshot on detection value
         snapOnDetectSpinner = onView(
-                allOf(withId(R.id.snapshot_spinner), isDisplayed()));
-        snapOnDetectSpinner.perform(click());
+                allOf(withId(R.id.snapshot_spinner)));
+        snapOnDetectSpinner.perform(scrollTo(),click());
 
         ViewInteraction snapOnDetectTextView = onView(
                 allOf(withId(android.R.id.text1), withText(value), isDisplayed()));
@@ -180,14 +191,14 @@ public class ChangeMediaSettingsTest {
     private void changeThresholdTest(String value){
         //change threshold value
         threshholdEditText = onView(
-                allOf(withId(R.id.threshold), isDisplayed()));
-        threshholdEditText.perform(replaceText(value), closeSoftKeyboard());
+                allOf(withId(R.id.threshold)));
+        threshholdEditText.perform(scrollTo(),replaceText(value), closeSoftKeyboard());
     }
 
     private void changeSnapIntervalTest(String value){
         //change snapshot interval value
         snapIntervalEditText = onView(
-                allOf(withId(R.id.snapshot_interval), isDisplayed()));
+                allOf(withId(R.id.snapshot_interval)));
         snapIntervalEditText.perform(replaceText(value), closeSoftKeyboard());
     }
 
@@ -201,7 +212,7 @@ public class ChangeMediaSettingsTest {
     }
 
     private static void setTestInputs(){
-        qualityImageTestIn = "75";
+        qualityImageTestIn = "100";
         pictureTypeTestIn = "ppm";
         maxMovieTimeTestIn = "25";
         snapOnDetectTestIn = "first";

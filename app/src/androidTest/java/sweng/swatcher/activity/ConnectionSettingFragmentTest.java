@@ -57,7 +57,7 @@ public class ConnectionSettingFragmentTest {
         user = "user";
         password = "password";
         //set up okMessage
-        okMessage = "Settings Saved";
+        okMessage = "Settings Saved!";
     }
 
     @Test
