@@ -19,7 +19,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="62dp"
             android:id="@+id/textView6"
-            android:textSize="40sp"
+            android:textSize="44sp"
             android:textColor="@color/colorPrimaryDark" />
 
         <TextView
@@ -35,7 +35,7 @@
             android:textColorHighlight="@color/colorPrimary" />
 
         <TextView
-            android:text="a project part of                           Software Engineering Course                                                   a.a. 2014/2015"
+            android:text="is a greenfield project developed for Software Engineering Course of Sannio Studies University"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
