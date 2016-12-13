@@ -35,7 +35,7 @@
             android:textColorHighlight="@color/colorPrimary" />
 
         <TextView
-            android:text="is a project developed as part of the Software Engineering Course             a.a. 2014/2015"
+            android:text="a project part of                           Software Engineering Course                                                   a.a. 2014/2015"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
