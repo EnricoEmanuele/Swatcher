@@ -35,8 +35,9 @@ public class GalleryCommand implements CommandInterface {
     private List<Media> mediaCollection;
     private ListView galleryListView;
     private ArrayAdapter<Media> mediaAdapter;
-    private final static int MEDIA_LIMIT = 50;
-
+    private final static int MEDIA_LIMIT_VALUE = 50;
+    private final static String MEDIA_LIMIT_SEVERITY = "Warning";
+    private final static String MEDIA_LIMIT_MESSAGE = "Too many media on Server! You shoud delete some pictures or videos!";
 
     public GalleryCommand(Context context, HttpRequest httpRequest, ListView galleryListView) {
         this.context = context;
@@ -50,7 +51,7 @@ public class GalleryCommand implements CommandInterface {
             @Override
             public void onResponse(JSONArray response) {
 
-                if (response.length() > MEDIA_LIMIT) {
+                if (response.length() > MEDIA_LIMIT_VALUE) {
                     //Warning for user
                     /*AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
                     alertDialog.setTitle("Warning");
@@ -70,8 +71,8 @@ public class GalleryCommand implements CommandInterface {
                             //do stuff
                         }
                     });
-                    builder.setTitle("Warning");
-                    builder.setMessage("Too many media on Server! You shoud delete some pictures or videos!");
+                    builder.setTitle(MEDIA_LIMIT_SEVERITY);
+                    builder.setMessage(MEDIA_LIMIT_MESSAGE);
                     AlertDialog alertDialog = builder.create();
                     alertDialog.show();
                 }
